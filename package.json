@@ -1,0 +1,181 @@
+{
+  "name": "lumina-ai-agent",
+  "displayName": "Lumina: AI Coding Agent",
+  "description": "Illuminating the Path from Idea to Implementation through Local Intelligence & Autonomous Coding Agents.",
+  "version": "0.1.0",
+  "publisher": "lumina-ai",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "Snippets",
+    "Other"
+  ],
+  "keywords": [
+    "ai",
+    "agent",
+    "ollama",
+    "copilot",
+    "local-ai",
+    "privacy",
+    "autocomplete",
+    "diff",
+    "refactoring"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "lumina-explorer",
+          "title": "Lumina Agent",
+          "icon": "resources/lumina-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "lumina-explorer": [
+        {
+          "type": "webview",
+          "id": "lumina.nexusView",
+          "name": "Nexus Hub",
+          "icon": "resources/lumina-icon.svg",
+          "contextualTitle": "Lumina Nexus"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "lumina.prism",
+        "title": "Lumina: Open Prism Command Bar",
+        "category": "Lumina",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "lumina.calibrate",
+        "title": "Lumina: Run Hardware Calibration",
+        "category": "Lumina",
+        "icon": "$(dashboard)"
+      },
+      {
+        "command": "lumina.benchmark",
+        "title": "Lumina: Benchmark Active Model (TPS)",
+        "category": "Lumina",
+        "icon": "$(pulse)"
+      },
+      {
+        "command": "lumina.indexWorkspace",
+        "title": "Lumina: Index Workspace for Local RAG",
+        "category": "Lumina",
+        "icon": "$(database)"
+      },
+      {
+        "command": "lumina.toggleGhostText",
+        "title": "Lumina: Toggle Aura Ghost Text Autocomplete",
+        "category": "Lumina"
+      },
+      {
+        "command": "lumina.runAutonomousLoop",
+        "title": "Lumina: Start Autonomous Test & Fix Loop",
+        "category": "Lumina",
+        "icon": "$(run-all)"
+      },
+      {
+        "command": "lumina.acceptDiff",
+        "title": "Lumina: Accept Diff Proposal",
+        "category": "Lumina"
+      },
+      {
+        "command": "lumina.rejectDiff",
+        "title": "Lumina: Reject Diff Proposal",
+        "category": "Lumina"
+      },
+      {
+        "command": "lumina.focusNexus",
+        "title": "Lumina: Open Nexus Sidebar",
+        "category": "Lumina"
+      },
+      {
+        "command": "lumina.openSettings",
+        "title": "Lumina: Open Settings",
+        "category": "Lumina"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "lumina.prism",
+        "key": "cmd+k",
+        "mac": "cmd+k",
+        "win": "ctrl+k",
+        "linux": "ctrl+k",
+        "when": "editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "Lumina",
+      "properties": {
+        "lumina.ollamaEndpoint": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "Base URL of the local Ollama inference server."
+        },
+        "lumina.selectedModel": {
+          "type": "string",
+          "default": "",
+          "description": "Active local LLM model name (e.g., llama3.1:8b, qwen2.5-coder:7b, deepseek-coder-v2). Leave empty for auto-recommendation."
+        },
+        "lumina.embeddingModel": {
+          "type": "string",
+          "default": "nomic-embed-text",
+          "description": "Model used for local vector embeddings and semantic search."
+        },
+        "lumina.enableGhostText": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable The Aura (Ghost Text inline autocomplete as you type)."
+        },
+        "lumina.ghostTextDelay": {
+          "type": "number",
+          "default": 350,
+          "description": "Debounce delay (in ms) before requesting inline ghost text."
+        },
+        "lumina.temperature": {
+          "type": "number",
+          "default": 0.2,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Sampling temperature for code generation."
+        },
+        "lumina.autoCalibrateOnStartup": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically run hardware telemetry check on startup to recommend optimal model."
+        },
+        "lumina.maxRagChunks": {
+          "type": "number",
+          "default": 5,
+          "description": "Maximum number of relevant codebase chunks to inject into context."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "build": "node esbuild.js",
+    "build:watch": "node esbuild.js --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.80.0",
+    "esbuild": "^0.23.0",
+    "typescript": "^5.5.0"
+  }
+}
