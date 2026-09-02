@@ -182,37 +182,45 @@ Lumina intelligently maps your detected hardware to recommended local open-sourc
 
 ---
 
-## 🚀 Installation & Setup
+## 🚀 Installation & How to Run
 
-### Option 1: Run in Development Mode
+### Method 1: Run Live in VS Code with <kbd>F5</kbd> (Recommended for Development)
 
+1. **Install dependencies and build**:
+   ```bash
+   npm install
+   npm run build
+   ```
+
+2. **Launch the Extension**:
+   - In VS Code, press <kbd>F5</kbd> (or click **Run $\rightarrow$ Start Debugging** from the top menu).
+   - This opens a new **`[Extension Development Host]`** VS Code window with Lumina loaded and active.
+
+3. **Verify it's Running**:
+   - In the new window, click the **Lumina Sparkle icon** in the left Activity Bar to open the **Nexus Hub**.
+   - Open any code file, select a function, and press <kbd>Cmd</kbd>+<kbd>K</kbd> (macOS) or <kbd>Ctrl</kbd>+<kbd>K</kbd> (Windows/Linux) to trigger **The Prism**.
+   - Type code to see **The Aura** ghost text autocomplete appear.
+
+### Method 2: Live Watch Mode (`npm run dev`)
+
+If you are modifying TypeScript or webview code:
 ```bash
-# 1. Clone the repository
-git clone https://github.com/Garvit-821/Lumina.git
-cd Lumina
-
-# 2. Install dependencies
-npm install
-
-# 3. Build the extension bundle
-npm run build
-
-# 4. Open in VS Code
-code .
+# Starts automatic build watcher
+npm run dev
+# (or)
+npm start
 ```
+Any changes you make to `src/` will automatically recompile into `dist/`. In the Extension Development Host window, press <kbd>Cmd</kbd>+<kbd>R</kbd> (or <kbd>Ctrl</kbd>+<kbd>R</kbd>) to reload instantly.
 
-Press <kbd>F5</kbd> in VS Code to launch the **Extension Development Host**.
+### Method 3: Install `.vsix` Directly into your Local VS Code
 
-### Option 2: Package & Install `.vsix`
+To install Lumina permanently into your main VS Code environment without running debug mode:
 
 ```bash
-# Install VS Code extension packaging tool
-npm install -g @vscode/vsce
+# 1. Package the extension
+npm run package
 
-# Package Lumina
-vsce package
-
-# Install into your local VS Code
+# 2. Install into VS Code
 code --install-extension lumina-ai-agent-0.1.0.vsix
 ```
 

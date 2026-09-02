@@ -180,7 +180,11 @@
     "watch": "tsc -watch -p ./",
     "build": "node esbuild.js",
     "build:watch": "node esbuild.js --watch",
-    "typecheck": "tsc --noEmit"
+    "dev": "node esbuild.js --watch",
+    "start": "node esbuild.js --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run compile && node test/test-suite.js",
+    "package": "vsce package --no-git-tag-version --allow-star-activation"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
