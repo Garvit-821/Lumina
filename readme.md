@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./resources/lumina-icon.svg" width="110" height="110" alt="Lumina Logo" />
+<img src="./resources/lumina-icon.png" width="110" height="110" alt="Lumina Logo" />
 
 # 🌌 Lumina: Autonomous AI Coding Agent for VS Code
 
@@ -10,7 +10,7 @@
 [![VS Code](https://img.shields.io/badge/VS_Code_Extension-1.80+-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/)
 [![Ollama](https://img.shields.io/badge/Ollama-Local_Inference-000000?style=for-the-badge&logo=ollama&logoColor=white)](https://ollama.com/)
 [![Privacy](https://img.shields.io/badge/Privacy-100%25_Air--Gapped-34D399?style=for-the-badge&logo=shield&logoColor=white)](#-zero-leak-data-sovereignty)
-[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)](https://github.com/lumina-ai/lumina)
+[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)](https://github.com/Garvit-821/Lumina)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 [**Features**](#-key-features) • [**Architecture**](#-system-architecture) • [**Quickstart**](#-quickstart-guide) • [**Hardware Profiles**](#-hardware-calibration--model-matrix) • [**Commands & Shortcuts**](#-keyboard-shortcuts--commands) • [**Contributing**](#-contributing)
@@ -188,8 +188,8 @@ Lumina intelligently maps your detected hardware to recommended local open-sourc
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/lumina-ai/lumina.git
-cd lumina
+git clone https://github.com/Garvit-821/Lumina.git
+cd Lumina
 
 # 2. Install dependencies
 npm install
