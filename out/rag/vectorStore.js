@@ -108,19 +108,25 @@ class LocalVectorStore {
         return scored.slice(0, topK);
     }
     cosineSimilarity(vecA, vecB) {
-        if (vecA.length !== vecB.length)
+        if (!vecA || !vecB || vecA.length === 0 || vecA.length !== vecB.length)
             return 0;
         let dotProduct = 0;
         let normA = 0;
         let normB = 0;
         for (let i = 0; i < vecA.length; i++) {
-            dotProduct += vecA[i] * vecB[i];
-            normA += vecA[i] * vecA[i];
-            normB += vecB[i] * vecB[i];
+            const a = vecA[i];
+            const b = vecB[i];
+            if (typeof a !== 'number' || typeof b !== 'number' || isNaN(a) || isNaN(b))
+                continue;
+            dotProduct += a * b;
+            normA += a * a;
+            normB += b * b;
         }
-        if (normA === 0 || normB === 0)
+        const denominator = Math.sqrt(normA) * Math.sqrt(normB);
+        if (!isFinite(denominator) || denominator === 0)
             return 0;
-        return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+        const sim = dotProduct / denominator;
+        return isNaN(sim) || !isFinite(sim) ? 0 : sim;
     }
     async saveToDisk() {
         if (!this.cachePath)

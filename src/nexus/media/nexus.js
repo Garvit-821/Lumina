@@ -277,7 +277,7 @@
   function formatMarkdown(text) {
     if (!text) return '';
 
-    // Code blocks with syntax container & action buttons
+    // Closed Code blocks with syntax container & action buttons
     let formatted = text.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, (_match, lang, code) => {
       const cleanLang = lang || 'code';
       const encoded = encodeURIComponent(code);
@@ -288,6 +288,23 @@
             <div class="code-actions">
               <button class="code-btn btn-copy-code" data-code="${encoded}">Copy</button>
               <button class="code-btn btn-apply-editor" data-code="${encoded}">Apply to Editor</button>
+            </div>
+          </div>
+          <pre class="code-block"><code>${escapeHtml(code)}</code></pre>
+        </div>
+      `;
+    });
+
+    // Unclosed streaming code block at the end
+    formatted = formatted.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*)$/g, (_match, lang, code) => {
+      const cleanLang = lang || 'code';
+      const encoded = encodeURIComponent(code);
+      return `
+        <div class="code-container">
+          <div class="code-header">
+            <span>${cleanLang} (Streaming...)</span>
+            <div class="code-actions">
+              <button class="code-btn btn-copy-code" data-code="${encoded}">Copy</button>
             </div>
           </div>
           <pre class="code-block"><code>${escapeHtml(code)}</code></pre>
@@ -424,6 +441,29 @@
         btnStartLoop.disabled = false;
         btnStopLoop.disabled = true;
         showToast(msg.summary, msg.success ? 'info' : 'warning');
+        break;
+
+      case 'diff_updated':
+        const sug = msg.suggestion;
+        if (sug) {
+          const diffBoxes = document.querySelectorAll('.diff-box');
+          diffBoxes.forEach((box) => {
+            const acceptBtn = box.querySelector(`.btn-accept-all[data-id="${sug.id}"]`);
+            if (acceptBtn) {
+              if (sug.status === 'applied') {
+                acceptBtn.innerText = '✅ Applied';
+                acceptBtn.setAttribute('disabled', 'true');
+                acceptBtn.classList.remove('primary');
+                acceptBtn.classList.add('secondary');
+              } else if (sug.status === 'rejected') {
+                acceptBtn.innerText = '❌ Rejected';
+                acceptBtn.setAttribute('disabled', 'true');
+              } else if (sug.status === 'partial') {
+                acceptBtn.innerText = '⚡ Partially Merged';
+              }
+            }
+          });
+        }
         break;
 
       case 'toast':

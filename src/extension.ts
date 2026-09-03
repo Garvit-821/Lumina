@@ -37,6 +37,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     statusBar.setStatus(isOnline, activeModel);
   });
 
+  context.subscriptions.push(statusBar, modelManager);
+
   // 2. Register Virtual Document Provider for Side-by-Side Diffs
   const diffProvider = LuminaDiffProvider.getInstance();
   context.subscriptions.push(

@@ -126,7 +126,7 @@ var OllamaClient = class {
       return [];
     }
   }
-  async generate(model, prompt, options) {
+  async generate(model, prompt, options, signal) {
     const response = await fetch(`${this.baseUrl}/api/generate`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -136,7 +136,7 @@ var OllamaClient = class {
         stream: false,
         options
       }),
-      signal: AbortSignal.timeout(6e4)
+      signal: signal || AbortSignal.timeout(6e4)
     });
     if (!response.ok) {
       const text = await response.text();
@@ -184,6 +184,13 @@ var OllamaClient = class {
           }
         }
       }
+      if (buffer.trim()) {
+        try {
+          const parsed = JSON.parse(buffer.trim());
+          yield parsed;
+        } catch {
+        }
+      }
     } finally {
       reader.releaseLock();
     }
@@ -227,11 +234,36 @@ var OllamaClient = class {
           }
         }
       }
+      if (buffer.trim()) {
+        try {
+          const parsed = JSON.parse(buffer.trim());
+          yield parsed;
+        } catch {
+        }
+      }
     } finally {
       reader.releaseLock();
     }
   }
   async getEmbeddings(model, prompt) {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/embed`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model,
+          input: prompt
+        }),
+        signal: AbortSignal.timeout(15e3)
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.embeddings && data.embeddings.length > 0) {
+          return data.embeddings[0];
+        }
+      }
+    } catch {
+    }
     try {
       const response = await fetch(`${this.baseUrl}/api/embeddings`, {
         method: "POST",
@@ -242,15 +274,14 @@ var OllamaClient = class {
         }),
         signal: AbortSignal.timeout(15e3)
       });
-      if (!response.ok) {
-        throw new Error(`Failed to generate embeddings: HTTP ${response.status}`);
+      if (response.ok) {
+        const data = await response.json();
+        return data.embedding || [];
       }
-      const data = await response.json();
-      return data.embedding || [];
     } catch (err) {
       LuminaLogger.getInstance().warn(`Ollama embeddings error: ${err}`);
-      return [];
     }
+    return [];
   }
   async *pullModel(model, abortSignal) {
     const response = await fetch(`${this.baseUrl}/api/pull`, {
@@ -285,6 +316,13 @@ var OllamaClient = class {
             yield parsed;
           } catch {
           }
+        }
+      }
+      if (buffer.trim()) {
+        try {
+          const parsed = JSON.parse(buffer.trim());
+          yield parsed;
+        } catch {
         }
       }
     } finally {
@@ -442,17 +480,22 @@ var LocalVectorStore = class {
     return scored.slice(0, topK);
   }
   cosineSimilarity(vecA, vecB) {
-    if (vecA.length !== vecB.length) return 0;
+    if (!vecA || !vecB || vecA.length === 0 || vecA.length !== vecB.length) return 0;
     let dotProduct = 0;
     let normA = 0;
     let normB = 0;
     for (let i = 0; i < vecA.length; i++) {
-      dotProduct += vecA[i] * vecB[i];
-      normA += vecA[i] * vecA[i];
-      normB += vecB[i] * vecB[i];
+      const a = vecA[i];
+      const b = vecB[i];
+      if (typeof a !== "number" || typeof b !== "number" || isNaN(a) || isNaN(b)) continue;
+      dotProduct += a * b;
+      normA += a * a;
+      normB += b * b;
     }
-    if (normA === 0 || normB === 0) return 0;
-    return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+    const denominator = Math.sqrt(normA) * Math.sqrt(normB);
+    if (!isFinite(denominator) || denominator === 0) return 0;
+    const sim = dotProduct / denominator;
+    return isNaN(sim) || !isFinite(sim) ? 0 : sim;
   }
   async saveToDisk() {
     if (!this.cachePath) return;
@@ -1012,16 +1055,33 @@ var PatchManager = class {
       const uri = vscode7.Uri.file(suggestion.filePath);
       const document = await vscode7.workspace.openTextDocument(uri);
       const startLine = Math.max(0, hunk.oldStartLine - 1);
-      const endLine = Math.min(document.lineCount - 1, startLine + hunk.oldLineCount);
-      const targetRange = new vscode7.Range(
-        new vscode7.Position(startLine, 0),
-        new vscode7.Position(endLine, document.lineAt(Math.max(0, endLine - 1)).text.length)
-      );
+      let targetRange;
+      let replacementText = hunk.modifiedLines.join("\n");
+      if (hunk.oldLineCount === 0) {
+        const pos = new vscode7.Position(Math.min(document.lineCount, startLine), 0);
+        targetRange = new vscode7.Range(pos, pos);
+        if (startLine < document.lineCount) {
+          replacementText += "\n";
+        }
+      } else {
+        const lastLineIndex = Math.min(document.lineCount - 1, startLine + hunk.oldLineCount - 1);
+        const lastLineLength = document.lineAt(lastLineIndex).text.length;
+        targetRange = new vscode7.Range(
+          new vscode7.Position(startLine, 0),
+          new vscode7.Position(lastLineIndex, lastLineLength)
+        );
+      }
       const edit = new vscode7.WorkspaceEdit();
-      edit.replace(uri, targetRange, hunk.modifiedLines.join("\n"));
+      edit.replace(uri, targetRange, replacementText);
       const success = await vscode7.workspace.applyEdit(edit);
       if (success) {
         hunk.accepted = true;
+        const lineDelta = hunk.newLineCount - hunk.oldLineCount;
+        for (const other of suggestion.hunks) {
+          if (!other.accepted && other.oldStartLine > hunk.oldStartLine) {
+            other.oldStartLine = Math.max(1, other.oldStartLine + lineDelta);
+          }
+        }
         const allAccepted = suggestion.hunks.every((h) => h.accepted);
         suggestion.status = allAccepted ? "applied" : "partial";
         await document.save();
@@ -1277,9 +1337,30 @@ var AutonomousLoopController = class {
   async diagnoseAndFixError(errorOutput, testCommand) {
     const activeModel = this.manager.getActiveModel();
     if (!activeModel) return null;
-    const editor = vscode10.window.activeTextEditor;
-    if (!editor) return null;
-    const doc = editor.document;
+    let doc = null;
+    const activeEditor = vscode10.window.activeTextEditor;
+    const fileMatch = errorOutput.match(/(?:at\s+|FAIL\s+|ERROR\s+in\s+|-->\s+)?([a-zA-Z0-9_./-]+\.(?:ts|js|tsx|jsx|py|go|rs|java|c|cpp|cs))/i);
+    if (fileMatch) {
+      const matchedPath = fileMatch[1];
+      const workspaceFolders = vscode10.workspace.workspaceFolders;
+      if (workspaceFolders && workspaceFolders.length > 0) {
+        const fullUri = vscode10.Uri.joinPath(workspaceFolders[0].uri, matchedPath);
+        try {
+          doc = await vscode10.workspace.openTextDocument(fullUri);
+        } catch {
+        }
+      }
+    }
+    if (!doc && activeEditor) {
+      doc = activeEditor.document;
+    }
+    if (!doc) {
+      const openDocs = vscode10.workspace.textDocuments.filter((d) => !d.isUntitled);
+      if (openDocs.length > 0) {
+        doc = openDocs[0];
+      }
+    }
+    if (!doc) return null;
     const originalCode = doc.getText();
     const prompt = `You are Lumina Autonomous Test & Fix Agent.
 The developer executed the test command \`${testCommand}\` and received the following failure output:
@@ -1588,13 +1669,20 @@ Prefix:
 ${prefixText}
 Continuation:`;
     }
+    const abortController = new AbortController();
+    token.onCancellationRequested(() => abortController.abort());
     try {
       const client = this.manager.getClient();
-      const completion = await client.generate(activeModel, prompt, {
-        temperature: 0.1,
-        num_predict: 64,
-        stop: ["\n\n\n", "<\uFF5Cfim end\uFF5C>", "<\uFF5Cfim hole\uFF5C>", "```"]
-      });
+      const completion = await client.generate(
+        activeModel,
+        prompt,
+        {
+          temperature: 0.1,
+          num_predict: 64,
+          stop: ["\n\n\n", "<\uFF5Cfim end\uFF5C>", "<\uFF5Cfim hole\uFF5C>", "```"]
+        },
+        abortController.signal
+      );
       if (token.isCancellationRequested || !completion || completion.trim().length === 0) {
         return void 0;
       }
@@ -2282,6 +2370,7 @@ async function activate(context) {
   modelManager.onStatusChange(({ isOnline, activeModel }) => {
     statusBar.setStatus(isOnline, activeModel);
   });
+  context.subscriptions.push(statusBar, modelManager);
   const diffProvider = LuminaDiffProvider.getInstance();
   context.subscriptions.push(
     vscode15.workspace.registerTextDocumentContentProvider(LuminaDiffProvider.scheme, diffProvider)

@@ -96,13 +96,15 @@ class AuraInlineCompletionProvider {
         else {
             prompt = `Continue the following ${document.languageId} code starting exactly at the end of prefix. Output ONLY the code continuation without explanations or backticks.\nPrefix:\n${prefixText}\nContinuation:`;
         }
+        const abortController = new AbortController();
+        token.onCancellationRequested(() => abortController.abort());
         try {
             const client = this.manager.getClient();
             const completion = await client.generate(activeModel, prompt, {
                 temperature: 0.1,
                 num_predict: 64,
                 stop: ['\n\n\n', '<｜fim end｜>', '<｜fim hole｜>', '```'],
-            });
+            }, abortController.signal);
             if (token.isCancellationRequested || !completion || completion.trim().length === 0) {
                 return undefined;
             }

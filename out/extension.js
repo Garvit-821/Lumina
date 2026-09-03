@@ -69,6 +69,7 @@ async function activate(context) {
     modelManager.onStatusChange(({ isOnline, activeModel }) => {
         statusBar.setStatus(isOnline, activeModel);
     });
+    context.subscriptions.push(statusBar, modelManager);
     // 2. Register Virtual Document Provider for Side-by-Side Diffs
     const diffProvider = diffProvider_1.LuminaDiffProvider.getInstance();
     context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider(diffProvider_1.LuminaDiffProvider.scheme, diffProvider));

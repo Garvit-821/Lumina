@@ -91,7 +91,12 @@ export class OllamaClient {
     }
   }
 
-  public async generate(model: string, prompt: string, options?: OllamaGenerateOptions): Promise<string> {
+  public async generate(
+    model: string,
+    prompt: string,
+    options?: OllamaGenerateOptions,
+    signal?: AbortSignal
+  ): Promise<string> {
     const response = await fetch(`${this.baseUrl}/api/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -101,7 +106,7 @@ export class OllamaClient {
         stream: false,
         options,
       }),
-      signal: AbortSignal.timeout(60000),
+      signal: signal || AbortSignal.timeout(60000),
     });
 
     if (!response.ok) {
@@ -164,6 +169,16 @@ export class OllamaClient {
           }
         }
       }
+
+      // Flush any trailing JSON line
+      if (buffer.trim()) {
+        try {
+          const parsed = JSON.parse(buffer.trim()) as OllamaStreamChunk;
+          yield parsed;
+        } catch {
+          // Ignore
+        }
+      }
     } finally {
       reader.releaseLock();
     }
@@ -220,12 +235,45 @@ export class OllamaClient {
           }
         }
       }
+
+      // Flush trailing buffer
+      if (buffer.trim()) {
+        try {
+          const parsed = JSON.parse(buffer.trim()) as OllamaStreamChunk;
+          yield parsed;
+        } catch {
+          // Ignored
+        }
+      }
     } finally {
       reader.releaseLock();
     }
   }
 
   public async getEmbeddings(model: string, prompt: string): Promise<number[]> {
+    // Try modern /api/embed first (Ollama v0.2+)
+    try {
+      const response = await fetch(`${this.baseUrl}/api/embed`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model,
+          input: prompt,
+        }),
+        signal: AbortSignal.timeout(15000),
+      });
+
+      if (response.ok) {
+        const data = (await response.json()) as { embeddings?: number[][] };
+        if (data.embeddings && data.embeddings.length > 0) {
+          return data.embeddings[0];
+        }
+      }
+    } catch {
+      // Fallback to legacy endpoint
+    }
+
+    // Fallback to /api/embeddings (Ollama v0.1.x)
     try {
       const response = await fetch(`${this.baseUrl}/api/embeddings`, {
         method: 'POST',
@@ -237,16 +285,15 @@ export class OllamaClient {
         signal: AbortSignal.timeout(15000),
       });
 
-      if (!response.ok) {
-        throw new Error(`Failed to generate embeddings: HTTP ${response.status}`);
+      if (response.ok) {
+        const data = (await response.json()) as { embedding?: number[] };
+        return data.embedding || [];
       }
-
-      const data = (await response.json()) as { embedding: number[] };
-      return data.embedding || [];
     } catch (err) {
       LuminaLogger.getInstance().warn(`Ollama embeddings error: ${err}`);
-      return [];
     }
+
+    return [];
   }
 
   public async *pullModel(
@@ -292,6 +339,15 @@ export class OllamaClient {
           } catch {
             // Ignored
           }
+        }
+      }
+
+      if (buffer.trim()) {
+        try {
+          const parsed = JSON.parse(buffer.trim()) as OllamaPullProgress;
+          yield parsed;
+        } catch {
+          // Ignored
         }
       }
     } finally {

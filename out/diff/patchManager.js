@@ -84,13 +84,34 @@ class PatchManager {
             const uri = vscode.Uri.file(suggestion.filePath);
             const document = await vscode.workspace.openTextDocument(uri);
             const startLine = Math.max(0, hunk.oldStartLine - 1);
-            const endLine = Math.min(document.lineCount - 1, startLine + hunk.oldLineCount);
-            const targetRange = new vscode.Range(new vscode.Position(startLine, 0), new vscode.Position(endLine, document.lineAt(Math.max(0, endLine - 1)).text.length));
+            let targetRange;
+            let replacementText = hunk.modifiedLines.join('\n');
+            if (hunk.oldLineCount === 0) {
+                // Pure insertion
+                const pos = new vscode.Position(Math.min(document.lineCount, startLine), 0);
+                targetRange = new vscode.Range(pos, pos);
+                if (startLine < document.lineCount) {
+                    replacementText += '\n';
+                }
+            }
+            else {
+                // Replacement or deletion
+                const lastLineIndex = Math.min(document.lineCount - 1, startLine + hunk.oldLineCount - 1);
+                const lastLineLength = document.lineAt(lastLineIndex).text.length;
+                targetRange = new vscode.Range(new vscode.Position(startLine, 0), new vscode.Position(lastLineIndex, lastLineLength));
+            }
             const edit = new vscode.WorkspaceEdit();
-            edit.replace(uri, targetRange, hunk.modifiedLines.join('\n'));
+            edit.replace(uri, targetRange, replacementText);
             const success = await vscode.workspace.applyEdit(edit);
             if (success) {
                 hunk.accepted = true;
+                const lineDelta = hunk.newLineCount - hunk.oldLineCount;
+                // Shift remaining unapplied hunks that start after this hunk
+                for (const other of suggestion.hunks) {
+                    if (!other.accepted && other.oldStartLine > hunk.oldStartLine) {
+                        other.oldStartLine = Math.max(1, other.oldStartLine + lineDelta);
+                    }
+                }
                 const allAccepted = suggestion.hunks.every((h) => h.accepted);
                 suggestion.status = allAccepted ? 'applied' : 'partial';
                 await document.save();

@@ -108,10 +108,34 @@ class AutonomousLoopController {
         const activeModel = this.manager.getActiveModel();
         if (!activeModel)
             return null;
-        const editor = vscode.window.activeTextEditor;
-        if (!editor)
+        let doc = null;
+        const activeEditor = vscode.window.activeTextEditor;
+        // Check if error trace mentions specific project source files
+        const fileMatch = errorOutput.match(/(?:at\s+|FAIL\s+|ERROR\s+in\s+|-->\s+)?([a-zA-Z0-9_./-]+\.(?:ts|js|tsx|jsx|py|go|rs|java|c|cpp|cs))/i);
+        if (fileMatch) {
+            const matchedPath = fileMatch[1];
+            const workspaceFolders = vscode.workspace.workspaceFolders;
+            if (workspaceFolders && workspaceFolders.length > 0) {
+                const fullUri = vscode.Uri.joinPath(workspaceFolders[0].uri, matchedPath);
+                try {
+                    doc = await vscode.workspace.openTextDocument(fullUri);
+                }
+                catch {
+                    // Fallback to active editor
+                }
+            }
+        }
+        if (!doc && activeEditor) {
+            doc = activeEditor.document;
+        }
+        if (!doc) {
+            const openDocs = vscode.workspace.textDocuments.filter((d) => !d.isUntitled);
+            if (openDocs.length > 0) {
+                doc = openDocs[0];
+            }
+        }
+        if (!doc)
             return null;
-        const doc = editor.document;
         const originalCode = doc.getText();
         const prompt = `You are Lumina Autonomous Test & Fix Agent.
 The developer executed the test command \`${testCommand}\` and received the following failure output:
