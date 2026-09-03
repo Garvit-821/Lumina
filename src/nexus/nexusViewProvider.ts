@@ -326,7 +326,7 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}'; img-src ${webview.cspSource} data: https:;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'nonce-${nonce}'; img-src ${webview.cspSource} data: https:;">
   <link rel="stylesheet" href="${styleUri}">
   <title>Lumina Nexus</title>
 </head>
@@ -336,28 +336,28 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
     <header class="lumina-header">
       <div class="brand-title">
         <div class="brand-pulse"></div>
-        <span class="brand-name">LUMINA</span>
-        <span class="brand-tag">SOVEREIGN AGENT</span>
+        <span class="brand-name">Lumina</span>
+        <span class="brand-tag">SOVEREIGN</span>
       </div>
       <div class="header-actions">
         <button id="btnOpenPrism" class="icon-btn" title="Open Prism Command Bar (Cmd+K)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         </button>
         <button id="btnSettings" class="icon-btn" title="Lumina Settings">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         </button>
       </div>
     </header>
 
     <!-- Navigation Tabs -->
     <nav class="lumina-tabs">
-      <button class="tab-btn active" data-tab="tab-chat">Agent Chat</button>
-      <button class="tab-btn" data-tab="tab-context">Context Hub</button>
+      <button class="tab-btn active" data-tab="tab-chat">Chat</button>
+      <button class="tab-btn" data-tab="tab-context">Context</button>
       <button class="tab-btn" data-tab="tab-hardware">Hardware</button>
       <button class="tab-btn" data-tab="tab-loop">Auto Loop</button>
     </nav>
 
-    <!-- Context Chips Bar (Always accessible) -->
+    <!-- Context Chips Bar -->
     <div class="chips-container" id="chipsContainer">
       <div class="chips-label">Context:</div>
       <div class="chips-list" id="chipsList">
@@ -368,27 +368,30 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
     <!-- TAB 1: AGENT CHAT -->
     <section class="tab-content active" id="tab-chat">
       <div class="chat-messages" id="chatMessages">
-        <div class="welcome-card glass-card">
-          <div class="welcome-icon">🌌</div>
-          <h3>Lumina Sovereign Intelligence</h3>
-          <p>Local, private AI coding agent powered by Ollama. Ask questions, request architectural refactoring, or trigger targeted code generation.</p>
+        <div class="welcome-card">
+          <div class="welcome-icon">✦</div>
+          <h3>Local intelligence on your machine.</h3>
+          <p>Autonomous coding agent powered by Ollama. 100% private, hardware-calibrated, and deeply connected to your codebase.</p>
           <div class="quick-prompts">
-            <button class="quick-btn" data-prompt="Analyze the active file and suggest modular refactoring.">✨ Refactor Active File</button>
-            <button class="quick-btn" data-prompt="Generate comprehensive unit tests for this module.">🧪 Write Tests</button>
-            <button class="quick-btn" data-prompt="Audit this codebase for edge case bugs and memory leaks.">🛡️ Audit Code</button>
+            <button class="quick-btn" data-prompt="Analyze the active file and suggest modular refactoring.">✦ Refactor Active File</button>
+            <button class="quick-btn" data-prompt="Generate comprehensive unit tests for this module.">✦ Generate Unit Tests</button>
+            <button class="quick-btn" data-prompt="Audit this codebase for edge case bugs and memory leaks.">✦ Audit Code Quality</button>
           </div>
         </div>
       </div>
 
       <div class="chat-input-area">
-        <div class="input-wrapper glass-card">
+        <div class="input-wrapper">
           <textarea id="chatInput" placeholder="Ask Lumina (or press Cmd+K in editor for Prism)..." rows="2"></textarea>
           <div class="input-actions">
             <span class="active-model-badge" id="chatModelBadge">Model: Loading...</span>
             <div class="action-buttons">
-              <button id="btnClearChat" class="icon-btn small" title="Clear History">🗑️</button>
+              <button id="btnClearChat" class="icon-btn small" title="Clear History">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
               <button id="btnSendChat" class="send-btn" title="Send Message">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                <span>Send</span>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
               </button>
             </div>
           </div>
@@ -399,8 +402,8 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
     <!-- TAB 2: CONTEXT HUB (RAG) -->
     <section class="tab-content" id="tab-context">
       <div class="tab-pane glass-card">
-        <h3>Local RAG & Codebase Index</h3>
-        <p class="section-desc">Lumina builds a 100% private vector index of your local workspace using vector embeddings to understand deep multi-file relationships.</p>
+        <h3>Local RAG & Codebase Index.</h3>
+        <p class="section-desc">Lumina builds a private local vector index of your repository using Cosine Similarity embeddings for deep multi-file awareness.</p>
         
         <div class="stats-grid">
           <div class="stat-card">
@@ -414,11 +417,11 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
         </div>
 
         <button id="btnIndexWorkspace" class="action-btn primary full-width">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
           Index Workspace Now
         </button>
 
-        <h4 style="margin-top: 16px;">Active Context Chips</h4>
+        <h4 style="margin-top: 20px;">Active Context Chips</h4>
         <div id="contextHubChipsList" class="chips-hub-list">
           <!-- Injected via JS -->
         </div>
@@ -428,21 +431,21 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
     <!-- TAB 3: HARDWARE & CALIBRATION -->
     <section class="tab-content" id="tab-hardware">
       <div class="tab-pane glass-card">
-        <h3>Hardware Telemetry Scan</h3>
+        <h3>Hardware Telemetry Scan.</h3>
         <p class="section-desc">Automatic calibration prevents system memory pressure and selects the fastest model tier for your GPU/RAM.</p>
 
         <div class="telemetry-box" id="telemetryBox">
           <div class="telemetry-row">
-            <span>CPU:</span> <strong id="telCpu">Scanning...</strong>
+            <span>CPU</span> <strong id="telCpu">Scanning...</strong>
           </div>
           <div class="telemetry-row">
-            <span>System RAM:</span> <strong id="telRam">-- GB</strong>
+            <span>System RAM</span> <strong id="telRam">-- GB</strong>
           </div>
           <div class="telemetry-row">
-            <span>GPU / VRAM:</span> <strong id="telGpu">--</strong>
+            <span>GPU / VRAM</span> <strong id="telGpu">--</strong>
           </div>
           <div class="telemetry-row">
-            <span>Profile Tier:</span> <span class="tier-pill" id="telTier">Calculating</span>
+            <span>Profile Tier</span> <span class="tier-pill" id="telTier">Calculating</span>
           </div>
         </div>
 
@@ -454,11 +457,11 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
 
         <div class="hardware-actions">
           <button id="btnRunCalibration" class="action-btn secondary">Rescan Hardware</button>
-          <button id="btnRunBenchmark" class="action-btn primary">Benchmark Model (TPS)</button>
+          <button id="btnRunBenchmark" class="action-btn primary">Benchmark Speed (TPS)</button>
         </div>
 
         <div class="benchmark-gauge" id="benchmarkGauge" style="display: none;">
-          <div class="gauge-title">Speed Benchmark</div>
+          <div class="gauge-title">Inference Throughput</div>
           <div class="gauge-value" id="gaugeTps">0.0 <span class="unit">tokens/sec</span></div>
           <div class="gauge-sub" id="gaugeDetails">Latency: --ms</div>
         </div>
@@ -481,17 +484,17 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
     <!-- TAB 4: AUTONOMOUS LOOP -->
     <section class="tab-content" id="tab-loop">
       <div class="tab-pane glass-card">
-        <h3>Autonomous Test & Fix Loop</h3>
+        <h3>Autonomous Test & Fix Loop.</h3>
         <p class="section-desc">Executes your test suite or compiler, diagnoses error stack traces, crafts precision patches, and loops until all tests pass.</p>
 
         <div class="loop-input-group">
-          <label for="loopTestCommand">Test Command:</label>
+          <label for="loopTestCommand">Test Command</label>
           <input type="text" id="loopTestCommand" value="npm test" placeholder="npm test / pytest / cargo test" />
         </div>
 
         <div class="loop-controls">
-          <button id="btnStartLoop" class="action-btn primary">🚀 Start Auto Loop</button>
-          <button id="btnStopLoop" class="action-btn secondary" disabled>⏹️ Stop</button>
+          <button id="btnStartLoop" class="action-btn primary">Start Auto Loop</button>
+          <button id="btnStopLoop" class="action-btn secondary" disabled>Stop</button>
         </div>
 
         <div class="loop-timeline" id="loopTimeline">

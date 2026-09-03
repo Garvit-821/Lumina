@@ -221,7 +221,7 @@ To install Lumina permanently into your main VS Code environment without running
 npm run package
 
 # 2. Install into VS Code
-code --install-extension lumina-ai-agent-0.1.0.vsix
+code --install-extension lumina-ai-agent-0.1.1.vsix
 ```
 
 ---

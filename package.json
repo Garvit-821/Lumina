@@ -2,7 +2,7 @@
   "name": "lumina-ai-agent",
   "displayName": "Lumina: AI Coding Agent",
   "description": "Illuminating the Path from Idea to Implementation through Local Intelligence & Autonomous Coding Agents.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "GarvitPrakash",
   "icon": "resources/lumina-icon.png",
   "license": "MIT",
