@@ -3,7 +3,7 @@
   "displayName": "Lumina: AI Coding Agent",
   "description": "Illuminating the Path from Idea to Implementation through Local Intelligence & Autonomous Coding Agents.",
   "version": "0.1.0",
-  "publisher": "lumina-ai",
+  "publisher": "GarvitPrakash",
   "icon": "resources/lumina-icon.png",
   "license": "MIT",
   "repository": {
@@ -184,7 +184,7 @@
     "start": "node esbuild.js --watch",
     "typecheck": "tsc --noEmit",
     "test": "npm run compile && node test/test-suite.js",
-    "package": "vsce package --no-git-tag-version --allow-star-activation"
+    "package": "npx @vscode/vsce package --no-git-tag-version --allow-star-activation"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
