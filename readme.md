@@ -13,6 +13,12 @@
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)](https://github.com/Garvit-821/Lumina)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
+<br/>
+
+<img src="./resources/preview.png" alt="Lumina Nexus AI Agent in VS Code" width="100%" />
+
+<br/>
+
 [**Features**](#-key-features) • [**Architecture**](#-system-architecture) • [**Quickstart**](#-quickstart-guide) • [**Hardware Profiles**](#-hardware-calibration--model-matrix) • [**Commands & Shortcuts**](#-keyboard-shortcuts--commands) • [**Contributing**](#-contributing)
 
 </div>
