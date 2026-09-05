@@ -31,7 +31,7 @@
 - [Zero-Leak Data Sovereignty](#-zero-leak-data-sovereignty)
 - [Key Features](#-key-features)
   - [1. The Nexus (Glassmorphic Sidebar)](#1-the-nexus-glassmorphic-sidebar)
-  - [2. The Prism (Floating Command Bar - Cmd+K)](#2-the-prism-floating-command-bar---cmdk--ctrlk)
+  - [2. The Prism (Floating Command Bar - Cmd+Alt+K)](#2-the-prism-floating-command-bar---cmdaltk--ctrlaltk)
   - [3. The Aura (Ghost Text Autocomplete)](#3-the-aura-ghost-text-autocomplete)
   - [4. The Calibration Engine (Hardware Telemetry)](#4-the-calibration-engine-hardware-telemetry)
   - [5. The Context Engine (Local RAG)](#5-the-context-engine-local-rag)
@@ -82,7 +82,7 @@ The central intelligence hub embedded directly in the VS Code Activity Bar (`lum
 - **Dynamic Model Switcher & Puller:** Switch between active local models on the fly and monitor running processes in VRAM.
 - **Interactive Markdown Streamer:** Real-time streaming token renderer with syntax highlighting, 1-click **Copy**, **Apply to Editor**, and **Diff & Review** controls.
 
-### 2. The Prism (Floating Command Bar - `Cmd+K` / `Ctrl+K`)
+### 2. The Prism (Floating Command Bar - `Cmd+Alt+K` / `Ctrl+Alt+K`)
 A lightweight, modal command bar for targeted in-place code transformations:
 - Highlight any code block (or whole document) and press <kbd>Cmd</kbd>+<kbd>K</kbd> (macOS) or <kbd>Ctrl</kbd>+<kbd>K</kbd> (Windows/Linux).
 - Choose from preset actions (*Refactor Selection*, *Generate Unit Tests*, *Fix Diagnostics*, *Add Strict Types*, *Optimize Performance*) or type a custom natural language instruction.
@@ -131,7 +131,7 @@ An iterative agent workflow for continuous bug fixes:
 flowchart TB
     subgraph UI ["Layer 1: Developer Interface"]
         Aura["The Aura (Ghost Text)"]
-        Prism["The Prism (Cmd+K Modal)"]
+        Prism["The Prism (Cmd+Alt+K Modal)"]
         Nexus["The Nexus (Glassmorphic Sidebar)"]
     end
 
@@ -341,7 +341,7 @@ lumina/
 │   │   ├── promptBuilder.ts
 │   │   ├── sovereignOrchestrator.ts
 │   │   └── autonomousLoop.ts
-│   ├── prism/             # The Prism (Cmd+K Floating Command Bar)
+│   ├── prism/             # The Prism (Cmd+Alt+K Floating Command Bar)
 │   │   └── floatingCommandBar.ts
 │   ├── rag/               # Local Context Engine & Vector Store
 │   │   ├── crawler.ts
