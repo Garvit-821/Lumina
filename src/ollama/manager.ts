@@ -10,6 +10,7 @@ export class OllamaModelManager {
   private runningProcesses: OllamaRunningProcess[] = [];
   private isOnline: boolean = false;
   private healthTimer?: NodeJS.Timeout;
+  private lastSignature = '';
   private onStatusChangeEmitter = new vscode.EventEmitter<{ isOnline: boolean; activeModel: string }>();
 
   public readonly onStatusChange = this.onStatusChangeEmitter.event;
@@ -40,7 +41,15 @@ export class OllamaModelManager {
     return this.isOnline;
   }
 
+  /** Re-reads `lumina.selectedModel`, e.g. after the user edits it in Settings. */
+  public async reloadFromConfig(): Promise<void> {
+    this.loadActiveModelFromConfig();
+    this.lastSignature = '';
+    await this.refreshModels();
+  }
+
   public async setActiveModel(modelName: string): Promise<void> {
+    if (modelName === this.activeModel) return;
     this.activeModel = modelName;
     const config = vscode.workspace.getConfiguration('lumina');
     await config.update('selectedModel', modelName, vscode.ConfigurationTarget.Global);
@@ -64,7 +73,17 @@ export class OllamaModelManager {
       this.runningProcesses = [];
     }
 
-    this.onStatusChangeEmitter.fire({ isOnline: this.isOnline, activeModel: this.activeModel });
+    // Polling runs every 15s; only notify listeners when something actually changed.
+    const signature = JSON.stringify([
+      this.isOnline,
+      this.activeModel,
+      this.availableModels.map((m) => m.digest || m.name),
+      this.runningProcesses.map((p) => p.name),
+    ]);
+    if (signature !== this.lastSignature) {
+      this.lastSignature = signature;
+      this.onStatusChangeEmitter.fire({ isOnline: this.isOnline, activeModel: this.activeModel });
+    }
     return { models: this.availableModels, running: this.runningProcesses };
   }
 
@@ -77,7 +96,7 @@ export class OllamaModelManager {
   }
 
   private startHealthCheck(): void {
-    this.refreshModels();
+    this.refreshModels().catch(() => {});
     this.healthTimer = setInterval(() => {
       this.refreshModels().catch(() => {});
     }, 15000);

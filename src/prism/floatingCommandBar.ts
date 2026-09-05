@@ -5,6 +5,8 @@ import { DiffEngine } from '../diff/diffEngine';
 import { LuminaDiffProvider } from '../diff/diffProvider';
 import { PatchManager } from '../diff/patchManager';
 import { LuminaLogger } from '../utils/logger';
+import { extractCodeReply } from '../utils/codeBlocks';
+import { getLuminaConfig } from '../utils/config';
 
 export class PrismCommandBar {
   private manager: OllamaModelManager;
@@ -77,14 +79,21 @@ export class PrismCommandBar {
       instruction = chosen.description || chosen.label;
     }
 
-    await this.executePrismInstruction(editor, selectedText, hasSelection, instruction);
+    // Snapshot now: the user may move the cursor or edit while the model is generating.
+    const snapshot = {
+      fullText: editor.document.getText(),
+      start: editor.document.offsetAt(selection.start),
+      end: editor.document.offsetAt(selection.end),
+    };
+    await this.executePrismInstruction(editor, selectedText, hasSelection, instruction, snapshot);
   }
 
   private async executePrismInstruction(
     editor: vscode.TextEditor,
     originalCode: string,
     isSelectionOnly: boolean,
-    instruction: string
+    instruction: string,
+    snapshot: { fullText: string; start: number; end: number }
   ): Promise<void> {
     const activeModel = this.manager.getActiveModel();
     if (!activeModel) {
@@ -104,7 +113,7 @@ export class PrismCommandBar {
       async (_progress, cancellationToken) => {
         try {
           // Retrieve context chunks from RAG
-          const ragResults = await this.contextEngine.retrieveRelevantContext(instruction, 3);
+          const ragResults = await this.contextEngine.retrieveRelevantContext(instruction, Math.min(3, getLuminaConfig().maxRagChunks));
           const ragContext = ragResults
             .map((r) => `// Context (${r.chunk.relativePath}):\n${r.chunk.content}`)
             .join('\n\n');
@@ -139,7 +148,7 @@ IMPORTANT REQUIREMENTS:
           const stream = client.generateStream(
             activeModel,
             prompt,
-            { temperature: 0.2 },
+            { temperature: getLuminaConfig().temperature },
             abortController.signal
           );
 
@@ -150,25 +159,25 @@ IMPORTANT REQUIREMENTS:
           }
 
           // Extract code block
-          let proposedCode = generatedResponse.trim();
-          const codeBlockMatch = proposedCode.match(/```[a-zA-Z0-9_-]*\n([\s\S]*?)```/);
-          if (codeBlockMatch) {
-            proposedCode = codeBlockMatch[1];
+          if (cancellationToken.isCancellationRequested) return;
+          const proposedCode = extractCodeReply(generatedResponse);
+          if (!proposedCode.trim()) {
+            vscode.window.showWarningMessage('Lumina Prism: The model returned an empty response.');
+            return;
           }
 
-          // If operating on whole document or selection, form full target proposed file
-          let finalProposedFullDoc = proposedCode;
-          if (isSelectionOnly) {
-            const fullText = doc.getText();
-            const startOffset = doc.offsetAt(editor.selection.start);
-            const endOffset = doc.offsetAt(editor.selection.end);
-            finalProposedFullDoc =
-              fullText.substring(0, startOffset) + proposedCode + fullText.substring(endOffset);
+          const finalProposedFullDoc = isSelectionOnly
+            ? snapshot.fullText.slice(0, snapshot.start) + proposedCode + snapshot.fullText.slice(snapshot.end)
+            : proposedCode;
+
+          if (finalProposedFullDoc === snapshot.fullText) {
+            vscode.window.showInformationMessage('Lumina Prism: No changes suggested.');
+            return;
           }
 
           const suggestion = DiffEngine.createSuggestion(
             filePath,
-            doc.getText(),
+            snapshot.fullText,
             finalProposedFullDoc,
             instruction
           );
@@ -177,7 +186,7 @@ IMPORTANT REQUIREMENTS:
           await LuminaDiffProvider.getInstance().showComparisonView(suggestion);
 
           vscode.window.showInformationMessage(
-            `Lumina Prism: Comparison view opened. Click 'Accept' or 'Reject' in the editor actions.`,
+            `Lumina Prism: Comparison view opened. Review the diff, then choose an action.`,
             'Accept All Changes',
             'Reject'
           ).then((action) => {
@@ -188,8 +197,9 @@ IMPORTANT REQUIREMENTS:
             }
           });
         } catch (err) {
+          if (err instanceof Error && err.name === 'AbortError') return; // user cancelled
           LuminaLogger.getInstance().error('Prism generation error:', err);
-          vscode.window.showErrorMessage(`Lumina Prism error: ${err}`);
+          vscode.window.showErrorMessage(`Lumina Prism: ${err instanceof Error ? err.message : String(err)}`);
         }
       }
     );

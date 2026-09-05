@@ -1,36 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-
-const IGNORED_DIRECTORIES = new Set([
-  'node_modules',
-  '.git',
-  '.svn',
-  '.hg',
-  'dist',
-  'build',
-  'out',
-  'coverage',
-  '.next',
-  '.nuxt',
-  '.lumina',
-  '.vscode',
-  '.idea',
-  '__pycache__',
-  '.venv',
-  'venv',
-  'target',
-  'bin',
-  'obj',
-]);
-
-const BINARY_EXTENSIONS = new Set([
-  '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.webp',
-  '.pdf', '.zip', '.tar', '.gz', '.7z', '.rar',
-  '.exe', '.dll', '.so', '.dylib', '.wasm',
-  '.mp3', '.mp4', '.mov', '.avi', '.wav',
-  '.ttf', '.woff', '.woff2', '.eot',
-  '.lock', '.bin', '.iso', '.dmg'
-]);
+import { shouldIndexDirectory, shouldIndexFile } from './filePolicy';
 
 const MAX_FILE_SIZE_BYTES = 250 * 1024; // 250KB
 
@@ -73,17 +43,13 @@ export class WorkspaceCrawler {
       for (const [name, type] of entries) {
         if (cancellationToken?.isCancellationRequested) return;
 
-        if (name.startsWith('.') && name !== '.env') {
-          if (IGNORED_DIRECTORIES.has(name)) continue;
-        }
-
         if (type === vscode.FileType.Directory) {
-          if (IGNORED_DIRECTORIES.has(name)) continue;
+          if (!shouldIndexDirectory(name)) continue;
           const subDirUri = vscode.Uri.joinPath(currentDirUri, name);
           await this.scanDirectory(rootUri, subDirUri, results, cancellationToken);
         } else if (type === vscode.FileType.File) {
+          if (!shouldIndexFile(name)) continue;
           const ext = path.extname(name).toLowerCase();
-          if (BINARY_EXTENSIONS.has(ext)) continue;
 
           const fileUri = vscode.Uri.joinPath(currentDirUri, name);
           const relativePath = path.relative(rootUri.fsPath, fileUri.fsPath);

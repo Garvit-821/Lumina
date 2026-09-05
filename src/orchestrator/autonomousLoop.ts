@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
-import { exec } from 'child_process';
+import { exec, ChildProcess } from 'child_process';
+import * as path from 'path';
 import { OllamaModelManager } from '../ollama/manager';
 import { ContextEngine } from '../rag/contextEngine';
 import { DiffEngine } from '../diff/diffEngine';
@@ -7,11 +8,15 @@ import { LuminaDiffProvider } from '../diff/diffProvider';
 import { PatchManager } from '../diff/patchManager';
 import { AutonomousLoopStep, DiffSuggestion } from '../types';
 import { LuminaLogger } from '../utils/logger';
+import { extractCodeReply } from '../utils/codeBlocks';
+import { findCandidateFiles } from './traceParser';
 
 export class AutonomousLoopController {
   private manager: OllamaModelManager;
   private contextEngine: ContextEngine;
   private isRunning: boolean = false;
+  private abortController: AbortController | null = null;
+  private child: ChildProcess | null = null;
   private currentStepEmitter = new vscode.EventEmitter<AutonomousLoopStep>();
   private finishedEmitter = new vscode.EventEmitter<{ success: boolean; summary: string }>();
 
@@ -24,12 +29,17 @@ export class AutonomousLoopController {
   }
 
   public stop(): void {
+    if (!this.isRunning) return;
     this.isRunning = false;
+    this.abortController?.abort();
+    this.child?.kill();
+    this.finishedEmitter.fire({ success: false, summary: 'Loop stopped.' });
   }
 
   public async startLoop(testCommand: string, maxIterations: number = 3): Promise<void> {
     if (this.isRunning) return;
     this.isRunning = true;
+    this.abortController = new AbortController();
 
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (!workspaceFolders || workspaceFolders.length === 0) {
@@ -50,6 +60,7 @@ export class AutonomousLoopController {
       this.emitStep(iteration, 'run_test', `Executing test suite: \`${testCommand}\` (Iteration ${iteration}/${maxIterations})`, testCommand, undefined, 'running');
 
       const testResult = await this.executeCommand(testCommand, cwd);
+      if (!this.isRunning) return;
 
       if (testResult.exitCode === 0) {
         this.emitStep(iteration, 'run_test', `✅ Tests Passed! All checks are green.`, testCommand, testResult.output, 'success');
@@ -62,6 +73,7 @@ export class AutonomousLoopController {
       this.emitStep(iteration, 'diagnose', `Tests failed with exit code ${testResult.exitCode}. Analyzing error stack trace with Ollama...`, undefined, testResult.output, 'running');
 
       const diagnosis = await this.diagnoseAndFixError(testResult.output, testCommand);
+      if (!this.isRunning) return;
 
       if (!diagnosis || !diagnosis.diff) {
         this.emitStep(iteration, 'diagnose', `Could not synthesize automated fix. Stopping loop.`, undefined, undefined, 'failed');
@@ -71,7 +83,7 @@ export class AutonomousLoopController {
       }
 
       // Step 3: Propose Fix
-      this.emitStep(iteration, 'propose_fix', `Proposed fix for ${diagnosis.diff.filePath.split('/').pop()}: ${diagnosis.explanation}`, undefined, undefined, 'running', diagnosis.diff);
+      this.emitStep(iteration, 'propose_fix', `Proposed fix for ${path.basename(diagnosis.diff.filePath)}: ${diagnosis.explanation}`, undefined, undefined, 'running', diagnosis.diff);
 
       PatchManager.registerSuggestion(diagnosis.diff);
       await LuminaDiffProvider.getInstance().showComparisonView(diagnosis.diff);
@@ -79,7 +91,7 @@ export class AutonomousLoopController {
       // Auto-apply patch to verify or prompt user
       await PatchManager.acceptAll(diagnosis.diff.id);
 
-      this.emitStep(iteration, 'verify', `Applied patch to ${diagnosis.diff.filePath.split('/').pop()}. Re-running verification...`, undefined, undefined, 'success');
+      this.emitStep(iteration, 'verify', `Applied patch to ${path.basename(diagnosis.diff.filePath)}. Re-running verification...`, undefined, undefined, 'success');
     }
 
     if (this.isRunning) {
@@ -101,17 +113,17 @@ export class AutonomousLoopController {
     let doc: vscode.TextDocument | null = null;
     const activeEditor = vscode.window.activeTextEditor;
 
-    // Check if error trace mentions specific project source files
-    const fileMatch = errorOutput.match(/(?:at\s+|FAIL\s+|ERROR\s+in\s+|-->\s+)?([a-zA-Z0-9_./-]+\.(?:ts|js|tsx|jsx|py|go|rs|java|c|cpp|cs))/i);
-    if (fileMatch) {
-      const matchedPath = fileMatch[1];
-      const workspaceFolders = vscode.workspace.workspaceFolders;
-      if (workspaceFolders && workspaceFolders.length > 0) {
-        const fullUri = vscode.Uri.joinPath(workspaceFolders[0].uri, matchedPath);
+    // Use the first file named in the failure output that exists inside the workspace.
+    const root = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+    if (root) {
+      for (const candidate of findCandidateFiles(errorOutput).slice(0, 10)) {
+        const abs = path.resolve(root, candidate);
+        if (path.relative(root, abs).startsWith('..')) continue; // outside the workspace
         try {
-          doc = await vscode.workspace.openTextDocument(fullUri);
+          doc = await vscode.workspace.openTextDocument(vscode.Uri.file(abs));
+          break;
         } catch {
-          // Fallback to active editor
+          // not a real file; try the next candidate
         }
       }
     }
@@ -148,10 +160,9 @@ Output ONLY the entire corrected file content within a single markdown code bloc
 
     try {
       const client = this.manager.getClient();
-      const response = await client.generate(activeModel, prompt, { temperature: 0.1 });
+      const response = await client.generate(activeModel, prompt, { temperature: 0.1 }, this.abortController?.signal);
 
-      const codeMatch = response.match(/```[a-zA-Z0-9_-]*\n([\s\S]*?)```/);
-      const proposedCode = codeMatch ? codeMatch[1].trim() : response.trim();
+      const proposedCode = extractCodeReply(response);
 
       if (proposedCode.length < 20) return null;
 
@@ -171,10 +182,11 @@ Output ONLY the entire corrected file content within a single markdown code bloc
 
   private executeCommand(cmd: string, cwd: string): Promise<{ exitCode: number; output: string }> {
     return new Promise((resolve) => {
-      exec(cmd, { cwd, timeout: 30000 }, (error, stdout, stderr) => {
+      this.child = exec(cmd, { cwd, timeout: 5 * 60_000, maxBuffer: 10 * 1024 * 1024 }, (error, stdout, stderr) => {
+        this.child = null;
         const output = (stdout || '') + (stderr || '') + (error ? `\n${error.message}` : '');
         resolve({
-          exitCode: error ? error.code || 1 : 0,
+          exitCode: error ? (typeof error.code === 'number' ? error.code : 1) : 0,
           output,
         });
       });

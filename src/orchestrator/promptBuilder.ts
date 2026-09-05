@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { ContextEngine } from '../rag/contextEngine';
+import { getLuminaConfig } from '../utils/config';
 
 export class PromptBuilder {
   public static async buildSystemPrompt(contextEngine: ContextEngine, userPrompt: string): Promise<string> {
@@ -25,7 +26,8 @@ ${selectedCode ? `Active Selection (Lines ${selection.start.line + 1}-${selectio
     const chipsContent = await contextEngine.getActiveChipsContent();
 
     // Retrieve RAG Context matches
-    const ragMatches = await contextEngine.retrieveRelevantContext(userPrompt, 4);
+    const maxChunks = getLuminaConfig().maxRagChunks;
+    const ragMatches = maxChunks > 0 ? await contextEngine.retrieveRelevantContext(userPrompt, maxChunks) : [];
     let ragContext = '';
     if (ragMatches.length > 0) {
       ragContext = ragMatches

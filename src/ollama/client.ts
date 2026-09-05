@@ -1,5 +1,6 @@
 import { OllamaModelInfo, OllamaRunningProcess } from '../types';
 import { LuminaLogger } from '../utils/logger';
+import { readNdjson, assertOk } from './ndjson';
 
 export interface OllamaGenerateOptions {
   temperature?: number;
@@ -91,11 +92,16 @@ export class OllamaClient {
     }
   }
 
+  /**
+   * Non-streaming completion. Pass `suffix` for fill-in-the-middle: Ollama then applies the model's own FIM
+   * template, which is correct for every FIM-capable model (Qwen, DeepSeek, CodeLlama, StarCoder…).
+   */
   public async generate(
     model: string,
     prompt: string,
     options?: OllamaGenerateOptions,
-    signal?: AbortSignal
+    signal?: AbortSignal,
+    suffix?: string
   ): Promise<string> {
     const response = await fetch(`${this.baseUrl}/api/generate`, {
       method: 'POST',
@@ -103,16 +109,14 @@ export class OllamaClient {
       body: JSON.stringify({
         model,
         prompt,
+        ...(suffix !== undefined ? { suffix } : {}),
         stream: false,
         options,
       }),
       signal: signal || AbortSignal.timeout(60000),
     });
 
-    if (!response.ok) {
-      const text = await response.text();
-      throw new Error(`Ollama generate failed (${response.status}): ${text}`);
-    }
+    await assertOk(response, 'Ollama generate');
 
     const data = (await response.json()) as { response: string };
     return data.response;
@@ -136,52 +140,11 @@ export class OllamaClient {
       signal: abortSignal,
     });
 
-    if (!response.ok) {
-      const text = await response.text();
-      throw new Error(`Ollama stream error (${response.status}): ${text}`);
-    }
-
+    await assertOk(response, 'Ollama generate');
     if (!response.body) {
       throw new Error('No response body from Ollama stream');
     }
-
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder('utf-8');
-    let buffer = '';
-
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed) continue;
-          try {
-            const parsed = JSON.parse(trimmed) as OllamaStreamChunk;
-            yield parsed;
-          } catch {
-            // Partial JSON chunk, skip
-          }
-        }
-      }
-
-      // Flush any trailing JSON line
-      if (buffer.trim()) {
-        try {
-          const parsed = JSON.parse(buffer.trim()) as OllamaStreamChunk;
-          yield parsed;
-        } catch {
-          // Ignore
-        }
-      }
-    } finally {
-      reader.releaseLock();
-    }
+    yield* readNdjson<OllamaStreamChunk>(response.body);
   }
 
   public async *chatStream(
@@ -202,52 +165,11 @@ export class OllamaClient {
       signal: abortSignal,
     });
 
-    if (!response.ok) {
-      const text = await response.text();
-      throw new Error(`Ollama chat stream error (${response.status}): ${text}`);
-    }
-
+    await assertOk(response, 'Ollama chat');
     if (!response.body) {
       throw new Error('No response body from Ollama chat stream');
     }
-
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder('utf-8');
-    let buffer = '';
-
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed) continue;
-          try {
-            const parsed = JSON.parse(trimmed) as OllamaStreamChunk;
-            yield parsed;
-          } catch {
-            // Ignored
-          }
-        }
-      }
-
-      // Flush trailing buffer
-      if (buffer.trim()) {
-        try {
-          const parsed = JSON.parse(buffer.trim()) as OllamaStreamChunk;
-          yield parsed;
-        } catch {
-          // Ignored
-        }
-      }
-    } finally {
-      reader.releaseLock();
-    }
+    yield* readNdjson<OllamaStreamChunk>(response.body);
   }
 
   public async getEmbeddings(model: string, prompt: string): Promise<number[]> {
@@ -296,6 +218,36 @@ export class OllamaClient {
     return [];
   }
 
+  /**
+   * Embeds many inputs in one request via /api/embed (Ollama 0.2+).
+   * Falls back to one request per input on older servers. Failed inputs come back as empty arrays.
+   */
+  public async getEmbeddingsBatch(model: string, inputs: string[]): Promise<number[][]> {
+    if (inputs.length === 0) return [];
+    try {
+      const response = await fetch(`${this.baseUrl}/api/embed`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model, input: inputs }),
+        signal: AbortSignal.timeout(15000 + inputs.length * 2000),
+      });
+      if (response.ok) {
+        const data = (await response.json()) as { embeddings?: number[][] };
+        if (data.embeddings && data.embeddings.length === inputs.length) {
+          return data.embeddings;
+        }
+      }
+    } catch {
+      // Fall through to per-input requests
+    }
+
+    const results: number[][] = [];
+    for (const input of inputs) {
+      results.push(await this.getEmbeddings(model, input));
+    }
+    return results;
+  }
+
   public async *pullModel(
     model: string,
     abortSignal?: AbortSignal
@@ -304,54 +256,15 @@ export class OllamaClient {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        model,
         name: model,
         stream: true,
       }),
       signal: abortSignal,
     });
 
-    if (!response.ok) {
-      const text = await response.text();
-      throw new Error(`Failed to pull model ${model}: ${text}`);
-    }
-
+    await assertOk(response, `Pulling ${model}`);
     if (!response.body) return;
-
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder('utf-8');
-    let buffer = '';
-
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed) continue;
-          try {
-            const parsed = JSON.parse(trimmed) as OllamaPullProgress;
-            yield parsed;
-          } catch {
-            // Ignored
-          }
-        }
-      }
-
-      if (buffer.trim()) {
-        try {
-          const parsed = JSON.parse(buffer.trim()) as OllamaPullProgress;
-          yield parsed;
-        } catch {
-          // Ignored
-        }
-      }
-    } finally {
-      reader.releaseLock();
-    }
+    yield* readNdjson<OllamaPullProgress>(response.body);
   }
 }

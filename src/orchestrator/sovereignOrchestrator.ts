@@ -6,6 +6,9 @@ import { DiffEngine } from '../diff/diffEngine';
 import { PatchManager } from '../diff/patchManager';
 import { ChatMessage, DiffSuggestion } from '../types';
 import { LuminaLogger } from '../utils/logger';
+import { extractFirstCodeBlock } from '../utils/codeBlocks';
+import { isLikelyFullFileReplacement } from '../diff/proposalPolicy';
+import { getLuminaConfig } from '../utils/config';
 
 export class SovereignOrchestrator {
   private manager: OllamaModelManager;
@@ -80,6 +83,23 @@ export class SovereignOrchestrator {
 
     this.currentAbortController = new AbortController();
 
+    // Capture the target now: the user may switch editors while the reply streams.
+    const editorAtRequest = vscode.window.activeTextEditor;
+    const target =
+      editorAtRequest && !editorAtRequest.document.isUntitled
+        ? {
+            document: editorAtRequest.document,
+            selection: editorAtRequest.selection.isEmpty
+              ? null
+              : {
+                  start: editorAtRequest.document.offsetAt(editorAtRequest.selection.start),
+                  end: editorAtRequest.document.offsetAt(editorAtRequest.selection.end),
+                },
+          }
+        : null;
+
+    let fullContent = '';
+
     try {
       const systemPrompt = await PromptBuilder.buildSystemPrompt(this.contextEngine, text);
 
@@ -88,8 +108,9 @@ export class SovereignOrchestrator {
         { role: 'system', content: systemPrompt },
       ];
 
-      // Append recent history
-      for (const msg of this.history.slice(-8, -1)) {
+      // Earlier turns only: the last two entries are this turn's user message and the empty reply placeholder.
+      const earlier = this.history.slice(0, -2).filter((m) => m.content.trim().length > 0);
+      for (const msg of earlier.slice(-8)) {
         messagesPayload.push({
           role: msg.role === 'assistant' ? 'assistant' : 'user',
           content: msg.content,
@@ -99,12 +120,11 @@ export class SovereignOrchestrator {
       messagesPayload.push({ role: 'user', content: text });
 
       const client = this.manager.getClient();
-      let fullContent = '';
 
       const stream = client.chatStream(
         activeModel,
         messagesPayload,
-        { temperature: 0.2 },
+        { temperature: getLuminaConfig().temperature },
         this.currentAbortController.signal
       );
 
@@ -119,49 +139,58 @@ export class SovereignOrchestrator {
       assistantMessage.content = fullContent;
       assistantMessage.isStreaming = false;
 
-      // Check if response contains modified code for the active file
-      let diffSuggestion: DiffSuggestion | undefined;
-      const editor = vscode.window.activeTextEditor;
-
-      if (editor && !editor.document.isUntitled) {
-        const codeBlockMatch = fullContent.match(/```[a-zA-Z0-9_-]*\n([\s\S]*?)```/);
-        if (codeBlockMatch && fullContent.length > 50) {
-          const proposedSnippet = codeBlockMatch[1];
-          const origDocText = editor.document.getText();
-
-          // If the snippet looks like a full file or replacement candidate
-          if (
-            proposedSnippet.length > 30 &&
-            (proposedSnippet.includes('function') ||
-              proposedSnippet.includes('class') ||
-              proposedSnippet.includes('import') ||
-              proposedSnippet.includes('export') ||
-              proposedSnippet.length > origDocText.length * 0.3)
-          ) {
-            diffSuggestion = DiffEngine.createSuggestion(
-              editor.document.uri.fsPath,
-              origDocText,
-              proposedSnippet,
-              `AI Code modification for "${text.slice(0, 40)}..."`
-            );
-            PatchManager.registerSuggestion(diffSuggestion);
-            assistantMessage.diffSuggestion = diffSuggestion;
-          }
-        }
+      const diffSuggestion = this.buildDiffSuggestion(fullContent, target, text);
+      if (diffSuggestion) {
+        PatchManager.registerSuggestion(diffSuggestion);
+        assistantMessage.diffSuggestion = diffSuggestion;
       }
 
       this.onStreamEndEmitter.fire({ messageId: assistantMsgId, diffSuggestion });
     } catch (err: unknown) {
-      if (err instanceof Error && err.name === 'AbortError') {
-        assistantMessage.content += '\n\n*(Generation stopped by user)*';
-      } else {
-        assistantMessage.content += `\n\n⚠️ **Inference Error**: ${err instanceof Error ? err.message : String(err)}`;
+      // Keep whatever streamed before the failure, and show the reason in the chat itself.
+      const note =
+        err instanceof Error && err.name === 'AbortError'
+          ? '\n\n_Stopped._'
+          : `\n\n**Error:** ${err instanceof Error ? err.message : String(err)}`;
+      if (!(err instanceof Error && err.name === 'AbortError')) {
         LuminaLogger.getInstance().error('Orchestrator error:', err);
       }
+      assistantMessage.content = fullContent + note;
       assistantMessage.isStreaming = false;
+      this.onStreamChunkEmitter.fire({ messageId: assistantMsgId, chunk: note });
       this.onStreamEndEmitter.fire({ messageId: assistantMsgId });
     } finally {
       this.currentAbortController = null;
     }
+  }
+
+  /**
+   * Turns the reply's first code block into a reviewable diff, but only when that is safe:
+   * with a selection, the block replaces the selection; otherwise only if it looks like the whole file.
+   */
+  private buildDiffSuggestion(
+    reply: string,
+    target: { document: vscode.TextDocument; selection: { start: number; end: number } | null } | null,
+    userText: string
+  ): DiffSuggestion | undefined {
+    if (!target || target.document.isClosed) return undefined;
+    const block = extractFirstCodeBlock(reply);
+    if (!block || block.code.trim().length < 10) return undefined;
+
+    const currentText = target.document.getText();
+    let proposed: string;
+
+    if (target.selection) {
+      proposed =
+        currentText.slice(0, target.selection.start) + block.code + currentText.slice(target.selection.end);
+    } else if (isLikelyFullFileReplacement(currentText, block.code)) {
+      proposed = block.code;
+    } else {
+      return undefined;
+    }
+
+    if (proposed === currentText) return undefined;
+    const label = userText.length > 40 ? `${userText.slice(0, 40)}…` : userText;
+    return DiffEngine.createSuggestion(target.document.uri.fsPath, currentText, proposed, `Chat: "${label}"`);
   }
 }

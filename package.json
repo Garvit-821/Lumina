@@ -119,10 +119,8 @@
     "keybindings": [
       {
         "command": "lumina.prism",
-        "key": "cmd+k",
-        "mac": "cmd+k",
-        "win": "ctrl+k",
-        "linux": "ctrl+k",
+        "key": "ctrl+alt+k",
+        "mac": "cmd+alt+k",
         "when": "editorTextFocus"
       }
     ],

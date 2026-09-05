@@ -90,8 +90,19 @@
     updateSendState();
   }
 
+  const SEND_ICON = btnSendChat.innerHTML;
+  const STOP_ICON = '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>';
+
   function updateSendState() {
-    btnSendChat.disabled = isStreaming || !chatInput.value.trim();
+    btnSendChat.classList.toggle('stop', isStreaming);
+    btnSendChat.innerHTML = isStreaming ? STOP_ICON : SEND_ICON;
+    btnSendChat.title = isStreaming ? 'Stop generating (Esc)' : 'Send (Enter)';
+    btnSendChat.setAttribute('aria-label', isStreaming ? 'Stop generating' : 'Send message');
+    btnSendChat.disabled = !isStreaming && !chatInput.value.trim();
+  }
+
+  function stopGenerating() {
+    if (isStreaming) send({ type: 'chat_stop' });
   }
 
   chatInput?.addEventListener('input', autosize);
@@ -101,7 +112,10 @@
       sendMessage();
     }
   });
-  btnSendChat?.addEventListener('click', sendMessage);
+  btnSendChat?.addEventListener('click', () => (isStreaming ? stopGenerating() : sendMessage()));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') stopGenerating();
+  });
 
   function sendMessage() {
     const text = chatInput.value.trim();
@@ -501,6 +515,15 @@
         }
         break;
       }
+
+      case 'chat_history':
+        chatMessages.querySelectorAll('.message').forEach((el) => el.remove());
+        rawById.clear();
+        diffById.clear();
+        (msg.messages || []).forEach((m) => renderMessage(m));
+        welcomeCard.hidden = (msg.messages || []).length > 0;
+        scrollToBottom(true);
+        break;
 
       case 'chat_message':
         renderMessage(msg.message);

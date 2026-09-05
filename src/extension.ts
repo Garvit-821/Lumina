@@ -7,6 +7,7 @@ import { AutonomousLoopController } from './orchestrator/autonomousLoop';
 import { CalibrationTelemetry } from './calibration/telemetry';
 import { ModelRecommender } from './calibration/recommender';
 import { ModelBenchmarker } from './calibration/benchmarker';
+import { sameModel } from './calibration/benchmarkMath';
 import { LuminaDiffProvider } from './diff/diffProvider';
 import { PatchManager } from './diff/patchManager';
 import { AuraInlineCompletionProvider } from './aura/inlineCompletion';
@@ -14,6 +15,7 @@ import { PrismCommandBar } from './prism/floatingCommandBar';
 import { NexusViewProvider } from './nexus/nexusViewProvider';
 import { LuminaStatusBar } from './utils/statusBar';
 import { LuminaLogger } from './utils/logger';
+import { getLuminaConfig } from './utils/config';
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   const logger = LuminaLogger.getInstance();
@@ -21,9 +23,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   // 1. Core Services Setup
   const config = vscode.workspace.getConfiguration('lumina');
-  const endpoint = config.get<string>('ollamaEndpoint') || 'http://localhost:11434';
-
-  const ollamaClient = new OllamaClient(endpoint);
+  const ollamaClient = new OllamaClient(getLuminaConfig().endpoint);
   const modelManager = new OllamaModelManager(ollamaClient);
   const contextEngine = new ContextEngine(ollamaClient);
   const orchestrator = new SovereignOrchestrator(modelManager, contextEngine);
@@ -37,7 +37,20 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     statusBar.setStatus(isOnline, activeModel);
   });
 
-  context.subscriptions.push(statusBar, modelManager);
+  context.subscriptions.push(statusBar, modelManager, auraProvider);
+
+  // Apply endpoint / model changes from Settings immediately instead of requiring a window reload.
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration(async (e) => {
+      if (e.affectsConfiguration('lumina.ollamaEndpoint')) {
+        ollamaClient.setBaseUrl(getLuminaConfig().endpoint);
+        logger.log(`Ollama endpoint changed to ${ollamaClient.getBaseUrl()}`);
+        await modelManager.reloadFromConfig();
+      } else if (e.affectsConfiguration('lumina.selectedModel')) {
+        await modelManager.reloadFromConfig();
+      }
+    })
+  );
 
   // 2. Register Virtual Document Provider for Side-by-Side Diffs
   const diffProvider = LuminaDiffProvider.getInstance();
@@ -69,7 +82,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   // 5. Register Commands
   context.subscriptions.push(
-    // Prism Command Bar (Cmd+K)
+    // Prism Command Bar (Cmd+Alt+K / Ctrl+Alt+K)
     vscode.commands.registerCommand('lumina.prism', async () => {
       await prismBar.open();
     }),
@@ -115,11 +128,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
           title: `Lumina: Benchmarking ${activeModel}...`,
         },
         async () => {
-          const result = await ModelBenchmarker.runBenchmark(ollamaClient, activeModel);
-          statusBar.setBenchmark(result);
-          vscode.window.showInformationMessage(
-            `🚀 Lumina Benchmark for ${result.model}: ${result.tokensPerSecond} tokens/sec (TTFT: ${result.timeToFirstTokenMs}ms)`
-          );
+          try {
+            const result = await ModelBenchmarker.runBenchmark(ollamaClient, activeModel);
+            statusBar.setBenchmark(result);
+            vscode.window.showInformationMessage(
+              `Lumina: ${result.model} runs at ${result.tokensPerSecond} tokens/sec (first token in ${result.timeToFirstTokenMs} ms).`
+            );
+          } catch (err) {
+            vscode.window.showErrorMessage(`Lumina: Benchmark failed. ${err instanceof Error ? err.message : err}`);
+          }
         }
       );
     }),
@@ -186,16 +203,22 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   // 6. Startup Calibration
   const autoCalibrate = config.get<boolean>('autoCalibrateOnStartup', true);
   if (autoCalibrate) {
-    CalibrationTelemetry.scanSystem().then((telemetry) => {
-      const rec = ModelRecommender.evaluate(telemetry);
-      logger.log('Startup telemetry calibrated', {
-        profile: rec.tier,
-        recommended: rec.recommendedModel,
-      });
-      if (!modelManager.getActiveModel()) {
-        modelManager.setActiveModel(rec.recommendedModel);
-      }
-    });
+    CalibrationTelemetry.scanSystem()
+      .then(async (telemetry) => {
+        const rec = ModelRecommender.evaluate(telemetry);
+        logger.log('Startup telemetry calibrated', { profile: rec.tier, recommended: rec.recommendedModel });
+        if (modelManager.getActiveModel()) return;
+
+        // Only auto-select the recommendation if it is installed; otherwise every chat would fail with "model not found".
+        const { models } = await modelManager.refreshModels();
+        const installed = models.find((m) => sameModel(m.name, rec.recommendedModel));
+        if (installed) {
+          await modelManager.setActiveModel(installed.name);
+        } else {
+          logger.log(`Recommended model ${rec.recommendedModel} is not installed; pull it from the Models tab.`);
+        }
+      })
+      .catch((err) => logger.warn(`Startup calibration skipped: ${err}`));
   }
 
   logger.log('🌌 Lumina Agent initialized and ready.');

@@ -6,6 +6,8 @@ import { WorkspaceCrawler } from './crawler';
 import { CodeChunker } from './chunker';
 import { ContextChip, RAGChunk, VectorSearchResult } from '../types';
 import { LuminaLogger } from '../utils/logger';
+import { isSecretFile } from './filePolicy';
+import { getLuminaConfig } from '../utils/config';
 
 export class ContextEngine {
   private ollamaClient: OllamaClient;
@@ -26,7 +28,10 @@ export class ContextEngine {
   }
 
   private async init(): Promise<void> {
-    await this.vectorStore.loadFromDisk();
+    if (await this.vectorStore.loadFromDisk()) {
+      this.indexedFilesCount = this.vectorStore.getFileCount();
+      this.emitStatus();
+    }
     this.syncActiveEditorChip();
 
     vscode.window.onDidChangeActiveTextEditor(() => {
@@ -137,30 +142,27 @@ export class ContextEngine {
       progressCallback?.(`Extracted ${allChunks.length} chunks. Computing vector embeddings...`, 50);
 
       // Attempt to generate embeddings via Ollama embedding model
-      const config = vscode.workspace.getConfiguration('lumina');
-      const embeddingModel = config.get<string>('embeddingModel') || 'nomic-embed-text';
+      const embeddingModel = getLuminaConfig().embeddingModel;
 
-      let embeddingsSuccessful = false;
-      try {
-        const testVec = await this.ollamaClient.getEmbeddings(embeddingModel, 'test');
-        if (testVec && testVec.length > 0) {
-          embeddingsSuccessful = true;
-          let count = 0;
-          for (const chunk of allChunks) {
-            count++;
-            if (count % 10 === 0) {
-              const pct = 50 + Math.round((count / allChunks.length) * 40);
-              progressCallback?.(`Embedding chunk ${count}/${allChunks.length}...`, pct);
-            }
-            try {
-              chunk.embedding = await this.ollamaClient.getEmbeddings(embeddingModel, chunk.content);
-            } catch {
-              // Ignore single failure
-            }
-          }
+      const BATCH_SIZE = 16;
+      const probe = await this.ollamaClient.getEmbeddings(embeddingModel, 'probe');
+      if (probe.length > 0) {
+        for (let i = 0; i < allChunks.length; i += BATCH_SIZE) {
+          const batch = allChunks.slice(i, i + BATCH_SIZE);
+          const vectors = await this.ollamaClient.getEmbeddingsBatch(
+            embeddingModel,
+            batch.map((c) => c.content)
+          );
+          batch.forEach((chunk, j) => {
+            if (vectors[j]?.length) chunk.embedding = vectors[j];
+          });
+          const done = Math.min(i + BATCH_SIZE, allChunks.length);
+          progressCallback?.(`Embedded ${done}/${allChunks.length} chunks...`, 50 + Math.round((done / allChunks.length) * 40));
         }
-      } catch {
-        LuminaLogger.getInstance().warn('Embedding model not available in Ollama, using lexical hybrid indexing.');
+      } else {
+        LuminaLogger.getInstance().warn(
+          `Embedding model "${embeddingModel}" is not available in Ollama; using keyword search only. Run \`ollama pull ${embeddingModel}\` to enable semantic search.`
+        );
       }
 
       this.vectorStore.clear();
@@ -177,8 +179,8 @@ export class ContextEngine {
   }
 
   public async retrieveRelevantContext(query: string, topK: number = 4): Promise<VectorSearchResult[]> {
-    const config = vscode.workspace.getConfiguration('lumina');
-    const embeddingModel = config.get<string>('embeddingModel') || 'nomic-embed-text';
+    if (this.vectorStore.getChunkCount() === 0) return [];
+    const embeddingModel = getLuminaConfig().embeddingModel;
 
     try {
       const queryEmbedding = await this.ollamaClient.getEmbeddings(embeddingModel, query);
@@ -202,10 +204,18 @@ export class ContextEngine {
     const sections: string[] = [];
 
     for (const chip of activeChips) {
+      if (isSecretFile(path.basename(chip.filePath))) {
+        sections.push(`--- Context File: ${chip.relativePath} (omitted: may contain secrets) ---\n`);
+        continue;
+      }
       try {
         const uri = vscode.Uri.file(chip.filePath);
         const data = await vscode.workspace.fs.readFile(uri);
-        const content = Buffer.from(data).toString('utf-8');
+        let content = Buffer.from(data).toString('utf-8');
+        const MAX_CHARS_PER_FILE = 24_000;
+        if (content.length > MAX_CHARS_PER_FILE) {
+          content = `${content.slice(0, MAX_CHARS_PER_FILE)}\n… (truncated: file is ${content.length.toLocaleString()} characters)`;
+        }
         sections.push(`--- Context File: ${chip.relativePath} ---\n${content}\n`);
       } catch {
         // Skip

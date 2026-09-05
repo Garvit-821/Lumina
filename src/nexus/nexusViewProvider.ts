@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { randomBytes } from 'crypto';
 import { OllamaModelManager } from '../ollama/manager';
 import { ContextEngine } from '../rag/contextEngine';
 import { SovereignOrchestrator } from '../orchestrator/sovereignOrchestrator';
@@ -105,6 +106,9 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
   }
 
   private async sendInitialState(): Promise<void> {
+    // Restore the conversation when the view is re-created (e.g. after moving it or reloading the webview).
+    this.postMessage({ type: 'chat_history', messages: this.orchestrator.getHistory() });
+
     const { models, running } = await this.manager.refreshModels();
     this.postMessage({
       type: 'models_list',
@@ -123,7 +127,7 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
     this.postMessage({
       type: 'rag_status',
       indexing: false,
-      indexedFiles: 0,
+      indexedFiles: vectorStore.getFileCount(),
       totalChunks: vectorStore.getChunkCount(),
     });
 
@@ -143,7 +147,12 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
         await this.orchestrator.handleUserMessage(message.text);
         break;
 
+      case 'chat_stop':
+        this.orchestrator.abortCurrent();
+        break;
+
       case 'chat_clear':
+        this.orchestrator.abortCurrent();
         this.orchestrator.clearHistory();
         this.postMessage({ type: 'toast', severity: 'info', text: 'Chat history cleared.' });
         break;
@@ -417,7 +426,7 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
             </div>
           </div>
         </div>
-        <div class="input-hint"><kbd>Enter</kbd> to send · <kbd>Shift</kbd>+<kbd>Enter</kbd> for a new line</div>
+        <div class="input-hint"><kbd>Enter</kbd> to send · <kbd>Shift</kbd>+<kbd>Enter</kbd> new line · <kbd>Esc</kbd> stop</div>
       </div>
     </section>
 
@@ -539,10 +548,5 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
 }
 
 function getNonce(): string {
-  let text = '';
-  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  for (let i = 0; i < 32; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
+  return randomBytes(16).toString('base64');
 }

@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 import { DiffSuggestion } from '../types';
 import { LuminaLogger } from '../utils/logger';
 
@@ -13,16 +14,32 @@ export class PatchManager {
     return this.activeSuggestions.get(id);
   }
 
+  /**
+   * A pending suggestion was computed against a snapshot of the file. If the file has changed since,
+   * applying it would silently drop those edits, so ask first.
+   */
+  private static async confirmIfStale(suggestion: DiffSuggestion, document: vscode.TextDocument): Promise<boolean> {
+    if (suggestion.status !== 'pending' || document.getText() === suggestion.originalCode) return true;
+    const choice = await vscode.window.showWarningMessage(
+      `${path.basename(suggestion.filePath)} has changed since Lumina proposed this edit. Applying it will overwrite your newer changes.`,
+      { modal: true },
+      'Apply anyway'
+    );
+    return choice === 'Apply anyway';
+  }
+
   public static async acceptAll(suggestionId: string): Promise<boolean> {
     const suggestion = this.activeSuggestions.get(suggestionId);
     if (!suggestion) {
       vscode.window.showErrorMessage('Lumina: Diff suggestion not found.');
       return false;
     }
+    if (suggestion.status === 'applied' || suggestion.status === 'rejected') return false;
 
     try {
       const uri = vscode.Uri.file(suggestion.filePath);
       const document = await vscode.workspace.openTextDocument(uri);
+      if (!(await this.confirmIfStale(suggestion, document))) return false;
       const fullRange = new vscode.Range(
         document.positionAt(0),
         document.positionAt(document.getText().length)
@@ -36,7 +53,7 @@ export class PatchManager {
         await document.save();
         suggestion.status = 'applied';
         suggestion.hunks.forEach((h) => (h.accepted = true));
-        vscode.window.showInformationMessage(`Lumina: All changes applied to ${suggestion.filePath.split('/').pop()}`);
+        vscode.window.showInformationMessage(`Lumina: All changes applied to ${path.basename(suggestion.filePath)}`);
         LuminaLogger.getInstance().log(`Accepted all diff changes for ${suggestion.filePath}`);
         return true;
       }
@@ -58,6 +75,7 @@ export class PatchManager {
     try {
       const uri = vscode.Uri.file(suggestion.filePath);
       const document = await vscode.workspace.openTextDocument(uri);
+      if (!(await this.confirmIfStale(suggestion, document))) return false;
 
       const startLine = Math.max(0, hunk.oldStartLine - 1);
       let targetRange: vscode.Range;

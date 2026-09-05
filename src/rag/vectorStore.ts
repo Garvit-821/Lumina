@@ -2,6 +2,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { RAGChunk, VectorSearchResult } from '../types';
 import { LuminaLogger } from '../utils/logger';
+import { cosineSimilarity } from './similarity';
+import { isSecretFile } from './filePolicy';
 
 export class LocalVectorStore {
   private chunks: RAGChunk[] = [];
@@ -39,6 +41,10 @@ export class LocalVectorStore {
     return this.chunks.length;
   }
 
+  public getFileCount(): number {
+    return new Set(this.chunks.map((c) => c.filePath)).size;
+  }
+
   public clear(): void {
     this.chunks = [];
   }
@@ -52,7 +58,7 @@ export class LocalVectorStore {
 
     for (const chunk of this.chunks) {
       if (!chunk.embedding || chunk.embedding.length === 0) continue;
-      const sim = this.cosineSimilarity(queryEmbedding, chunk.embedding);
+      const sim = cosineSimilarity(queryEmbedding, chunk.embedding);
       scored.push({ chunk, similarity: sim });
     }
 
@@ -88,28 +94,6 @@ export class LocalVectorStore {
     return scored.slice(0, topK);
   }
 
-  private cosineSimilarity(vecA: number[], vecB: number[]): number {
-    if (!vecA || !vecB || vecA.length === 0 || vecA.length !== vecB.length) return 0;
-
-    let dotProduct = 0;
-    let normA = 0;
-    let normB = 0;
-
-    for (let i = 0; i < vecA.length; i++) {
-      const a = vecA[i];
-      const b = vecB[i];
-      if (typeof a !== 'number' || typeof b !== 'number' || isNaN(a) || isNaN(b)) continue;
-      dotProduct += a * b;
-      normA += a * a;
-      normB += b * b;
-    }
-
-    const denominator = Math.sqrt(normA) * Math.sqrt(normB);
-    if (!isFinite(denominator) || denominator === 0) return 0;
-    const sim = dotProduct / denominator;
-    return isNaN(sim) || !isFinite(sim) ? 0 : sim;
-  }
-
   public async saveToDisk(): Promise<void> {
     if (!this.cachePath) return;
 
@@ -135,7 +119,8 @@ export class LocalVectorStore {
       const data = await vscode.workspace.fs.readFile(vscode.Uri.file(this.cachePath));
       const parsed = JSON.parse(Buffer.from(data).toString('utf-8')) as RAGChunk[];
       if (Array.isArray(parsed)) {
-        this.chunks = parsed;
+        // Caches written before secret filtering existed may contain .env and key files.
+        this.chunks = parsed.filter((c) => !isSecretFile(path.basename(c.filePath || '')));
         LuminaLogger.getInstance().log(`Loaded ${this.chunks.length} chunks from local vector cache.`);
         return true;
       }

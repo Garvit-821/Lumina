@@ -134,6 +134,7 @@ export interface AutonomousLoopStep {
 export type WebviewMessage =
   | { type: 'chat_send'; text: string; contextChipIds?: string[] }
   | { type: 'chat_clear' }
+  | { type: 'chat_stop' }
   | { type: 'request_calibration' }
   | { type: 'request_benchmark'; model?: string }
   | { type: 'request_models' }
@@ -154,6 +155,7 @@ export type WebviewMessage =
 
 export type ExtensionMessage =
   | { type: 'chat_message'; message: ChatMessage }
+  | { type: 'chat_history'; messages: ChatMessage[] }
   | { type: 'chat_stream_chunk'; messageId: string; chunk: string }
   | { type: 'chat_stream_end'; messageId: string; diffSuggestion?: DiffSuggestion }
   | { type: 'calibration_data'; telemetry: HardwareTelemetry; recommendation: ModelRecommendation }
