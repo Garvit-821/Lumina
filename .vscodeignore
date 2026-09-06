@@ -10,3 +10,6 @@ esbuild.js
 Documentation.md
 **/*.map
 node_modules/**
+out/**
+*.vsix
+lumina-ai-agent-*.vsix
