@@ -1,3 +1,4 @@
+/** A fenced code block from a markdown reply. `language` is the first word of the info string, or ''. */
 export interface CodeBlock {
   language: string;
   code: string;
