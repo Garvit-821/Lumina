@@ -12,6 +12,7 @@ export class LuminaLogger {
     this.channel = vscode.window.createOutputChannel('Lumina Agent');
   }
 
+  /** Returns the shared logger, creating it and its output channel on first use. */
   public static getInstance(): LuminaLogger {
     if (!LuminaLogger.instance) {
       LuminaLogger.instance = new LuminaLogger();
