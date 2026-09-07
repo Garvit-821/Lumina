@@ -1,5 +1,9 @@
 import * as vscode from 'vscode';
 
+/**
+ * Process-wide logger that writes to the "Lumina Agent" output channel; obtain it with getInstance().
+ * Each line starts with a UTC HH:MM:SS timestamp and a level tag.
+ */
 export class LuminaLogger {
   private static instance: LuminaLogger;
   private channel: vscode.OutputChannel;
