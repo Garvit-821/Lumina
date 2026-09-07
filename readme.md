@@ -84,7 +84,7 @@ The central intelligence hub embedded directly in the VS Code Activity Bar (`lum
 
 ### 2. The Prism (Floating Command Bar - `Cmd+Alt+K` / `Ctrl+Alt+K`)
 A lightweight, modal command bar for targeted in-place code transformations:
-- Highlight any code block (or whole document) and press <kbd>Cmd</kbd>+<kbd>K</kbd> (macOS) or <kbd>Ctrl</kbd>+<kbd>K</kbd> (Windows/Linux).
+- Highlight any code block (or whole document) and press <kbd>Cmd</kbd>+<kbd>Alt</kbd>+<kbd>K</kbd> (macOS) or <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>K</kbd> (Windows/Linux).
 - Choose from preset actions (*Refactor Selection*, *Generate Unit Tests*, *Fix Diagnostics*, *Add Strict Types*, *Optimize Performance*) or type a custom natural language instruction.
 - Automatically launches a side-by-side diff comparison view for review.
 
