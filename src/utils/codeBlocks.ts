@@ -4,6 +4,10 @@ export interface CodeBlock {
   code: string;
 }
 
+/**
+ * Matches a fenced block: group 1 is the info string, group 2 the body. A match ends at the next ```
+ * anywhere, so a body containing triple backticks is cut short, and an unclosed fence matches nothing.
+ */
 const FENCE = /```([^\n`]*)\r?\n([\s\S]*?)```/g;
 
 /** All fenced code blocks in a markdown reply, in order. Handles CRLF and info strings like ```ts title="a.ts". */
