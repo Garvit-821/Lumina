@@ -204,7 +204,7 @@ Lumina intelligently maps your detected hardware to recommended local open-sourc
 
 3. **Verify it's Running**:
    - In the new window, click the **Lumina Sparkle icon** in the left Activity Bar to open the **Nexus Hub**.
-   - Open any code file, select a function, and press <kbd>Cmd</kbd>+<kbd>K</kbd> (macOS) or <kbd>Ctrl</kbd>+<kbd>K</kbd> (Windows/Linux) to trigger **The Prism**.
+   - Open any code file, select a function, and press <kbd>Cmd</kbd>+<kbd>Alt</kbd>+<kbd>K</kbd> (macOS) or <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>K</kbd> (Windows/Linux) to trigger **The Prism**.
    - Type code to see **The Aura** ghost text autocomplete appear.
 
 ### Method 2: Live Watch Mode (`npm run dev`)
