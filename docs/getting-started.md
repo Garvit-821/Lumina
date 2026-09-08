@@ -18,3 +18,16 @@ Lumina polls `GET /api/tags` every 15 seconds with a 3 second timeout. Until a c
 status bar item on the right reads "Lumina: Offline". If Ollama listens on another address, set
 [`lumina.ollamaEndpoint`](configuration.md#luminaollamaendpoint). In a remote window (SSH, WSL or a
 dev container) the extension runs on the remote side by default, so `localhost` means that machine.
+
+## Pull a model
+
+```bash
+ollama pull qwen2.5-coder:7b
+ollama pull nomic-embed-text
+```
+
+`qwen2.5-coder:7b` is what calibration recommends for the balanced tier. Run **Lumina: Run Hardware
+Calibration** to see the recommendation for your machine. `nomic-embed-text` is the default value of
+`lumina.embeddingModel`. You can also pull from the **Models** tab of the Nexus panel: type a name
+and press **Pull**. A model pulled there becomes the active chat model when the download finishes,
+so pull embedding models with the `ollama` CLI instead.
