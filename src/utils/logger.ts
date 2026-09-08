@@ -27,6 +27,7 @@ export class LuminaLogger {
     this.channel.appendLine(formatted);
   }
 
+  /** Writes a WARN line for a recoverable problem. `context`, when given, is appended as JSON. */
   public warn(message: string, context?: Record<string, unknown>): void {
     const timestamp = new Date().toISOString().split('T')[1].slice(0, 8);
     const formatted = `[${timestamp}] [WARN] ${message} ${context ? JSON.stringify(context) : ''}`;
