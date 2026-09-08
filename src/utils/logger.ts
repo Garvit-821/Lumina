@@ -42,6 +42,7 @@ export class LuminaLogger {
     this.channel.appendLine(formatted);
   }
 
+  /** Reveals the output channel in the Output panel. */
   public show(): void {
     this.channel.show();
   }
