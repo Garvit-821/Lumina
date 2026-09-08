@@ -20,6 +20,7 @@ export class LuminaLogger {
     return LuminaLogger.instance;
   }
 
+  /** Writes an INFO line. `context`, when given, is appended as JSON. */
   public log(message: string, context?: Record<string, unknown>): void {
     const timestamp = new Date().toISOString().split('T')[1].slice(0, 8);
     const formatted = `[${timestamp}] [INFO] ${message} ${context ? JSON.stringify(context) : ''}`;
