@@ -34,6 +34,7 @@ export class LuminaLogger {
     this.channel.appendLine(formatted);
   }
 
+  /** Writes an ERROR line. An Error contributes its message and stack trace; any other value is stringified. */
   public error(message: string, error?: unknown): void {
     const timestamp = new Date().toISOString().split('T')[1].slice(0, 8);
     const errStr = error instanceof Error ? `${error.message}\n${error.stack}` : String(error || '');
