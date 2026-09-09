@@ -12,3 +12,8 @@ test('large files are split into overlapping annotated chunks', () => {
   assert.equal(chunks.at(-1).endLine, 120);
   assert.ok(chunks[1].startLine < chunks[0].endLine, 'chunks overlap');
 });
+
+test('small files stay as a single chunk', () => {
+  const chunks = CodeChunker.chunkFile('/p/a.ts', 'a.ts', 'const a = 1;\n', 'typescript');
+  assert.equal(chunks.length, 1);
+});
