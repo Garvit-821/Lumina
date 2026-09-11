@@ -36,6 +36,7 @@ export class LuminaStatusBar {
     this.update();
   }
 
+  /** Shows the tokens-per-second figure from a finished benchmark run. */
   public setBenchmark(result: BenchmarkResult): void {
     this.lastTps = result.tokensPerSecond;
     this.update();
