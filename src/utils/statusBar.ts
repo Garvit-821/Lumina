@@ -1,6 +1,10 @@
 import * as vscode from 'vscode';
 import { BenchmarkResult } from '../types';
 
+/**
+ * Right-aligned status bar item showing the Ollama connection state, active model and last measured
+ * generation speed. Clicking it runs `lumina.focusNexus` to open the Nexus sidebar.
+ */
 export class LuminaStatusBar {
   private item: vscode.StatusBarItem;
   private currentModel: string = 'Offline';
