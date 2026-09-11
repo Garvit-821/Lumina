@@ -59,3 +59,15 @@ activates once VS Code has finished starting (`onStartupFinished`).
 Each code block in a reply has **Copy** and **Insert** buttons. Insert replaces the selection in the
 active editor, or inserts at the cursor, without saving. The trash icon clears the conversation.
 History is kept in memory: it survives hiding the panel, but not a window reload.
+
+## Editing code with Prism
+
+1. Select the code you want to change. With no selection, Prism works on the whole file.
+2. Press Cmd+Alt+K on macOS or Ctrl+Alt+K on Windows and Linux, or run **Lumina: Open Prism Command Bar**.
+3. Pick a preset (Refactor & Clean Code, Generate Unit Tests, Fix Diagnostics & Potential Bugs, Add Strict Types & Documentation, Optimize Performance) or **Custom Instruction...** and type your own.
+4. A progress notification is shown while the model generates. Cancel it there if needed.
+5. A diff editor opens with your file on the left and the proposal on the right. Choose **Accept All Changes** or **Reject** in the notification that follows.
+
+Accepting replaces the file content with the proposal and saves the file. If you dismiss the
+notification instead, the proposal stays unapplied and there is no command to bring it back, so run
+Prism again. Details are in [Reviewing diffs](diff-review.md).
