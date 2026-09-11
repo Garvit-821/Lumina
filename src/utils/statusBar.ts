@@ -9,8 +9,13 @@ export class LuminaStatusBar {
   private item: vscode.StatusBarItem;
   private currentModel: string = 'Offline';
   private isOnline: boolean = false;
+  /**
+   * Tokens per second from the latest benchmark or explicit update; null until one is measured.
+   * It is not reset when the model changes.
+   */
   private lastTps: number | null = null;
 
+  /** Creates the item and shows it immediately in the offline state until setStatus is called. */
   constructor() {
     this.item = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     this.item.command = 'lumina.focusNexus';
