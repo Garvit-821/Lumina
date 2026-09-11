@@ -47,3 +47,15 @@ code --install-extension lumina-ai-agent-0.1.1.vsix
 also install the file with **Extensions: Install from VSIX...** in VS Code. To run the extension
 from source without installing it, see [Run and debug](development.md#run-and-debug). Lumina
 activates once VS Code has finished starting (`onStartupFinished`).
+
+## Your first chat
+
+1. Click the **Lumina Agent** icon in the Activity Bar to open the **Nexus Hub** view. The pill in its header reads "Ollama" when the server is reachable and "Offline" when it is not.
+2. On the **Models** tab, pick an installed model from the dropdown. Lumina saves it as `lumina.selectedModel`. If you skip this, Lumina uses the first model Ollama lists.
+3. Open a source file, switch to the **Chat** tab, type a question and press Enter. Shift+Enter adds a new line; Esc or the stop button cancels the reply.
+4. The open file appears as a context chip above the input, and its content goes into the prompt while the chip is highlighted. Click the chip to exclude it.
+5. If you select code before sending, the selection goes into the prompt, and a code block in the reply can be offered as a diff. See [Reviewing diffs](diff-review.md).
+
+Each code block in a reply has **Copy** and **Insert** buttons. Insert replaces the selection in the
+active editor, or inserts at the cursor, without saving. The trash icon clears the conversation.
+History is kept in memory: it survives hiding the panel, but not a window reload.
