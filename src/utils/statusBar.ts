@@ -23,6 +23,10 @@ export class LuminaStatusBar {
     this.item.show();
   }
 
+  /**
+   * Updates the connection state and model name (an empty name shows as "No Model").
+   * `tps` replaces the displayed speed only when given; otherwise the previous value stays.
+   */
   public setStatus(isOnline: boolean, modelName: string, tps?: number): void {
     this.isOnline = isOnline;
     this.currentModel = modelName || 'No Model';
