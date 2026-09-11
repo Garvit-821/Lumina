@@ -31,3 +31,19 @@ Calibration** to see the recommendation for your machine. `nomic-embed-text` is 
 `lumina.embeddingModel`. You can also pull from the **Models** tab of the Nexus panel: type a name
 and press **Pull**. A model pulled there becomes the active chat model when the download finishes,
 so pull embedding models with the `ollama` CLI instead.
+
+## Install the extension
+
+Build a `.vsix` package from the repository and install it:
+
+```bash
+npm install
+npm run package
+code --install-extension lumina-ai-agent-0.1.1.vsix
+```
+
+`npm run package` runs `vsce` through `npx`, which first runs the `vscode:prepublish` script
+(`npm run build`). The file name follows the `name` and `version` fields of `package.json`. You can
+also install the file with **Extensions: Install from VSIX...** in VS Code. To run the extension
+from source without installing it, see [Run and debug](development.md#run-and-debug). Lumina
+activates once VS Code has finished starting (`onStartupFinished`).
