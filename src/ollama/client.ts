@@ -27,6 +27,7 @@ export interface OllamaStreamChunk {
     content: string;
   };
   done: boolean;
+  /** Whole-request time in nanoseconds, like the other durations here. Only set on the final chunk. */
   total_duration?: number;
   load_duration?: number;
   prompt_eval_count?: number;
