@@ -71,3 +71,11 @@ History is kept in memory: it survives hiding the panel, but not a window reload
 Accepting replaces the file content with the proposal and saves the file. If you dismiss the
 notification instead, the proposal stays unapplied and there is no command to bring it back, so run
 Prism again. Details are in [Reviewing diffs](diff-review.md).
+
+## Next steps
+
+- Index the workspace so chat and Prism can pull in related code: **Index workspace** on the Context tab, or **Lumina: Index Workspace for Local RAG**. See [Workspace search and context](rag.md).
+- Type at the end of a line to get ghost text completions, and press Tab to accept one. See [Ghost text and fill-in-the-middle](models.md#ghost-text-and-fill-in-the-middle).
+- Press **Benchmark speed** on the Models tab to measure tokens per second for the active model.
+- Read the safety notes of the [autonomous test and fix loop](autonomous-loop.md) before trying it on a project with a failing test.
+- Review [Configuration](configuration.md) and [Privacy and data handling](privacy.md).
