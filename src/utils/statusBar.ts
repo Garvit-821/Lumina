@@ -57,6 +57,7 @@ export class LuminaStatusBar {
     this.item.backgroundColor = undefined;
   }
 
+  /** Removes the item from the status bar. */
   public dispose(): void {
     this.item.dispose();
   }
