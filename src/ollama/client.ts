@@ -2,6 +2,10 @@ import { OllamaModelInfo, OllamaRunningProcess } from '../types';
 import { LuminaLogger } from '../utils/logger';
 import { readNdjson, assertOk } from './ndjson';
 
+/**
+ * Sampling options sent as Ollama's `options` object on generate and chat requests.
+ * Fields left undefined are dropped from the JSON, so the model's own defaults apply.
+ */
 export interface OllamaGenerateOptions {
   temperature?: number;
   top_p?: number;
