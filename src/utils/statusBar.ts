@@ -42,6 +42,7 @@ export class LuminaStatusBar {
     this.update();
   }
 
+  /** Re-renders text, tooltip and background from the current fields; offline uses the warning colour. */
   private update(): void {
     if (!this.isOnline) {
       this.item.text = '$(circle-slash) Lumina: Offline';
