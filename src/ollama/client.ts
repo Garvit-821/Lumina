@@ -13,6 +13,11 @@ export interface OllamaGenerateOptions {
   stop?: string[];
 }
 
+/**
+ * One NDJSON line from a streaming /api/generate or /api/chat response. Text arrives in pieces:
+ * generate puts it in `response`, chat in `message.content`, and callers concatenate across chunks.
+ * The last chunk has `done: true` and carries the timing and token statistics.
+ */
 export interface OllamaStreamChunk {
   model: string;
   created_at: string;
