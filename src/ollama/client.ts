@@ -58,14 +58,23 @@ export class OllamaClient {
     this.baseUrl = baseUrl.replace(/\/+$/, '');
   }
 
+  /**
+   * Points the client at another server, e.g. after `lumina.ollamaEndpoint` changes in Settings.
+   * Trailing slashes are stripped. Requests already in flight keep the old URL.
+   */
   public setBaseUrl(url: string): void {
     this.baseUrl = url.replace(/\/+$/, '');
   }
 
+  /** The current server root, without a trailing slash. */
   public getBaseUrl(): string {
     return this.baseUrl;
   }
 
+  /**
+   * Probes GET /api/tags with a 3 second timeout. True only for a 2xx response; network errors,
+   * timeouts and error statuses all yield false rather than throwing.
+   */
   public async isHealthy(): Promise<boolean> {
     try {
       const response = await fetch(`${this.baseUrl}/api/tags`, {
