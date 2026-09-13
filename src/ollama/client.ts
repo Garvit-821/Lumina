@@ -46,6 +46,11 @@ export interface OllamaPullProgress {
   completed?: number;
 }
 
+/**
+ * Thin HTTP client for a local Ollama server (default http://localhost:11434), built on global fetch.
+ * Health, listing and embedding calls swallow failures and return false or empty results; generate,
+ * chat and pull throw on a non-OK response so callers can show the server's error message.
+ */
 export class OllamaClient {
   private baseUrl: string;
 
