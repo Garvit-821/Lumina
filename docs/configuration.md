@@ -40,3 +40,14 @@ If the model returns no vector when indexing starts, chunks are stored without e
 retrieval uses keyword search. Re-index after changing this setting. Vectors from different models
 are not comparable, and a query vector of a different length scores 0 against every stored chunk,
 which returns arbitrary chunks rather than falling back to keyword search. See [Embeddings](rag.md#embeddings).
+
+## lumina.enableGhostText
+
+- Type: boolean
+- Default: `true`
+- Read by: `AuraInlineCompletionProvider`, at startup and whenever the setting changes.
+
+Turns inline ghost text completions on or off. **Lumina: Toggle Aura Ghost Text Autocomplete** flips
+the value and writes it to your user settings. A value in workspace settings takes precedence over
+the user value, so the toggle can appear to have no effect there. Completions also need VS Code's own
+inline suggestions to be enabled (`editor.inlineSuggest.enabled`).
