@@ -87,6 +87,10 @@ export class OllamaClient {
     }
   }
 
+  /**
+   * Lists the models installed on the server (GET /api/tags, 5 second timeout).
+   * Never throws: on any failure it logs a warning and returns an empty array.
+   */
   public async listModels(): Promise<OllamaModelInfo[]> {
     try {
       const response = await fetch(`${this.baseUrl}/api/tags`, {
