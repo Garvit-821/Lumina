@@ -108,6 +108,10 @@ export class OllamaClient {
     }
   }
 
+  /**
+   * Lists the models currently loaded in memory (GET /api/ps, 4 second timeout).
+   * Returns an empty array on any failure without logging, so it is safe to call from polling.
+   */
   public async listRunning(): Promise<OllamaRunningProcess[]> {
     try {
       const response = await fetch(`${this.baseUrl}/api/ps`, {
