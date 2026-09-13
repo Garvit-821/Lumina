@@ -15,3 +15,16 @@ The base URL of the Ollama server. The health check, model listing, chat, genera
 and model pulls all go to this address (see [Network access](privacy.md#network-access)). Changing it
 repoints the client immediately and re-lists models. Lumina does not restrict it to `localhost`: a
 remote host receives your prompts and code, unencrypted unless the URL uses `https`.
+
+## lumina.selectedModel
+
+- Type: string
+- Default: `""` (empty)
+- Valid values: the name of a model installed in Ollama, such as `qwen2.5-coder:7b`. Whitespace is trimmed; the name is not validated.
+- Read by: `OllamaModelManager`, which supplies the active model to chat, Prism, ghost text, the autonomous loop and the benchmark.
+
+When empty, Lumina uses the first model returned by `GET /api/tags`, without saving it. With
+`lumina.autoCalibrateOnStartup` on, the startup scan may select the recommended model instead, if it
+is installed. Lumina writes this setting to your user settings when you pick a model on the Models
+tab, when a pull from that tab finishes, when you click **Use <model>** after calibration, and on the
+startup auto-selection. A name that is not installed makes requests fail with HTTP 404 from Ollama.
