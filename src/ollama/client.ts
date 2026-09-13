@@ -35,6 +35,10 @@ export interface OllamaStreamChunk {
   eval_duration?: number;
 }
 
+/**
+ * One progress line from /api/pull. `status` names the phase (e.g. "pulling manifest", "success");
+ * `total` and `completed` are byte counts for the layer named by `digest` and are absent between downloads.
+ */
 export interface OllamaPullProgress {
   status: string;
   digest?: string;
