@@ -28,3 +28,15 @@ When empty, Lumina uses the first model returned by `GET /api/tags`, without sav
 is installed. Lumina writes this setting to your user settings when you pick a model on the Models
 tab, when a pull from that tab finishes, when you click **Use <model>** after calibration, and on the
 startup auto-selection. A name that is not installed makes requests fail with HTTP 404 from Ollama.
+
+## lumina.embeddingModel
+
+- Type: string
+- Default: `nomic-embed-text`
+- Valid values: an Ollama embedding model name. An empty value falls back to `nomic-embed-text`.
+- Read by: `ContextEngine`, each time the workspace is indexed and each time chat or Prism retrieves context.
+
+If the model returns no vector when indexing starts, chunks are stored without embeddings and
+retrieval uses keyword search. Re-index after changing this setting. Vectors from different models
+are not comparable, and a query vector of a different length scores 0 against every stored chunk,
+which returns arbitrary chunks rather than falling back to keyword search. See [Embeddings](rag.md#embeddings).
