@@ -181,7 +181,7 @@
     "dev": "node esbuild.js --watch",
     "start": "node esbuild.js --watch",
     "typecheck": "tsc --noEmit",
-    "test": "npm run compile && node test/test-suite.js",
+    "test": "npm run compile && node --test \"test/**/*.test.js\"",
     "package": "npx @vscode/vsce package --no-git-tag-version --allow-star-activation"
   },
   "devDependencies": {
