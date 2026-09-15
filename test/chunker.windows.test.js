@@ -22,3 +22,13 @@ test('chunk ids encode the relative path and line range', () => {
   const chunks = CodeChunker.chunkFile('/p/f.ts', 'f.ts', linesOf(100), 'typescript');
   assert.deepEqual(chunks.map((c) => c.id), ['f.ts:1-40', 'f.ts:31-70', 'f.ts:61-100']);
 });
+
+test('every line of the file is covered by at least one chunk', () => {
+  const total = 137;
+  const chunks = CodeChunker.chunkFile('/p/f.ts', 'f.ts', linesOf(total), 'typescript');
+  const covered = new Set();
+  for (const c of chunks) {
+    for (let l = c.startLine; l <= c.endLine; l++) covered.add(l);
+  }
+  assert.equal(covered.size, total);
+});
