@@ -51,3 +51,14 @@ Turns inline ghost text completions on or off. **Lumina: Toggle Aura Ghost Text 
 the value and writes it to your user settings. A value in workspace settings takes precedence over
 the user value, so the toggle can appear to have no effect there. Completions also need VS Code's own
 inline suggestions to be enabled (`editor.inlineSuggest.enabled`).
+
+## lumina.ghostTextDelay
+
+- Type: number (milliseconds)
+- Default: `350`
+- Valid range: 0 to 5000, clamped in code. `package.json` declares no bounds.
+- Read by: `AuraInlineCompletionProvider`, on every completion request.
+
+How long Lumina waits after a completion request before calling Ollama. If you keep typing during
+that time, VS Code cancels the request and no call is made. Lower values show suggestions sooner but
+send more requests. See [Ghost text and fill-in-the-middle](models.md#ghost-text-and-fill-in-the-middle).
