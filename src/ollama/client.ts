@@ -158,6 +158,11 @@ export class OllamaClient {
     return data.response;
   }
 
+  /**
+   * Streaming completion via /api/generate, yielding each chunk as it arrives.
+   * No timeout is applied; pass `abortSignal` to cancel. Throws before yielding anything if the
+   * server returns an error status or an empty body.
+   */
   public async *generateStream(
     model: string,
     prompt: string,
