@@ -188,6 +188,10 @@ export class OllamaClient {
     yield* readNdjson<OllamaStreamChunk>(response.body);
   }
 
+  /**
+   * Streaming multi-turn chat via /api/chat; the server applies the model's chat template to `messages`
+   * (roles such as system, user, assistant). Cancellation and errors behave as in generateStream.
+   */
   public async *chatStream(
     model: string,
     messages: Array<{ role: string; content: string }>,
