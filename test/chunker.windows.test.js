@@ -17,3 +17,8 @@ test('a 41-line file is split in two, the second window starting 30 lines in', (
   assert.equal(chunks.length, 2);
   assert.deepEqual([chunks[1].startLine, chunks[1].endLine], [31, 41]);
 });
+
+test('chunk ids encode the relative path and line range', () => {
+  const chunks = CodeChunker.chunkFile('/p/f.ts', 'f.ts', linesOf(100), 'typescript');
+  assert.deepEqual(chunks.map((c) => c.id), ['f.ts:1-40', 'f.ts:31-70', 'f.ts:61-100']);
+});
