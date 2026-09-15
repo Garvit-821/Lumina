@@ -62,3 +62,13 @@ inline suggestions to be enabled (`editor.inlineSuggest.enabled`).
 How long Lumina waits after a completion request before calling Ollama. If you keep typing during
 that time, VS Code cancels the request and no call is made. Lower values show suggestions sooner but
 send more requests. See [Ghost text and fill-in-the-middle](models.md#ghost-text-and-fill-in-the-middle).
+
+## lumina.temperature
+
+- Type: number
+- Default: `0.2`
+- Valid range: 0 to 1, declared in `package.json` and clamped in code.
+- Read by: chat (`SovereignOrchestrator`) and Prism (`PrismCommandBar`), on every request.
+
+Passed to Ollama as the `temperature` sampling option. Other features use a fixed value and ignore
+this setting: ghost text, the autonomous loop and the benchmark all send `0.1`.
