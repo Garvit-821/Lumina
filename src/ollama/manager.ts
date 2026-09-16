@@ -3,6 +3,11 @@ import { OllamaClient } from './client';
 import { OllamaModelInfo, OllamaRunningProcess } from '../types';
 import { LuminaLogger } from '../utils/logger';
 
+/**
+ * Tracks which Ollama models are installed and loaded and which one Lumina uses for requests.
+ * Polls the server every 15 seconds and fires `onStatusChange` when anything changes.
+ * The chosen model is persisted in the `lumina.selectedModel` setting.
+ */
 export class OllamaModelManager {
   private client: OllamaClient;
   private activeModel: string = '';
