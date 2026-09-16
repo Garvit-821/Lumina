@@ -32,3 +32,9 @@ test('every line of the file is covered by at least one chunk', () => {
   }
   assert.equal(covered.size, total);
 });
+
+test('split chunks start with a header naming the file and line range', () => {
+  const chunks = CodeChunker.chunkFile('/p/lib/x.py', 'lib/x.py', linesOf(50), 'python');
+  assert.ok(chunks[0].content.startsWith('// File: lib/x.py (Lines 1-40)\nline 1\n'));
+  assert.ok(chunks[1].content.startsWith('// File: lib/x.py (Lines 31-50)\nline 31\n'));
+});
