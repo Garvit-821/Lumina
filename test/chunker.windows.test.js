@@ -38,3 +38,8 @@ test('split chunks start with a header naming the file and line range', () => {
   assert.ok(chunks[0].content.startsWith('// File: lib/x.py (Lines 1-40)\nline 1\n'));
   assert.ok(chunks[1].content.startsWith('// File: lib/x.py (Lines 31-50)\nline 31\n'));
 });
+
+test('token count is estimated as a quarter of the characters, rounded up', () => {
+  assert.equal(CodeChunker.chunkFile('/p/a.ts', 'a.ts', 'abcdefgh', 'typescript')[0].tokenCount, 2);
+  assert.equal(CodeChunker.chunkFile('/p/a.ts', 'a.ts', 'abcde', 'typescript')[0].tokenCount, 2);
+});
