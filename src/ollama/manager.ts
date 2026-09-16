@@ -15,11 +15,23 @@ export class OllamaModelManager {
   private runningProcesses: OllamaRunningProcess[] = [];
   private isOnline: boolean = false;
   private healthTimer?: NodeJS.Timeout;
+  /**
+   * JSON fingerprint of the state last broadcast by refreshModels, used to skip duplicate events.
+   * Cleared to force the next refresh to notify listeners.
+   */
   private lastSignature = '';
   private onStatusChangeEmitter = new vscode.EventEmitter<{ isOnline: boolean; activeModel: string }>();
 
+  /**
+   * Fires with the online flag and active model when either, or the installed or running model lists,
+   * change. Also fires when setActiveModel switches to a different model.
+   */
   public readonly onStatusChange = this.onStatusChangeEmitter.event;
 
+  /**
+   * Loads the saved model choice and starts polling the server right away.
+   * The poll timer keeps running until dispose() is called.
+   */
   constructor(client: OllamaClient) {
     this.client = client;
     this.loadActiveModelFromConfig();
