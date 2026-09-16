@@ -84,3 +84,14 @@ When on, Lumina scans the hardware at startup and logs the tier and the recommen
 models and selects the recommended one if it is installed; otherwise it logs that the model is not
 installed. It never downloads a model. The Nexus panel runs its own (cached) scan when it opens,
 whatever this setting says.
+
+## lumina.maxRagChunks
+
+- Type: number
+- Default: `5`
+- Valid range: 0 to 20, rounded and clamped in code. `package.json` declares no bounds.
+- Read by: `PromptBuilder` (chat) and `PrismCommandBar`, on every request.
+
+The number of retrieved code chunks added to a chat prompt. Prism uses the smaller of this value and
+3. Set it to 0 to stop adding retrieved chunks; context chips and the selection are still included.
+Retrieval only returns results once the workspace has been indexed. See [Retrieval](rag.md#retrieval).
