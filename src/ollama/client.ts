@@ -217,6 +217,11 @@ export class OllamaClient {
     yield* readNdjson<OllamaStreamChunk>(response.body);
   }
 
+  /**
+   * Embeds a single text. Tries /api/embed first and falls back to the legacy /api/embeddings endpoint
+   * for older servers, each with a 15 second timeout. Never throws: returns an empty array when both
+   * fail, for example because the embedding model has not been pulled.
+   */
   public async getEmbeddings(model: string, prompt: string): Promise<number[]> {
     // Try modern /api/embed first (Ollama v0.2+)
     try {
