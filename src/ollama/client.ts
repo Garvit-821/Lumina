@@ -298,6 +298,11 @@ export class OllamaClient {
     return results;
   }
 
+  /**
+   * Downloads a model from the Ollama registry, yielding progress lines until the pull completes.
+   * The name is sent as both `model` and `name` so older and newer servers accept it. Throws if the
+   * server rejects the request; ends without yielding if the response has no body.
+   */
   public async *pullModel(
     model: string,
     abortSignal?: AbortSignal
