@@ -72,3 +72,15 @@ send more requests. See [Ghost text and fill-in-the-middle](models.md#ghost-text
 
 Passed to Ollama as the `temperature` sampling option. Other features use a fixed value and ignore
 this setting: ghost text, the autonomous loop and the benchmark all send `0.1`.
+
+## lumina.autoCalibrateOnStartup
+
+- Type: boolean
+- Default: `true`
+- Read by: `activate()` in `src/extension.ts`, once per activation.
+
+When on, Lumina scans the hardware at startup and logs the tier and the recommended model to the
+**Lumina Agent** output channel. If no model is active when the scan finishes, it lists installed
+models and selects the recommended one if it is installed; otherwise it logs that the model is not
+installed. It never downloads a model. The Nexus panel runs its own (cached) scan when it opens,
+whatever this setting says.
