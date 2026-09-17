@@ -70,6 +70,10 @@ export class OllamaModelManager {
     await this.refreshModels();
   }
 
+  /**
+   * Switches the active model and saves it to the user-level (Global) `lumina.selectedModel` setting.
+   * Does nothing if the name is unchanged, and does not check that the model is installed.
+   */
   public async setActiveModel(modelName: string): Promise<void> {
     if (modelName === this.activeModel) return;
     this.activeModel = modelName;
