@@ -83,6 +83,11 @@ export class OllamaModelManager {
     LuminaLogger.getInstance().log(`Active model changed to: ${modelName}`);
   }
 
+  /**
+   * Probes the server and reloads the installed and running model lists, clearing both when offline.
+   * If no model is selected yet, the first installed model becomes active. Listeners are notified only
+   * when the result differs from the last broadcast. Returns the lists just fetched.
+   */
   public async refreshModels(): Promise<{ models: OllamaModelInfo[]; running: OllamaRunningProcess[] }> {
     const isHealthy = await this.client.isHealthy();
     this.isOnline = isHealthy;
