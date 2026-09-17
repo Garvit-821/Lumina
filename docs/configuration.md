@@ -95,3 +95,21 @@ whatever this setting says.
 The number of retrieved code chunks added to a chat prompt. Prism uses the smaller of this value and
 3. Set it to 0 to stop adding retrieved chunks; context chips and the selection are still included.
 Retrieval only returns results once the workspace has been indexed. See [Retrieval](rag.md#retrieval).
+
+## Applying changes
+
+All settings except `lumina.autoCalibrateOnStartup` apply without a reload:
+
+| Setting | Takes effect |
+|---|---|
+| `lumina.ollamaEndpoint` | Immediately: the client is repointed and models are re-listed. |
+| `lumina.selectedModel` | Immediately. Clearing it keeps the current model until the window reloads. |
+| `lumina.embeddingModel` | On the next index or retrieval. Re-index to rebuild the vectors. |
+| `lumina.enableGhostText` | Immediately. |
+| `lumina.ghostTextDelay` | On the next completion request. |
+| `lumina.temperature` | On the next chat or Prism request. |
+| `lumina.maxRagChunks` | On the next chat or Prism request. |
+| `lumina.autoCalibrateOnStartup` | At the next activation, after a window reload or restart. |
+
+Lumina itself writes `lumina.selectedModel` and `lumina.enableGhostText`, always at the user (global)
+scope. A value in workspace settings overrides what Lumina writes.
