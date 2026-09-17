@@ -7,3 +7,7 @@ const close = (actual, expected) => assert.ok(Math.abs(actual - expected) < 1e-9
 test('opposite vectors score -1', () => {
   close(cosineSimilarity([1, 2], [-1, -2]), -1);
 });
+
+test('vector length does not affect the score', () => {
+  close(cosineSimilarity([1, 2, 3], [10, 20, 30]), 1);
+});
