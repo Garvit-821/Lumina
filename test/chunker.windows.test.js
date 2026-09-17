@@ -43,3 +43,12 @@ test('token count is estimated as a quarter of the characters, rounded up', () =
   assert.equal(CodeChunker.chunkFile('/p/a.ts', 'a.ts', 'abcdefgh', 'typescript')[0].tokenCount, 2);
   assert.equal(CodeChunker.chunkFile('/p/a.ts', 'a.ts', 'abcde', 'typescript')[0].tokenCount, 2);
 });
+
+test('language and both paths are carried onto every chunk', () => {
+  const chunks = CodeChunker.chunkFile('/repo/src/big.go', 'src/big.go', linesOf(90), 'go');
+  for (const c of chunks) {
+    assert.equal(c.language, 'go');
+    assert.equal(c.filePath, '/repo/src/big.go');
+    assert.equal(c.relativePath, 'src/big.go');
+  }
+});
