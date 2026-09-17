@@ -38,22 +38,27 @@ export class OllamaModelManager {
     this.startHealthCheck();
   }
 
+  /** The shared HTTP client, for callers that send chat, completion or pull requests directly. */
   public getClient(): OllamaClient {
     return this.client;
   }
 
+  /** The model used for chat and completions, or an empty string when none is configured or installed. */
   public getActiveModel(): string {
     return this.activeModel;
   }
 
+  /** Installed models as of the last poll; empty while the server is offline. */
   public getAvailableModels(): OllamaModelInfo[] {
     return this.availableModels;
   }
 
+  /** Models loaded in memory as of the last poll (from /api/ps); empty while offline. */
   public getRunningProcesses(): OllamaRunningProcess[] {
     return this.runningProcesses;
   }
 
+  /** Whether the last health probe reached the server. May lag reality by up to one poll (15 s). */
   public getIsOnline(): boolean {
     return this.isOnline;
   }
