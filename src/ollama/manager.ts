@@ -138,6 +138,7 @@ export class OllamaModelManager {
     }, 15000);
   }
 
+  /** Stops polling and disposes the change event emitter. */
   public dispose(): void {
     if (this.healthTimer) {
       clearInterval(this.healthTimer);
