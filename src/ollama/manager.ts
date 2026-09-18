@@ -130,6 +130,7 @@ export class OllamaModelManager {
     }
   }
 
+  /** Refreshes once now and then every 15 seconds. Errors are swallowed so a failed poll stays silent. */
   private startHealthCheck(): void {
     this.refreshModels().catch(() => {});
     this.healthTimer = setInterval(() => {
