@@ -118,6 +118,10 @@ export class OllamaModelManager {
     return { models: this.availableModels, running: this.runningProcesses };
   }
 
+  /**
+   * Copies a non-blank `lumina.selectedModel` (trimmed) into the active model.
+   * A blank setting leaves the current active model as it is rather than clearing it.
+   */
   private loadActiveModelFromConfig(): void {
     const config = vscode.workspace.getConfiguration('lumina');
     const configuredModel = config.get<string>('selectedModel');
