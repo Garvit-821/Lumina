@@ -17,3 +17,14 @@ and **Reject** in a notification. Cancel generation from the progress notificati
 button in the Nexus header runs the same command. Without an editor it warns "Lumina Prism: Open a
 file in the editor to use Prism."; without a model it shows "Lumina: No active Ollama model
 selected. Please select a model in Nexus."
+
+## Lumina: Run Hardware Calibration
+
+- Command ID: `lumina.calibrate`
+- Preconditions: none. Ollama does not need to be running.
+
+Rescans CPU, memory and GPU, bypassing the cached result, picks a tier, and shows a notification with
+the GPU and VRAM, total RAM and the recommended model. **Use <model>** makes that model active and
+saves it to `lumina.selectedModel` without checking that it is installed, so pull it first or chat
+will fail with a model-not-found error. **Rescan** on the Models tab runs the same scan. See
+[Hardware tiers](models.md#hardware-tiers).
