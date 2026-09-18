@@ -11,3 +11,9 @@ test('opposite vectors score -1', () => {
 test('vector length does not affect the score', () => {
   close(cosineSimilarity([1, 2, 3], [10, 20, 30]), 1);
 });
+
+test('the score is the same in both directions', () => {
+  const a = [0.2, -1.5, 3];
+  const b = [4, 0.1, -2];
+  assert.equal(cosineSimilarity(a, b), cosineSimilarity(b, a));
+});
