@@ -7,6 +7,7 @@ export async function* readNdjson<T>(body: ReadableStream<Uint8Array>): AsyncGen
   const decoder = new TextDecoder('utf-8');
   let buffer = '';
 
+  /** Parses one line, returning undefined for blank or invalid JSON so the caller skips it. */
   const parse = (line: string): T | undefined => {
     const trimmed = line.trim();
     if (!trimmed) return undefined;
