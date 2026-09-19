@@ -15,3 +15,15 @@ test('createSuggestion produces an id, file path and at least one hunk', () => {
 test('identical input produces no hunks', () => {
   assert.deepEqual(DiffEngine.computeHunks('a\nb\nc', 'a\nb\nc'), []);
 });
+
+test('a one-line edit in a long file yields exactly one minimal hunk', () => {
+  const lines = Array.from({ length: 200 }, (_, i) => `line ${i}`);
+  const changed = [...lines];
+  changed[120] = 'line 120 (edited)';
+  const hunks = DiffEngine.computeHunks(lines.join('\n'), changed.join('\n'));
+  assert.equal(hunks.length, 1);
+  assert.deepEqual(
+    [hunks[0].oldStartLine, hunks[0].oldLineCount, hunks[0].newLineCount],
+    [121, 1, 1]
+  );
+});
