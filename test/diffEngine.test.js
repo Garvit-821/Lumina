@@ -11,3 +11,7 @@ test('createSuggestion produces an id, file path and at least one hunk', () => {
   assert.equal(s.status, 'pending');
   assert.ok(s.hunks.length > 0);
 });
+
+test('identical input produces no hunks', () => {
+  assert.deepEqual(DiffEngine.computeHunks('a\nb\nc', 'a\nb\nc'), []);
+});
