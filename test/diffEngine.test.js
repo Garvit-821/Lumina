@@ -27,3 +27,10 @@ test('a one-line edit in a long file yields exactly one minimal hunk', () => {
     [121, 1, 1]
   );
 });
+
+test('pure insertions and deletions are reported with zero-length sides', () => {
+  const ins = DiffEngine.computeHunks('a\nc', 'a\nb\nc');
+  assert.deepEqual([ins[0].oldStartLine, ins[0].oldLineCount, ins[0].modifiedLines], [2, 0, ['b']]);
+  const del = DiffEngine.computeHunks('a\nb\nc', 'a\nc');
+  assert.deepEqual([del[0].oldStartLine, del[0].oldLineCount, del[0].newLineCount], [2, 1, 0]);
+});
