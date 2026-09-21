@@ -17,3 +17,7 @@ test('the score is the same in both directions', () => {
   const b = [4, 0.1, -2];
   assert.equal(cosineSimilarity(a, b), cosineSimilarity(b, a));
 });
+
+test('vectors 45 degrees apart score about 0.707', () => {
+  close(cosineSimilarity([1, 0], [1, 1]), Math.SQRT1_2);
+});
