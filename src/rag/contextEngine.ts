@@ -22,9 +22,15 @@ export class ContextEngine {
   private onChipsUpdatedEmitter = new vscode.EventEmitter<ContextChip[]>();
   private onStatusUpdatedEmitter = new vscode.EventEmitter<{ indexing: boolean; indexedFiles: number; totalChunks: number }>();
 
+  /** Fires with the full chip list after a chip is added, removed, toggled or replaced. */
   public readonly onChipsUpdated = this.onChipsUpdatedEmitter.event;
+  /** Fires when indexing starts or finishes, and after a cached index is loaded at startup. */
   public readonly onStatusUpdated = this.onStatusUpdatedEmitter.event;
 
+  /**
+   * Starts loading the cached index and tracking the active editor. That work is not awaited,
+   * so the index can still be empty for a moment after construction.
+   */
   constructor(ollamaClient: OllamaClient) {
     this.ollamaClient = ollamaClient;
     this.vectorStore = new LocalVectorStore();
