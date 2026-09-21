@@ -21,3 +21,8 @@ test('the score is the same in both directions', () => {
 test('vectors 45 degrees apart score about 0.707', () => {
   close(cosineSimilarity([1, 0], [1, 1]), Math.SQRT1_2);
 });
+
+test('non-finite components are skipped instead of poisoning the score', () => {
+  close(cosineSimilarity([1, NaN, 1], [1, 5, 1]), 1);
+  close(cosineSimilarity([Infinity, 1], [1, 1]), 1);
+});
