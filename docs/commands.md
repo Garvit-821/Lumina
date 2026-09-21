@@ -39,3 +39,14 @@ Streams a fixed prompt to the active model and reports throughput in a notificat
 also added to the status bar item. Without an active model it warns "Lumina: No active model
 selected to benchmark."; on failure it shows "Lumina: Benchmark failed." followed by the reason.
 See [Benchmarking a model](models.md#benchmarking-a-model).
+
+## Lumina: Index Workspace for Local RAG
+
+- Command ID: `lumina.indexWorkspace`
+- Preconditions: an open folder or workspace; without one, the result is 0 chunks. An embedding model is optional.
+
+Crawls all workspace folders, splits files into chunks, embeds them in batches of 16 if the embedding
+model responds, and saves the index to `.lumina/vector_cache.json` in the first workspace folder.
+Progress appears in a notification, and the result reads "Lumina: Indexed N code chunks in
+workspace." Starting it again while a run is in progress returns the current chunk count instead.
+**Index workspace** on the Context tab does the same. See [Workspace search and context](rag.md).
