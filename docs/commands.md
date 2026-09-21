@@ -28,3 +28,14 @@ the GPU and VRAM, total RAM and the recommended model. **Use <model>** makes tha
 saves it to `lumina.selectedModel` without checking that it is installed, so pull it first or chat
 will fail with a model-not-found error. **Rescan** on the Models tab runs the same scan. See
 [Hardware tiers](models.md#hardware-tiers).
+
+## Lumina: Benchmark Active Model (TPS)
+
+- Command ID: `lumina.benchmark`
+- Preconditions: an active model, and Ollama reachable.
+
+Streams a fixed prompt to the active model and reports throughput in a notification of the form
+"Lumina: <model> runs at <N> tokens/sec (first token in <M> ms)." The tokens-per-second figure is
+also added to the status bar item. Without an active model it warns "Lumina: No active model
+selected to benchmark."; on failure it shows "Lumina: Benchmark failed." followed by the reason.
+See [Benchmarking a model](models.md#benchmarking-a-model).
