@@ -9,6 +9,10 @@ import { LuminaLogger } from '../utils/logger';
 import { isSecretFile } from './filePolicy';
 import { getLuminaConfig } from '../utils/config';
 
+/**
+ * Supplies workspace context for prompts: builds and queries the local RAG index, and manages
+ * context chips, the files pinned to the chat plus one chip that follows the active editor.
+ */
 export class ContextEngine {
   private ollamaClient: OllamaClient;
   private vectorStore: LocalVectorStore;
