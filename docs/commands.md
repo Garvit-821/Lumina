@@ -50,3 +50,12 @@ model responds, and saves the index to `.lumina/vector_cache.json` in the first 
 Progress appears in a notification, and the result reads "Lumina: Indexed N code chunks in
 workspace." Starting it again while a run is in progress returns the current chunk count instead.
 **Index workspace** on the Context tab does the same. See [Workspace search and context](rag.md).
+
+## Lumina: Toggle Aura Ghost Text Autocomplete
+
+- Command ID: `lumina.toggleGhostText`
+- Preconditions: none.
+
+Turns ghost text on or off, writes the new value of `lumina.enableGhostText` to your user settings,
+and shows "Lumina: The Aura (Ghost Text) is now ENABLED." or "... is now DISABLED.". A value of the
+setting in workspace settings takes precedence over the one this command writes.
