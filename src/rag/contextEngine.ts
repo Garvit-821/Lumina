@@ -53,14 +53,17 @@ export class ContextEngine {
     });
   }
 
+  /** Direct access to the index, for callers that need its counts or raw searches. */
   public getVectorStore(): LocalVectorStore {
     return this.vectorStore;
   }
 
+  /** All chips, included or not, in insertion order. The array is new; the chip objects are shared. */
   public getContextChips(): ContextChip[] {
     return Array.from(this.activeContextChips.values());
   }
 
+  /** Flips a chip between included and excluded without removing it. Unknown ids are ignored. */
   public toggleChip(chipId: string): void {
     const chip = this.activeContextChips.get(chipId);
     if (chip) {
