@@ -30,3 +30,8 @@ test('non-finite components are skipped instead of poisoning the score', () => {
 test('a zero vector against a non-zero vector scores 0', () => {
   assert.equal(cosineSimilarity([0, 0, 0], [1, 2, 3]), 0);
 });
+
+test('missing vectors score 0', () => {
+  assert.equal(cosineSimilarity(null, [1]), 0);
+  assert.equal(cosineSimilarity(undefined, undefined), 0);
+});
