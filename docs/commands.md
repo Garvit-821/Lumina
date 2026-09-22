@@ -59,3 +59,14 @@ workspace." Starting it again while a run is in progress returns the current chu
 Turns ghost text on or off, writes the new value of `lumina.enableGhostText` to your user settings,
 and shows "Lumina: The Aura (Ghost Text) is now ENABLED." or "... is now DISABLED.". A value of the
 setting in workspace settings takes precedence over the one this command writes.
+
+## Lumina: Start Autonomous Test & Fix Loop
+
+- Command ID: `lumina.runAutonomousLoop`
+- Preconditions: an open folder, an active model, and a command that exits non-zero when tests fail.
+
+Asks for a command, prefilled with `npm test`; Escape or an empty value cancels. The loop runs the
+command in the first workspace folder, asks the model for a corrected file when it fails, applies and
+saves that file without asking, and repeats up to three times. Steps appear only on the Nexus
+**Loop** tab, and a run started from this command leaves that tab's Stop button disabled. Read
+[Autonomous test and fix loop](autonomous-loop.md) before using it.
