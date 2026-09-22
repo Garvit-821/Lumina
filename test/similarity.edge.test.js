@@ -26,3 +26,7 @@ test('non-finite components are skipped instead of poisoning the score', () => {
   close(cosineSimilarity([1, NaN, 1], [1, 5, 1]), 1);
   close(cosineSimilarity([Infinity, 1], [1, 1]), 1);
 });
+
+test('a zero vector against a non-zero vector scores 0', () => {
+  assert.equal(cosineSimilarity([0, 0, 0], [1, 2, 3]), 0);
+});
