@@ -72,6 +72,10 @@ export class ContextEngine {
     }
   }
 
+  /**
+   * Pins a file to the chat context, with a path relative to the first workspace folder (or just the
+   * file name when none is open). Pinning an already pinned file replaces its chip and re-includes it.
+   */
   public addFileChip(filePath: string): void {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     const rootPath = workspaceFolders && workspaceFolders.length > 0 ? workspaceFolders[0].uri.fsPath : '';
