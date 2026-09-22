@@ -70,3 +70,14 @@ command in the first workspace folder, asks the model for a corrected file when 
 saves that file without asking, and repeats up to three times. Steps appear only on the Nexus
 **Loop** tab, and a run started from this command leaves that tab's Stop button disabled. Read
 [Autonomous test and fix loop](autonomous-loop.md) before using it.
+
+## Lumina: Accept Diff Proposal
+
+- Command ID: `lumina.acceptDiff`
+- Argument: the ID of a registered proposal.
+
+Applies the whole proposal and saves the file, like **Accept all** in the chat panel. The command
+does nothing without an ID, so running it from the Command Palette has no effect, and nothing in
+Lumina's own UI calls it. It only acts when invoked with an argument, for example through
+`vscode.commands.executeCommand('lumina.acceptDiff', id)`. See
+[Reviewing and applying](diff-review.md#reviewing-and-applying).
