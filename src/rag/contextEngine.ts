@@ -94,6 +94,7 @@ export class ContextEngine {
     this.onChipsUpdatedEmitter.fire(this.getContextChips());
   }
 
+  /** Removes a chip by id and notifies listeners, even when the id was not present. */
   public removeChip(chipId: string): void {
     this.activeContextChips.delete(chipId);
     this.onChipsUpdatedEmitter.fire(this.getContextChips());
