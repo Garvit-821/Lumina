@@ -37,6 +37,10 @@ export class ContextEngine {
     this.init();
   }
 
+  /**
+   * Loads `.lumina/vector_cache.json` if present, adds a chip for the current editor and follows
+   * editor changes from then on. The editor subscription is never disposed.
+   */
   private async init(): Promise<void> {
     if (await this.vectorStore.loadFromDisk()) {
       this.indexedFilesCount = this.vectorStore.getFileCount();
