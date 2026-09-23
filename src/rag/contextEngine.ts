@@ -100,6 +100,11 @@ export class ContextEngine {
     this.onChipsUpdatedEmitter.fire(this.getContextChips());
   }
 
+  /**
+   * Replaces the "(Active)" chip with one for the focused editor. Untitled documents, or no text editor
+   * having focus, leave the previous chip in place. The new chip always starts included, so excluding
+   * the old one does not carry over.
+   */
   public syncActiveEditorChip(): void {
     const editor = vscode.window.activeTextEditor;
     if (!editor || editor.document.isUntitled) return;
