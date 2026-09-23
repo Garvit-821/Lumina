@@ -81,3 +81,12 @@ does nothing without an ID, so running it from the Command Palette has no effect
 Lumina's own UI calls it. It only acts when invoked with an argument, for example through
 `vscode.commands.executeCommand('lumina.acceptDiff', id)`. See
 [Reviewing and applying](diff-review.md#reviewing-and-applying).
+
+## Lumina: Reject Diff Proposal
+
+- Command ID: `lumina.rejectDiff`
+- Argument: the ID of a registered proposal.
+
+Marks the proposal as rejected and shows "Lumina: Diff suggestion discarded." The file is not
+touched. Like the accept command, it does nothing when run from the Command Palette without an ID.
+To reject a proposal in practice, use **Reject** under the chat reply or in the Prism notification.
