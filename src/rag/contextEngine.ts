@@ -211,6 +211,11 @@ export class ContextEngine {
     }
   }
 
+  /**
+   * Finds the indexed chunks most relevant to `query`: by embedding similarity when the embedding model
+   * answers and some chunk has a vector, otherwise by keyword matching. Scores are cosine similarity or
+   * the fraction of query terms matched, depending on the path taken. Empty when nothing is indexed.
+   */
   public async retrieveRelevantContext(query: string, topK: number = 4): Promise<VectorSearchResult[]> {
     if (this.vectorStore.getChunkCount() === 0) return [];
     const embeddingModel = getLuminaConfig().embeddingModel;
