@@ -7,3 +7,9 @@ test('secret detection ignores letter case', () => {
     assert.equal(isSecretFile(f), true, f);
   }
 });
+
+test('names that merely contain env, key or secret are not secrets', () => {
+  for (const f of ['env.d.ts', 'environment.ts', 'dotenv.ts', 'keymap.json', 'secretsanta.ts', 'secrets.md']) {
+    assert.equal(isSecretFile(f), false, f);
+  }
+});
