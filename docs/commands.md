@@ -90,3 +90,12 @@ Lumina's own UI calls it. It only acts when invoked with an argument, for exampl
 Marks the proposal as rejected and shows "Lumina: Diff suggestion discarded." The file is not
 touched. Like the accept command, it does nothing when run from the Command Palette without an ID.
 To reject a proposal in practice, use **Reject** under the chat reply or in the Prism notification.
+
+## Lumina: Open Nexus Sidebar
+
+- Command ID: `lumina.focusNexus`
+- Preconditions: none.
+
+Reveals and focuses the **Nexus Hub** view in the **Lumina Agent** Activity Bar container by running
+`lumina.nexusView.focus`. Clicking the Lumina status bar item runs this command too. The view has
+four tabs: Chat, Context, Models and Loop.
