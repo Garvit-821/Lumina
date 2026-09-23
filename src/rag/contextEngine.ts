@@ -135,6 +135,12 @@ export class ContextEngine {
     this.onChipsUpdatedEmitter.fire(this.getContextChips());
   }
 
+  /**
+   * Rebuilds the RAG index from scratch: crawls the workspace, chunks every file, embeds chunks in
+   * batches of 16 and saves to disk. If the embedding model is not installed, chunks are kept without
+   * vectors and retrieval uses keyword search. `progressCallback` gets an absolute percentage (0-100),
+   * not an increment. Returns the chunk count; a call made while indexing runs returns the old count.
+   */
   public async indexWorkspace(progressCallback?: (msg: string, percent: number) => void): Promise<number> {
     if (this.isIndexing) return this.vectorStore.getChunkCount();
 
