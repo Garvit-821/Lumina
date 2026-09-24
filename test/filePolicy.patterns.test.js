@@ -19,3 +19,9 @@ test('certificates and keystores are secrets', () => {
     assert.equal(isSecretFile(f), true, f);
   }
 });
+
+test('registry and auth dotfiles are secrets', () => {
+  for (const f of ['.npmrc', '.pypirc', '.netrc', '.htpasswd']) {
+    assert.equal(isSecretFile(f), true, f);
+  }
+});
