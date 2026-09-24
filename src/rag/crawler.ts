@@ -2,8 +2,13 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { shouldIndexDirectory, shouldIndexFile } from './filePolicy';
 
+/** Files larger than this are left out of the index, as are empty files. */
 const MAX_FILE_SIZE_BYTES = 250 * 1024; // 250KB
 
+/**
+ * A file the crawler chose to index. `relativePath` is relative to the workspace folder it was found in;
+ * `language` is a VS Code language id guessed from the extension ('plaintext' when unknown).
+ */
 export interface WorkspaceFileEntry {
   uri: vscode.Uri;
   relativePath: string;
