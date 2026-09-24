@@ -107,3 +107,18 @@ four tabs: Chat, Context, Models and Loop.
 
 Opens the Settings editor filtered to `lumina`, which lists the eight settings described in
 [Configuration](configuration.md). The gear button in the Nexus header does the same.
+
+## Keyboard shortcuts
+
+| Keys | Where | Action |
+|---|---|---|
+| Cmd+Alt+K (macOS), Ctrl+Alt+K (Windows, Linux) | Editor with text focus | Open Prism (`lumina.prism`) |
+| Tab | Editor, while ghost text is shown | Accept the completion (standard VS Code inline suggestion) |
+| Enter | Nexus chat input | Send the message |
+| Shift+Enter | Nexus chat input | Insert a new line |
+| Esc | Anywhere in the Nexus panel | Stop the reply being generated |
+| Enter | Pull field on the Models tab | Pull the model typed in the field |
+
+Only the Prism shortcut is contributed to VS Code's keybindings; the others are handled inside the
+webview or by VS Code itself. To change the Prism shortcut, open **Preferences: Open Keyboard
+Shortcuts** and search for `lumina.prism`.
