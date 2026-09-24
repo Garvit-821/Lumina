@@ -268,6 +268,7 @@ export class ContextEngine {
     return sections.join('\n');
   }
 
+  /** Broadcasts the indexing flag, indexed file count and chunk count to onStatusUpdated listeners. */
   private emitStatus(): void {
     this.onStatusUpdatedEmitter.fire({
       indexing: this.isIndexing,
