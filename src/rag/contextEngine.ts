@@ -235,6 +235,11 @@ export class ContextEngine {
     return this.vectorStore.searchByKeywords(query, topK);
   }
 
+  /**
+   * Reads every included chip's file fresh from disk and joins them under `--- Context File: path ---`
+   * headers. Files over 24,000 characters are truncated, secret-looking files are replaced by a
+   * placeholder and unreadable files are skipped. Returns '' when no chip is included.
+   */
   public async getActiveChipsContent(): Promise<string> {
     const activeChips = Array.from(this.activeContextChips.values()).filter((c) => c.active);
     if (activeChips.length === 0) return '';
