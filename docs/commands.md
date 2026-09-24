@@ -99,3 +99,11 @@ To reject a proposal in practice, use **Reject** under the chat reply or in the 
 Reveals and focuses the **Nexus Hub** view in the **Lumina Agent** Activity Bar container by running
 `lumina.nexusView.focus`. Clicking the Lumina status bar item runs this command too. The view has
 four tabs: Chat, Context, Models and Loop.
+
+## Lumina: Open Settings
+
+- Command ID: `lumina.openSettings`
+- Preconditions: none.
+
+Opens the Settings editor filtered to `lumina`, which lists the eight settings described in
+[Configuration](configuration.md). The gear button in the Nexus header does the same.
