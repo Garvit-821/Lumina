@@ -13,3 +13,9 @@ test('names that merely contain env, key or secret are not secrets', () => {
     assert.equal(isSecretFile(f), false, f);
   }
 });
+
+test('certificates and keystores are secrets', () => {
+  for (const f of ['cert.crt', 'ca.cer', 'ca.der', 'store.jks', 'app.keystore', 'bundle.p12', 'client.pfx']) {
+    assert.equal(isSecretFile(f), true, f);
+  }
+});
