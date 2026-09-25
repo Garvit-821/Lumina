@@ -6,6 +6,10 @@ export const IGNORED_DIRECTORIES = new Set([
   '.lumina', '.vscode', '.idea', '__pycache__', '.venv', 'venv', 'target', 'bin', 'obj', '.turbo', '.cache',
 ]);
 
+/**
+ * Extensions never indexed: binaries and media, plus text formats with no useful code for retrieval
+ * (lock files, source maps, SVG).
+ */
 const BINARY_EXTENSIONS = new Set([
   '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.webp',
   '.pdf', '.zip', '.tar', '.gz', '.7z', '.rar',
