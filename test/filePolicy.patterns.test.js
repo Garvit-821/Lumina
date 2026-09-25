@@ -31,3 +31,9 @@ test('credential files are caught in their json, yaml and toml variants', () => 
     assert.equal(isSecretFile(f), true, f);
   }
 });
+
+test('every ssh private key type is covered, with or without .pub', () => {
+  for (const f of ['id_rsa', 'id_dsa', 'id_ecdsa', 'id_ed25519', 'id_rsa.pub']) {
+    assert.equal(isSecretFile(f), true, f);
+  }
+});
