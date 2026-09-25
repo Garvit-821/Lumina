@@ -88,6 +88,7 @@ export class WorkspaceCrawler {
     }
   }
 
+  /** Maps a lowercase extension (including the dot) to a VS Code language id, or 'plaintext'. */
   private static inferLanguage(ext: string): string {
     const map: Record<string, string> = {
       '.ts': 'typescript',
