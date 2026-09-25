@@ -42,6 +42,11 @@ export class WorkspaceCrawler {
     return results;
   }
 
+  /**
+   * Recursively appends indexable files under `currentDirUri` to `results`. Ignored directory names are
+   * skipped at any depth. Symbolic links are skipped as well, since their reported type is never exactly
+   * File or Directory. Unreadable directories and files are silently ignored.
+   */
   private static async scanDirectory(
     rootUri: vscode.Uri,
     currentDirUri: vscode.Uri,
