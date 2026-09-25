@@ -25,3 +25,9 @@ test('registry and auth dotfiles are secrets', () => {
     assert.equal(isSecretFile(f), true, f);
   }
 });
+
+test('credential files are caught in their json, yaml and toml variants', () => {
+  for (const f of ['credentials.prod.json', 'secret.json', 'service_account.json', 'secrets.yml', 'secret.yaml', 'secrets.toml']) {
+    assert.equal(isSecretFile(f), true, f);
+  }
+});
