@@ -15,7 +15,15 @@ export interface WorkspaceFileEntry {
   language: string;
 }
 
+/**
+ * Walks the workspace folders and collects files worth indexing, using the rules in filePolicy
+ * plus a size limit.
+ */
 export class WorkspaceCrawler {
+  /**
+   * Lists indexable files across all workspace folders, depth first. Returns an empty array when no
+   * folder is open. Cancelling stops the walk and returns what was collected so far.
+   */
   public static async scanWorkspace(
     cancellationToken?: vscode.CancellationToken
   ): Promise<WorkspaceFileEntry[]> {
