@@ -48,6 +48,10 @@ export function shouldIndexDirectory(dirName: string): boolean {
   return !IGNORED_DIRECTORIES.has(dirName);
 }
 
+/**
+ * Whether the crawler should index a file, judged by base name: rejects secrets, lock files,
+ * minified JS/CSS and binary extensions. File size is checked separately by the crawler.
+ */
 export function shouldIndexFile(fileName: string): boolean {
   if (isSecretFile(fileName)) return false;
   if (GENERATED_FILES.has(fileName)) return false;
