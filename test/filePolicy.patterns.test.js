@@ -37,3 +37,9 @@ test('every ssh private key type is covered, with or without .pub', () => {
     assert.equal(isSecretFile(f), true, f);
   }
 });
+
+test('binary detection ignores the case of the extension', () => {
+  for (const f of ['LOGO.PNG', 'Font.WOFF2', 'Setup.EXE']) {
+    assert.equal(shouldIndexFile(f), false, f);
+  }
+});
