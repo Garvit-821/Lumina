@@ -29,12 +29,21 @@ const SECRET_FILE_PATTERNS: RegExp[] = [
   /^secrets?\.(ya?ml|toml)$/i,
 ];
 
+/** Machine-generated lock files matched by exact name; they are large and add only noise to the index. */
 const GENERATED_FILES = new Set(['package-lock.json', 'pnpm-lock.yaml', 'npm-shrinkwrap.json']);
 
+/**
+ * Whether a file name looks like it holds credentials (.env files, private keys, certificates, etc.).
+ * Pass the base name, not a path: several patterns are anchored to the start of the name.
+ */
 export function isSecretFile(fileName: string): boolean {
   return SECRET_FILE_PATTERNS.some((re) => re.test(fileName));
 }
 
+/**
+ * False for dependency, build and tool directories. Matches the bare name, so any folder called
+ * e.g. "bin" or "out" is skipped at every depth.
+ */
 export function shouldIndexDirectory(dirName: string): boolean {
   return !IGNORED_DIRECTORIES.has(dirName);
 }
