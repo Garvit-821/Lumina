@@ -43,3 +43,10 @@ test('binary detection ignores the case of the extension', () => {
     assert.equal(shouldIndexFile(f), false, f);
   }
 });
+
+test('minified assets are skipped but their readable versions are kept', () => {
+  assert.equal(shouldIndexFile('app.min.css'), false);
+  assert.equal(shouldIndexFile('jquery.MIN.JS'), false);
+  assert.equal(shouldIndexFile('app.css'), true);
+  assert.equal(shouldIndexFile('admin.js'), true);
+});
