@@ -34,3 +34,18 @@ and it can be selected at startup if it is installed. The fallback, embedding an
 values are part of the recommendation but are neither shown nor applied. Lumina never sends
 `num_ctx`, so the model's context length is whatever Ollama is configured to use. To use
 `all-minilm` on a small machine, pull it and set `lumina.embeddingModel` yourself.
+
+## Choosing the active model
+
+The active model is `lumina.selectedModel`. It can be set in four ways:
+
+- the dropdown on the Models tab, which lists installed models with their size in GB;
+- **Use <model>** in the notification from **Lumina: Run Hardware Calibration**;
+- a pull on the Models tab, which activates the model when the download finishes;
+- editing the setting directly.
+
+The first three write the setting to your user settings. When it is empty, Lumina uses the first
+installed model Ollama reports. A pull streams progress from `POST /api/pull` with a percentage and
+ends with "Model <name> downloaded and activated!". Because a pulled model becomes the chat model,
+pull embedding models with `ollama pull` in a terminal instead. There is no separate setting for a
+completion model: chat, Prism, ghost text and the loop share the active model.
