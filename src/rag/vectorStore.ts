@@ -5,8 +5,13 @@ import { LuminaLogger } from '../utils/logger';
 import { cosineSimilarity } from './similarity';
 import { isSecretFile } from './filePolicy';
 
+/**
+ * In-memory store of RAG chunks with brute-force cosine and keyword search, persisted as JSON in
+ * `.lumina/vector_cache.json` under the first workspace folder. Every search scans all chunks.
+ */
 export class LocalVectorStore {
   private chunks: RAGChunk[] = [];
+  /** Absolute path of the cache file, or null when no folder was open; persistence is then a no-op. */
   private cachePath: string | null = null;
 
   constructor() {
