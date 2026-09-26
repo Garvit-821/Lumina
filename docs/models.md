@@ -20,3 +20,17 @@ and the balanced tier from 8 GB. Other machines need a GPU with 16 GB of VRAM or
 power tier. VRAM is only detected through `nvidia-smi` (NVIDIA) and `system_profiler` (Intel Macs).
 On Windows without `nvidia-smi`, only the GPU name is read through `wmic`; on Linux without it, the
 GPU is reported as "Standard Integrated Graphics" with 0 GB.
+
+## Recommended models
+
+| Tier | Recommended model | Fallback | Embedding | Context window |
+|---|---|---|---|---|
+| Power | `deepseek-coder-v2:latest` | `qwen2.5-coder:14b` | `nomic-embed-text:latest` | 16384 |
+| Balanced | `qwen2.5-coder:7b` | `llama3.1:8b` | `nomic-embed-text:latest` | 8192 |
+| Low | `qwen2.5-coder:1.5b` | `phi3:mini` | `all-minilm:latest` | 4096 |
+
+Only the recommended model is used: it appears on the Models tab and in the calibration notification,
+and it can be selected at startup if it is installed. The fallback, embedding and context window
+values are part of the recommendation but are neither shown nor applied. Lumina never sends
+`num_ctx`, so the model's context length is whatever Ollama is configured to use. To use
+`all-minilm` on a small machine, pull it and set `lumina.embeddingModel` yourself.
