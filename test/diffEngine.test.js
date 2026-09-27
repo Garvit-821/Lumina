@@ -43,3 +43,14 @@ test('repeated lines do not confuse the diff (greedy matching used to misalign h
   const changedLines = hunks.reduce((n, h) => n + h.oldLineCount + h.newLineCount, 0);
   assert.ok(changedLines <= 2, `expected a minimal diff, got ${changedLines} changed lines`);
 });
+
+test('applying all hunks always reproduces the proposed text', () => {
+  const rand = (seed) => () => (seed = (seed * 1103515245 + 12345) % 2 ** 31) / 2 ** 31;
+  const r = rand(42);
+  for (let t = 0; t < 200; t++) {
+    const a = Array.from({ length: Math.floor(r() * 30) }, () => String.fromCharCode(97 + Math.floor(r() * 5)));
+    const b = a.filter(() => r() > 0.3).flatMap((x) => (r() > 0.8 ? [x, 'new'] : [x]));
+    const hunks = DiffEngine.computeHunks(a.join('\n'), b.join('\n'));
+    assert.equal(DiffEngine.applyHunks(a.join('\n'), hunks), b.join('\n'));
+  }
+});
