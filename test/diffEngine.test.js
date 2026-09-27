@@ -34,3 +34,12 @@ test('pure insertions and deletions are reported with zero-length sides', () => 
   const del = DiffEngine.computeHunks('a\nb\nc', 'a\nc');
   assert.deepEqual([del[0].oldStartLine, del[0].oldLineCount, del[0].newLineCount], [2, 1, 0]);
 });
+
+test('repeated lines do not confuse the diff (greedy matching used to misalign here)', () => {
+  const original = '}\n}\nfoo\n}\nbar';
+  const proposed = '}\nfoo\n}\n}\nbar';
+  const hunks = DiffEngine.computeHunks(original, proposed);
+  assert.equal(DiffEngine.applyHunks(original, hunks), proposed);
+  const changedLines = hunks.reduce((n, h) => n + h.oldLineCount + h.newLineCount, 0);
+  assert.ok(changedLines <= 2, `expected a minimal diff, got ${changedLines} changed lines`);
+});
