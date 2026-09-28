@@ -31,6 +31,10 @@ export class LocalVectorStore {
     this.chunks = chunks;
   }
 
+  /**
+   * Appends chunks whose ids are not already present; a chunk with an existing id is ignored, not
+   * updated. Does not save to disk.
+   */
   public addChunks(newChunks: RAGChunk[]): void {
     const existingIds = new Set(this.chunks.map((c) => c.id));
     for (const chunk of newChunks) {
