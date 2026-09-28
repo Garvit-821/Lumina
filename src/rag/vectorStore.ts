@@ -26,6 +26,7 @@ export class LocalVectorStore {
     }
   }
 
+  /** Replaces the whole index with `chunks`, keeping the array by reference. Does not save to disk. */
   public setChunks(chunks: RAGChunk[]): void {
     this.chunks = chunks;
   }
