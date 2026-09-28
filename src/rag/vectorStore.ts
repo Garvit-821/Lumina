@@ -18,6 +18,7 @@ export class LocalVectorStore {
     this.initCachePath();
   }
 
+  /** Resolves the cache path from the first workspace folder. Folders opened later are not picked up. */
   private initCachePath(): void {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (workspaceFolders && workspaceFolders.length > 0) {
