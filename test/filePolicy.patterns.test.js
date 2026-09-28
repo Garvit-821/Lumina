@@ -50,3 +50,9 @@ test('minified assets are skipped but their readable versions are kept', () => {
   assert.equal(shouldIndexFile('app.css'), true);
   assert.equal(shouldIndexFile('admin.js'), true);
 });
+
+test('build output and tooling directories are skipped', () => {
+  for (const d of ['dist', 'build', 'out', 'coverage', '.next', '__pycache__', '.venv', 'target', '.lumina']) {
+    assert.equal(shouldIndexDirectory(d), false, d);
+  }
+});
