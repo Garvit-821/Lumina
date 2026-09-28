@@ -56,3 +56,9 @@ test('build output and tooling directories are skipped', () => {
     assert.equal(shouldIndexDirectory(d), false, d);
   }
 });
+
+test('directory names are matched exactly', () => {
+  for (const d of ['lib', 'test', 'docs', 'node_modules_backup', 'distribution']) {
+    assert.equal(shouldIndexDirectory(d), true, d);
+  }
+});
