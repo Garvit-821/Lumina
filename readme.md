@@ -250,7 +250,7 @@ ollama pull nomic-embed-text
 
 ### 3. Use Prism for Fast Code Editing
 1. Select a block of code in any editor.
-2. Press <kbd>Cmd</kbd>+<kbd>K</kbd> (macOS) or <kbd>Ctrl</kbd>+<kbd>K</kbd> (Windows/Linux).
+2. Press <kbd>Cmd</kbd>+<kbd>Alt</kbd>+<kbd>K</kbd> (macOS) or <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>K</kbd> (Windows/Linux).
 3. Select an action (e.g. *Refactor & Clean Code*) or enter your prompt.
 4. Review the generated changes in the side-by-side diff window and click **Accept All** or **Reject**.
 
