@@ -49,3 +49,14 @@ installed model Ollama reports. A pull streams progress from `POST /api/pull` wi
 ends with "Model <name> downloaded and activated!". Because a pulled model becomes the chat model,
 pull embedding models with `ollama pull` in a terminal instead. There is no separate setting for a
 completion model: chat, Prism, ghost text and the loop share the active model.
+
+## Benchmarking a model
+
+Press **Benchmark speed** on the Models tab or run **Lumina: Benchmark Active Model (TPS)**. Both
+stream the same fixed prompt, asking for a memoized Fibonacci function in TypeScript, to
+`/api/generate` with `temperature: 0.1` and `num_predict: 256`.
+
+- Tokens per second come from Ollama's `eval_count` and `eval_duration` in the final chunk, which exclude model loading and prompt processing. Without them, Lumina estimates from streamed characters (four per token) over the time since the first token.
+- Time to first token runs from sending the request to the first streamed text, so it includes loading the model on a cold start. Run the benchmark twice to see it without the load.
+- The Models tab shows tokens per second, time to first token and the number of generated tokens. The command shows a notification and adds the figure to the status bar item.
+- If the model streams no text, the benchmark fails with "<model> produced no output." rather than reporting a number. There is no timeout.
