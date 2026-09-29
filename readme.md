@@ -299,7 +299,7 @@ Customize Lumina through VS Code Settings (`settings.json`):
 
 | Command | Shortcut | Description |
 | :--- | :--- | :--- |
-| `lumina.prism` | <kbd>Cmd</kbd>+<kbd>K</kbd> / <kbd>Ctrl</kbd>+<kbd>K</kbd> | Open floating Prism command bar for selected code |
+| `lumina.prism` | <kbd>Cmd</kbd>+<kbd>Alt</kbd>+<kbd>K</kbd> / <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>K</kbd> | Open floating Prism command bar for selected code |
 | `lumina.calibrate` | Command Palette | Run hardware telemetry and model recommendation |
 | `lumina.benchmark` | Command Palette | Benchmark active model inference speed (tokens/sec) |
 | `lumina.indexWorkspace`| Command Palette | Index codebase files for local RAG |
