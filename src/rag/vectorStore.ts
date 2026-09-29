@@ -49,6 +49,7 @@ export class LocalVectorStore {
     return this.chunks;
   }
 
+  /** Number of chunks held, with or without embeddings. */
   public getChunkCount(): number {
     return this.chunks.length;
   }
