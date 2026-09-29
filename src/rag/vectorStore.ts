@@ -54,6 +54,7 @@ export class LocalVectorStore {
     return this.chunks.length;
   }
 
+  /** Number of distinct files in the index, counted by absolute path. */
   public getFileCount(): number {
     return new Set(this.chunks.map((c) => c.filePath)).size;
   }
