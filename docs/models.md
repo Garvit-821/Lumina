@@ -60,3 +60,19 @@ stream the same fixed prompt, asking for a memoized Fibonacci function in TypeSc
 - Time to first token runs from sending the request to the first streamed text, so it includes loading the model on a cold start. Run the benchmark twice to see it without the load.
 - The Models tab shows tokens per second, time to first token and the number of generated tokens. The command shows a notification and adds the figure to the status bar item.
 - If the model streams no text, the benchmark fails with "<model> produced no output." rather than reporting a number. There is no timeout.
+
+## Ghost text and fill-in-the-middle
+
+Ghost text sends the text before the cursor as the prompt and the text after it as the `suffix`
+field of `/api/generate`, so Ollama applies the model's own fill-in-the-middle template. Code models
+whose Ollama template supports this, such as the Qwen2.5-Coder, DeepSeek Coder, CodeLlama and
+StarCoder families, complete in place.
+
+- Prompt: up to 60 lines before the cursor. Suffix: up to 20 lines after it.
+- Options: `temperature: 0.1`, `num_predict: 64` (at most 64 tokens), stop on three newlines or a code fence.
+- If Ollama answers with an error that mentions "does not support insert" or "suffix", the model is marked as lacking FIM support until the window reloads. It then gets a plain "continue this code" prompt with the prefix only.
+- Code fences at the start or end of the result are stripped.
+
+Completions are only requested at the end of a line, after `lumina.ghostTextDelay` ms (default 350).
+Because ghost text uses the active model, a large chat model makes it slow. A smaller model such as
+`qwen2.5-coder:1.5b` answers faster, but it is then used for chat as well.
