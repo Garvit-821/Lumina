@@ -21,3 +21,7 @@ async function collect(gen) {
 test('an empty stream yields nothing', async () => {
   assert.deepEqual(await collect(readNdjson(streamOf())), []);
 });
+
+test('a final line without a trailing newline is still parsed', async () => {
+  assert.deepEqual(await collect(readNdjson(streamOf('{"done":true}'))), [{ done: true }]);
+});
