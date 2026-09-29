@@ -44,6 +44,7 @@ export class LocalVectorStore {
     }
   }
 
+  /** The live internal array, not a copy; mutating it changes the index. */
   public getAllChunks(): RAGChunk[] {
     return this.chunks;
   }
