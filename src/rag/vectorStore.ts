@@ -86,6 +86,11 @@ export class LocalVectorStore {
     return scored.slice(0, topK);
   }
 
+  /**
+   * Search without embeddings. Splits the query into lowercase terms longer than two characters and
+   * scores each chunk by the fraction of terms it contains as substrings (0 to 1). Chunks matching no
+   * term are dropped; an empty array is returned when the query has no usable terms.
+   */
   public searchByKeywords(query: string, topK: number = 5): VectorSearchResult[] {
     const terms = query
       .toLowerCase()
