@@ -30,3 +30,7 @@ test('CRLF-delimited lines are parsed', async () => {
   const got = await collect(readNdjson(streamOf('{"a":1}\r\n{"a":2}\r\n')));
   assert.deepEqual(got, [{ a: 1 }, { a: 2 }]);
 });
+
+test('whitespace around a line is ignored', async () => {
+  assert.deepEqual(await collect(readNdjson(streamOf('   {"a":1}  \n'))), [{ a: 1 }]);
+});
