@@ -64,6 +64,11 @@ export class LocalVectorStore {
     this.chunks = [];
   }
 
+  /**
+   * Ranks chunks by cosine similarity to `queryEmbedding` and returns the best `topK`. Chunks without a
+   * vector are skipped. There is no minimum score, so weak matches come back when nothing better exists.
+   * Returns an empty array when the query vector or the index is empty.
+   */
   public searchByEmbedding(queryEmbedding: number[], topK: number = 5): VectorSearchResult[] {
     if (this.chunks.length === 0 || queryEmbedding.length === 0) {
       return [];
