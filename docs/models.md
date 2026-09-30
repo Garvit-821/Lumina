@@ -76,3 +76,18 @@ StarCoder families, complete in place.
 Completions are only requested at the end of a line, after `lumina.ghostTextDelay` ms (default 350).
 Because ghost text uses the active model, a large chat model makes it slow. A smaller model such as
 `qwen2.5-coder:1.5b` answers faster, but it is then used for chat as well.
+
+## Embedding model
+
+Workspace search embeds chunks and queries with `lumina.embeddingModel`, default `nomic-embed-text`.
+Pull it before indexing:
+
+```bash
+ollama pull nomic-embed-text
+```
+
+Lumina calls `POST /api/embed` (Ollama 0.2 and later) and falls back to `POST /api/embeddings` for
+older servers. If the model is missing when you index, Lumina logs a warning and the index has no
+vectors, so search stays keyword-only until you pull the model and index again. Indexing and queries
+must use the same model, so re-index after changing the setting. Do not select an embedding model as
+the active chat model: embedding-only models cannot generate text.
