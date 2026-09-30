@@ -25,3 +25,8 @@ test('an empty stream yields nothing', async () => {
 test('a final line without a trailing newline is still parsed', async () => {
   assert.deepEqual(await collect(readNdjson(streamOf('{"done":true}'))), [{ done: true }]);
 });
+
+test('CRLF-delimited lines are parsed', async () => {
+  const got = await collect(readNdjson(streamOf('{"a":1}\r\n{"a":2}\r\n')));
+  assert.deepEqual(got, [{ a: 1 }, { a: 2 }]);
+});
