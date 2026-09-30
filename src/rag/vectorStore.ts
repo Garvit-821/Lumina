@@ -59,6 +59,7 @@ export class LocalVectorStore {
     return new Set(this.chunks.map((c) => c.filePath)).size;
   }
 
+  /** Empties the in-memory index. The cache file is left as it is until the next saveToDisk. */
   public clear(): void {
     this.chunks = [];
   }
