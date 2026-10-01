@@ -119,6 +119,10 @@ export class LocalVectorStore {
     return scored.slice(0, topK);
   }
 
+  /**
+   * Writes every chunk, embeddings included, to the cache file, creating `.lumina/` if needed.
+   * Failures are logged as warnings, never thrown. Does nothing without a workspace folder.
+   */
   public async saveToDisk(): Promise<void> {
     if (!this.cachePath) return;
 
