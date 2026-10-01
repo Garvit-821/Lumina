@@ -24,6 +24,7 @@ export function sameModel(a: string, b: string): boolean {
   return norm(a) === norm(b);
 }
 
+/** Rounds to one decimal place. */
 function round1(n: number): number {
   return Math.round(n * 10) / 10;
 }
