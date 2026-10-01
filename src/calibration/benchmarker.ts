@@ -3,8 +3,10 @@ import { OllamaClient } from '../ollama/client';
 import { LuminaLogger } from '../utils/logger';
 import { OllamaTimings, tokensPerSecond } from './benchmarkMath';
 
+/** Fixed prompt so results are comparable across models and runs. Generation is capped at 256 tokens. */
 const TEST_PROMPT = 'Write a TypeScript function to recursively calculate Fibonacci numbers with memoization. Output only code.';
 
+/** Measures how fast a local model generates text, for the status bar and the Nexus calibration view. */
 export class ModelBenchmarker {
   /** Measures real throughput. Throws if the model can't be reached; never returns made-up numbers. */
   public static async runBenchmark(
