@@ -141,6 +141,11 @@ export class LocalVectorStore {
     }
   }
 
+  /**
+   * Replaces the in-memory index with the cache file, dropping chunks from secret-looking files.
+   * Returns true if a cache was loaded; false when there is no workspace, no readable cache, or the
+   * file is not a JSON array, in which case the current index is left untouched.
+   */
   public async loadFromDisk(): Promise<boolean> {
     if (!this.cachePath) return false;
 
