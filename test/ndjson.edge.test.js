@@ -39,3 +39,9 @@ test('values keep their JSON types', async () => {
   const got = await collect(readNdjson(streamOf('{"n":1.5,"b":false,"s":"x","z":null,"arr":[1,2]}\n')));
   assert.deepEqual(got, [{ n: 1.5, b: false, s: 'x', z: null, arr: [1, 2] }]);
 });
+
+test('a stream delivered one character at a time still reassembles', async () => {
+  const text = '{"response":"Hel"}\n{"response":"lo"}\n';
+  const got = await collect(readNdjson(streamOf(...text.split(''))));
+  assert.deepEqual(got.map((c) => c.response).join(''), 'Hello');
+});
