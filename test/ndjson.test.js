@@ -27,3 +27,15 @@ test('skips blank and malformed lines', async () => {
   const got = await collect(readNdjson(streamOf('\n{"ok":true}\nnot json\n\n')));
   assert.deepEqual(got, [{ ok: true }]);
 });
+
+test('handles multi-byte characters split across chunks', async () => {
+  const bytes = new TextEncoder().encode('{"t":"✦"}\n');
+  const stream = new ReadableStream({
+    start(c) {
+      c.enqueue(bytes.slice(0, 7));
+      c.enqueue(bytes.slice(7));
+      c.close();
+    },
+  });
+  assert.deepEqual(await collect(readNdjson(stream)), [{ t: '✦' }]);
+});
