@@ -22,3 +22,8 @@ test('reassembles JSON lines split across chunks', async () => {
   const got = await collect(readNdjson(streamOf('{"a":1}\n{"a"', ':2}\n', '{"a":3}')));
   assert.deepEqual(got, [{ a: 1 }, { a: 2 }, { a: 3 }]);
 });
+
+test('skips blank and malformed lines', async () => {
+  const got = await collect(readNdjson(streamOf('\n{"ok":true}\nnot json\n\n')));
+  assert.deepEqual(got, [{ ok: true }]);
+});
