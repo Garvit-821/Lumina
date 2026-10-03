@@ -39,3 +39,8 @@ test('handles multi-byte characters split across chunks', async () => {
   });
   assert.deepEqual(await collect(readNdjson(stream)), [{ t: '✦' }]);
 });
+
+test('assertOk surfaces the Ollama error message', async () => {
+  const res = new Response(JSON.stringify({ error: 'model "foo" not found' }), { status: 404 });
+  await assert.rejects(assertOk(res, 'Ollama chat'), /HTTP 404\): model "foo" not found/);
+});
