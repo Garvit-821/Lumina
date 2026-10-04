@@ -3,9 +3,22 @@ import { DiffHunk, DiffSuggestion } from '../types';
 /** Above this many cells (old lines × new lines) the LCS table gets too big and we fall back to a greedy diff. */
 const MAX_LCS_CELLS = 4_000_000;
 
+/**
+ * One step of a line-level edit script: keep a line, drop a line of the original, or add a line of
+ * the proposal.
+ */
 type Op = 'equal' | 'delete' | 'insert';
 
+/**
+ * Line-based diffing for Lumina's edit proposals: builds DiffSuggestion objects and the hunks used for
+ * per-hunk review. It has no VS Code dependency, which is why the unit tests can load it directly.
+ */
 export class DiffEngine {
+  /**
+   * Wraps a proposed rewrite of a file as a pending DiffSuggestion with a unique id and precomputed hunks.
+   * Both texts are full file contents, not snippets. The result must still be registered with
+   * PatchManager before it can be accepted.
+   */
   public static createSuggestion(
     filePath: string,
     originalCode: string,
