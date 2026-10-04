@@ -1,6 +1,13 @@
 import { HardwareTelemetry, ModelRecommendation } from '../types';
 
+/** Maps scanned hardware to one of three model profiles: low, balanced or power. */
 export class ModelRecommender {
+  /**
+   * Picks a profile from RAM and usable GPU memory. On Apple Silicon 75% of RAM counts as GPU memory;
+   * elsewhere the larger of dedicated VRAM and 40% of RAM is used. Power needs about 16 GB of that or 32 GB
+   * of RAM; balanced needs 12 GB of RAM or 6 GB of it. Pure function: the recommended models are only names
+   * and may not be installed.
+   */
   public static evaluate(telemetry: HardwareTelemetry): ModelRecommendation {
     const { totalRamGB, vramGB, isAppleSilicon, hasCuda } = telemetry;
     const effectiveVram = isAppleSilicon ? totalRamGB * 0.75 : Math.max(vramGB, totalRamGB * 0.4);
