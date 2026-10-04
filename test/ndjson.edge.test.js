@@ -45,3 +45,7 @@ test('a stream delivered one character at a time still reassembles', async () =>
   const got = await collect(readNdjson(streamOf(...text.split(''))));
   assert.deepEqual(got.map((c) => c.response).join(''), 'Hello');
 });
+
+test('assertOk resolves quietly for successful responses', async () => {
+  assert.equal(await assertOk(new Response('ok', { status: 200 }), 'Ollama chat'), undefined);
+});
