@@ -15,3 +15,9 @@ version, what an attacker could do, and steps to reproduce.
 - Secret files (`.env`, private keys, credential files) ending up in the index or in a prompt.
 - Model output that can run script or inject markup in the Nexus webview.
 - Edits applied outside the workspace, or without the user accepting them.
+
+## Out of scope
+
+- Vulnerabilities in Ollama itself or in the models it serves.
+- An Ollama endpoint that the user deliberately pointed at a remote host.
+- Poor or incorrect model suggestions that the user reviewed and accepted.
