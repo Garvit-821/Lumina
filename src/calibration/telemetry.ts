@@ -6,9 +6,20 @@ import { LuminaLogger } from '../utils/logger';
 
 const execAsync = promisify(exec);
 
+/** Detects CPU, RAM and GPU details used to recommend a model profile. */
 export class CalibrationTelemetry {
+  /**
+   * Result of the first scan, reused for the rest of the session unless a refresh is forced.
+   * Its free RAM figure goes stale.
+   */
   private static cachedTelemetry: HardwareTelemetry | null = null;
 
+  /**
+   * Scans the machine once and caches the result; pass forceRefresh to rescan. RAM figures are GB rounded to
+   * one decimal. On Apple Silicon VRAM is estimated as 75% of unified memory; Intel Macs query system_profiler,
+   * and other platforms try nvidia-smi and then, on Windows, wmic for the GPU name. Each probe times out after
+   * 3 s. If they all fail the GPU stays "Standard Integrated Graphics" with 0 GB VRAM; it does not throw.
+   */
   public static async scanSystem(forceRefresh = false): Promise<HardwareTelemetry> {
     if (this.cachedTelemetry && !forceRefresh) {
       return this.cachedTelemetry;
