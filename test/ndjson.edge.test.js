@@ -49,3 +49,8 @@ test('a stream delivered one character at a time still reassembles', async () =>
 test('assertOk resolves quietly for successful responses', async () => {
   assert.equal(await assertOk(new Response('ok', { status: 200 }), 'Ollama chat'), undefined);
 });
+
+test('assertOk falls back to the raw body when it is not JSON', async () => {
+  const res = new Response('gateway timeout', { status: 504 });
+  await assert.rejects(assertOk(res, 'Pulling foo'), /Pulling foo failed \(HTTP 504\): gateway timeout/);
+});
