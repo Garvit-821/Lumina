@@ -31,3 +31,15 @@ Files are skipped when:
 - the name matches a secret-file pattern (see [Secrets](privacy.md#secrets)).
 
 `.gitignore` is not read. Files that Git ignores are indexed unless one of the rules above excludes them.
+
+## Chunking
+
+`CodeChunker` (`src/rag/chunker.ts`) splits each file by lines:
+
+- A file of 40 lines or fewer becomes one chunk that holds the file text unchanged.
+- Longer files are cut into windows of 40 lines that overlap by 10, so a new chunk starts every 30 lines. The last window ends at the last line of the file.
+- Each windowed chunk begins with a header line, `// File: <relative path> (Lines <start>-<end>)`, which is embedded together with the code.
+- Chunk IDs have the form `<relative path>:<start>-<end>`, with 1-based line numbers.
+- Each chunk stores a token estimate of one token per four characters; no limit uses it.
+
+Lines are counted by splitting on `\n`, so a trailing newline adds an empty last line to the count.
