@@ -25,6 +25,10 @@ export class LuminaDiffProvider implements vscode.TextDocumentContentProvider {
     return LuminaDiffProvider.instance;
   }
 
+  /**
+   * Stores a suggestion and returns the virtual URI that shows its proposed code. The file name in the URI is
+   * the last "/"-separated segment of filePath and only serves the tab label and language detection.
+   */
   public registerSuggestion(suggestion: DiffSuggestion): vscode.Uri {
     this.suggestions.set(suggestion.id, suggestion);
     const uri = vscode.Uri.parse(`${LuminaDiffProvider.scheme}://${suggestion.id}/${suggestion.filePath.split('/').pop()}`);
