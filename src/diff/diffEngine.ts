@@ -71,6 +71,11 @@ export class DiffEngine {
     return this.opsToHunks(ops, midA, midB, prefix);
   }
 
+  /**
+   * Minimal edit script from a longest-common-subsequence table held in one flat Uint32Array of
+   * (n + 1) x (m + 1) cells; computeHunks keeps that under MAX_LCS_CELLS. On ties deletions come before
+   * insertions, so a replaced block reads as old lines followed by new lines.
+   */
   private static lcsOps(a: string[], b: string[]): Op[] {
     const n = a.length;
     const m = b.length;
