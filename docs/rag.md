@@ -17,3 +17,17 @@ Indexing runs only when you ask for it, with **Index workspace** on the Context 
 
 The Context tab shows the number of chunks and files in the current index. Each run rebuilds the
 whole index and replaces the previous one.
+
+## Files that are never indexed
+
+Directories with these names are skipped at any depth: `node_modules`, `.git`, `.svn`, `.hg`, `dist`,
+`build`, `out`, `coverage`, `.next`, `.nuxt`, `.lumina`, `.vscode`, `.idea`, `__pycache__`, `.venv`,
+`venv`, `target`, `bin`, `obj`, `.turbo`, `.cache`.
+
+Files are skipped when:
+
+- the extension is one of `.png`, `.jpg`, `.jpeg`, `.gif`, `.svg`, `.ico`, `.webp`, `.pdf`, `.zip`, `.tar`, `.gz`, `.7z`, `.rar`, `.exe`, `.dll`, `.so`, `.dylib`, `.wasm`, `.mp3`, `.mp4`, `.mov`, `.avi`, `.wav`, `.ttf`, `.woff`, `.woff2`, `.eot`, `.lock`, `.bin`, `.iso`, `.dmg`, `.vsix`, `.map`;
+- the name is `package-lock.json`, `pnpm-lock.yaml` or `npm-shrinkwrap.json`, or ends in `.min.js` or `.min.css`;
+- the name matches a secret-file pattern (see [Secrets](privacy.md#secrets)).
+
+`.gitignore` is not read. Files that Git ignores are indexed unless one of the rules above excludes them.
