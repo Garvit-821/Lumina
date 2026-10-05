@@ -117,6 +117,11 @@ export class DiffEngine {
     return [...a.map((): Op => 'delete'), ...b.map((): Op => 'insert')];
   }
 
+  /**
+   * Turns each run of consecutive non-equal ops into one hunk. offset is the number of common leading lines
+   * trimmed beforehand, so line numbers come out 1-based against the full files. Hunks are numbered from 1
+   * and start unaccepted.
+   */
   private static opsToHunks(ops: Op[], a: string[], b: string[], offset: number): DiffHunk[] {
     const hunks: DiffHunk[] = [];
     let i = 0;
