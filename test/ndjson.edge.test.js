@@ -54,3 +54,8 @@ test('assertOk falls back to the raw body when it is not JSON', async () => {
   const res = new Response('gateway timeout', { status: 504 });
   await assert.rejects(assertOk(res, 'Pulling foo'), /Pulling foo failed \(HTTP 504\): gateway timeout/);
 });
+
+test('assertOk leaves out the detail when the body is empty', async () => {
+  const res = new Response('', { status: 500 });
+  await assert.rejects(assertOk(res, 'Ollama generate'), { message: 'Ollama generate failed (HTTP 500)' });
+});
