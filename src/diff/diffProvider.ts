@@ -1,14 +1,23 @@
 import * as vscode from 'vscode';
 import { DiffSuggestion } from '../types';
 
+/**
+ * Serves the proposed side of Lumina's diff views as read-only virtual documents under the lumina-diff
+ * scheme. One shared instance is registered in extension.ts, and suggestions are kept in memory for the
+ * session.
+ */
 export class LuminaDiffProvider implements vscode.TextDocumentContentProvider {
+  /** URI scheme for proposal documents. URIs look like lumina-diff://<suggestionId>/<fileName>. */
   public static readonly scheme = 'lumina-diff';
   private static instance: LuminaDiffProvider;
+  /** Suggestions by id, so provideTextDocumentContent can resolve a URI. Entries are never removed. */
   private suggestions: Map<string, DiffSuggestion> = new Map();
   private onDidChangeEmitter = new vscode.EventEmitter<vscode.Uri>();
 
+  /** Tells VS Code to re-read a proposal document; fired every time a suggestion is registered. */
   public readonly onDidChange = this.onDidChangeEmitter.event;
 
+  /** Returns the shared provider, creating it on first use. */
   public static getInstance(): LuminaDiffProvider {
     if (!LuminaDiffProvider.instance) {
       LuminaDiffProvider.instance = new LuminaDiffProvider();
