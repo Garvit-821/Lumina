@@ -3,13 +3,26 @@ import * as path from 'path';
 import { DiffSuggestion } from '../types';
 import { LuminaLogger } from '../utils/logger';
 
+/**
+ * Applies or discards diff suggestions in the real file. Suggestions must be registered first. State lives in
+ * a static map for the session, and a suggestion moves from pending to partial, applied or rejected.
+ */
 export class PatchManager {
+  /**
+   * Registered suggestions by id. Callers get these objects by reference, so accepting hunks mutates what
+   * they hold. Entries are never removed.
+   */
   private static activeSuggestions: Map<string, DiffSuggestion> = new Map();
 
+  /**
+   * Makes a suggestion available to acceptAll, acceptHunk and reject. Registering the same id again
+   * replaces it.
+   */
   public static registerSuggestion(suggestion: DiffSuggestion): void {
     this.activeSuggestions.set(suggestion.id, suggestion);
   }
 
+  /** Returns the stored suggestion with its current status and hunk flags, or undefined for an unknown id. */
   public static getSuggestion(id: string): DiffSuggestion | undefined {
     return this.activeSuggestions.get(id);
   }
