@@ -36,10 +36,15 @@ export class LuminaDiffProvider implements vscode.TextDocumentContentProvider {
     return uri;
   }
 
+  /** Looks up a suggestion by id; undefined if it was never registered with this provider. */
   public getSuggestion(suggestionId: string): DiffSuggestion | undefined {
     return this.suggestions.get(suggestionId);
   }
 
+  /**
+   * Returns the proposed code for a lumina-diff URI (the URI authority is the suggestion id),
+   * or a placeholder comment when the id is unknown.
+   */
   public provideTextDocumentContent(uri: vscode.Uri): string {
     const suggestionId = uri.authority;
     const suggestion = this.suggestions.get(suggestionId);
