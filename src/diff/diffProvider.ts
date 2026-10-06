@@ -51,6 +51,10 @@ export class LuminaDiffProvider implements vscode.TextDocumentContentProvider {
     return suggestion ? suggestion.proposedCode : '// Lumina Diff: Content not found';
   }
 
+  /**
+   * Opens VS Code's diff editor with the current file on the left and the proposed code on the right.
+   * It only displays the proposal; accepting or rejecting it goes through PatchManager.
+   */
   public async showComparisonView(suggestion: DiffSuggestion): Promise<void> {
     const proposedUri = this.registerSuggestion(suggestion);
     const originalUri = vscode.Uri.file(suggestion.filePath);
