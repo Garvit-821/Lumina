@@ -55,3 +55,15 @@ Embeddings come from Ollama, using `lumina.embeddingModel` (default `nomic-embed
 
 Progress messages read "Embedded X/Y chunks..." as batches finish. Vectors are only computed at index
 time, so index again after pulling the embedding model or changing `lumina.embeddingModel`.
+
+## Retrieval
+
+Chat retrieves up to `lumina.maxRagChunks` chunks (default 5, range 0 to 20) per message, using the
+message text as the query. Prism retrieves up to the smaller of that value and 3, using the
+instruction as the query. Nothing is retrieved until an index exists.
+
+- Vector search: the query is embedded with the same model, and every chunk that has a vector is scored by cosine similarity. The highest scores are returned; there is no minimum score.
+- Keyword search: used when the query cannot be embedded or vector search finds no chunk with a vector. The query is lower-cased and split into terms of 3 or more characters, and a chunk scores the fraction of terms it contains.
+
+Chat prompts list each match as `--- Code Context (<path>:<start>-<end>) [Match Score: N%] ---`
+followed by the chunk text. Prism adds matches as `// Context (<path>):` blocks.
