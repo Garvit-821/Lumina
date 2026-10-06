@@ -43,3 +43,15 @@ Files are skipped when:
 - Each chunk stores a token estimate of one token per four characters; no limit uses it.
 
 Lines are counted by splitting on `\n`, so a trailing newline adds an empty last line to the count.
+
+## Embeddings
+
+Embeddings come from Ollama, using `lumina.embeddingModel` (default `nomic-embed-text`):
+
+1. Before embedding, Lumina sends one probe request. If it returns no vector, the run continues without embeddings and logs a warning that suggests `ollama pull <model>`.
+2. Otherwise chunks are sent in batches of 16 to `POST /api/embed`, with a timeout of 15 seconds plus 2 seconds per chunk in the batch.
+3. If a batch fails or returns the wrong number of vectors, each chunk in it is retried alone: `/api/embed` first, then the older `/api/embeddings` endpoint, each with a 15 second timeout.
+4. A chunk that still gets no vector is stored without one. Vector search skips it, so only keyword search can find it.
+
+Progress messages read "Embedded X/Y chunks..." as batches finish. Vectors are only computed at index
+time, so index again after pulling the embedding model or changing `lumina.embeddingModel`.
