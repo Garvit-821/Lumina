@@ -83,6 +83,12 @@ export class PatchManager {
     }
   }
 
+  /**
+   * Applies one hunk to the file and saves it, then shifts the start line of later unaccepted hunks by the
+   * hunk's line delta so they still line up. The suggestion becomes partial, or applied once every hunk is in.
+   * Returns false for an unknown suggestion or hunk, an already accepted hunk, a declined stale-file prompt
+   * or a failed edit.
+   */
   public static async acceptHunk(suggestionId: string, hunkIndex: number): Promise<boolean> {
     const suggestion = this.activeSuggestions.get(suggestionId);
     if (!suggestion) return false;
