@@ -150,6 +150,7 @@ export class PatchManager {
     }
   }
 
+  /** Marks the suggestion rejected so acceptAll refuses it. The file is not touched; unknown ids are ignored. */
   public static reject(suggestionId: string): void {
     const suggestion = this.activeSuggestions.get(suggestionId);
     if (suggestion) {
