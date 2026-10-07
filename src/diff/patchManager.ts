@@ -41,6 +41,11 @@ export class PatchManager {
     return choice === 'Apply anyway';
   }
 
+  /**
+   * Replaces the whole file with the suggestion's proposed code and saves it, asking first if the file changed
+   * since a still-pending suggestion was made. Returns false without throwing when the suggestion is unknown,
+   * already applied or rejected, the user declines, or the edit fails (errors are logged and shown).
+   */
   public static async acceptAll(suggestionId: string): Promise<boolean> {
     const suggestion = this.activeSuggestions.get(suggestionId);
     if (!suggestion) {
