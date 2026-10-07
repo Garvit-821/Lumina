@@ -14,3 +14,9 @@ test('blank lines and indentation inside a block are preserved', () => {
 test('only the final newline before the closing fence is trimmed', () => {
   assert.equal(extractFirstCodeBlock('```\na\n\n```').code, 'a\n');
 });
+
+test('an unclosed fence is not a block', () => {
+  const md = '```js\nconst a = 1;';
+  assert.deepEqual(extractCodeBlocks(md), []);
+  assert.equal(extractCodeReply(md), md);
+});
