@@ -79,3 +79,17 @@ chunk text and, if available, the embedding vector.
 - On load, entries for files that match a secret-file pattern are dropped, which also cleans caches written by older versions.
 - The `.lumina` folder is excluded from indexing, but Lumina does not add it to `.gitignore`. Add `.lumina/` yourself so the cache, which contains your code, is not committed.
 - With no folder open there is no cache path, and nothing is saved.
+
+## Context chips
+
+Chips attach whole files to chat prompts. They appear above the chat input and in the **Context
+files** list on the Context tab.
+
+- The file in the active editor is added as a chip labelled `<name> (Active)`, and replaced by a new, included chip when you switch editors. Untitled documents are not added.
+- Chips start included. Click one to exclude or include it. The X on the Context tab removes it until the next editor switch.
+- For each included chip, the file is read from disk, so unsaved edits are not seen. Content beyond 24,000 characters is cut off, with a note giving the full length.
+- Files that match a secret-file pattern are never read; the prompt only says the file was omitted.
+- Chips are used by chat only. Prism works on the selection or file it was opened on, plus retrieval.
+
+The extension can add other files as chips (`add_file_as_chip` in the message protocol), but the
+current panel has no control for it, so in practice the list holds the active file.
