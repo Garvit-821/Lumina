@@ -67,3 +67,15 @@ instruction as the query. Nothing is retrieved until an index exists.
 
 Chat prompts list each match as `--- Code Context (<path>:<start>-<end>) [Match Score: N%] ---`
 followed by the chunk text. Prism adds matches as `// Context (<path>):` blocks.
+
+## On-disk cache
+
+The index is saved as JSON to `.lumina/vector_cache.json` in the first workspace folder, as it was
+when the extension activated. Each entry holds the absolute and relative path, line range, language,
+chunk text and, if available, the embedding vector.
+
+- The cache is loaded at activation, so the index survives restarts.
+- Every index run overwrites the file. Lumina never deletes it; remove the `.lumina` folder to drop the index.
+- On load, entries for files that match a secret-file pattern are dropped, which also cleans caches written by older versions.
+- The `.lumina` folder is excluded from indexing, but Lumina does not add it to `.gitignore`. Add `.lumina/` yourself so the cache, which contains your code, is not committed.
+- With no folder open there is no cache path, and nothing is saved.
