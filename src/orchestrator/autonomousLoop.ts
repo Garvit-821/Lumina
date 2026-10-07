@@ -11,16 +11,30 @@ import { LuminaLogger } from '../utils/logger';
 import { extractCodeReply } from '../utils/codeBlocks';
 import { findCandidateFiles } from './traceParser';
 
+/**
+ * The test-and-fix loop: runs a test command and, on failure, asks the active model for a corrected version
+ * of the file the failure points at, applies it and runs the tests again, up to a fixed number of iterations.
+ * Progress is reported through onStep and the outcome through onFinished. Only one loop runs at a time.
+ */
 export class AutonomousLoopController {
   private manager: OllamaModelManager;
+  /** Taken in the constructor but not used by the loop at the moment. */
   private contextEngine: ContextEngine;
+  /** True while a loop is active. Doubles as the cancellation flag that startLoop checks after each await. */
   private isRunning: boolean = false;
+  /** Aborts the in-flight diagnosis request when the loop is stopped. */
   private abortController: AbortController | null = null;
+  /** The test process that is currently running, so stop() can kill it; null between runs. */
   private child: ChildProcess | null = null;
   private currentStepEmitter = new vscode.EventEmitter<AutonomousLoopStep>();
   private finishedEmitter = new vscode.EventEmitter<{ success: boolean; summary: string }>();
 
+  /** Fires for each stage of each iteration (run_test, diagnose, propose_fix, verify) with its status. */
   public readonly onStep = this.currentStepEmitter.event;
+  /**
+   * Fires when a loop ends: tests passed, no fix could be produced, iterations ran out, it was stopped,
+   * or no workspace is open.
+   */
   public readonly onFinished = this.finishedEmitter.event;
 
   constructor(manager: OllamaModelManager, contextEngine: ContextEngine) {
