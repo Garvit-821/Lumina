@@ -9,3 +9,8 @@ test('extracts language and code from each fenced block', () => {
     { language: 'python', code: 'print(1)' },
   ]);
 });
+
+test('supports CRLF, info strings and missing language', () => {
+  assert.deepEqual(extractFirstCodeBlock('```c++ title="x"\r\nint x;\r\n```'), { language: 'c++', code: 'int x;' });
+  assert.deepEqual(extractFirstCodeBlock('```\nplain\n```'), { language: '', code: 'plain' });
+});
