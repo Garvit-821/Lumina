@@ -14,3 +14,9 @@ test('supports CRLF, info strings and missing language', () => {
   assert.deepEqual(extractFirstCodeBlock('```c++ title="x"\r\nint x;\r\n```'), { language: 'c++', code: 'int x;' });
   assert.deepEqual(extractFirstCodeBlock('```\nplain\n```'), { language: '', code: 'plain' });
 });
+
+test('returns null without a block, and extractCodeReply falls back to the text', () => {
+  assert.equal(extractFirstCodeBlock('no code here'), null);
+  assert.equal(extractCodeReply('  const x = 1;  '), 'const x = 1;');
+  assert.equal(extractCodeReply('Sure!\n```js\nx()\n```\nDone.'), 'x()');
+});
