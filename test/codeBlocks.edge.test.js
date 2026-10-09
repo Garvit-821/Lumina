@@ -25,3 +25,7 @@ test('extractCodeReply returns the first of several blocks', () => {
   const md = 'Before:\n```js\nold()\n```\nAfter:\n```js\nfresh()\n```';
   assert.equal(extractCodeReply(md), 'old()');
 });
+
+test('the language is the first word of the info string', () => {
+  assert.equal(extractFirstCodeBlock('```typescript {1,3}\nx\n```').language, 'typescript');
+});
