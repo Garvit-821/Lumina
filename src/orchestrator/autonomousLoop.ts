@@ -54,6 +54,12 @@ export class AutonomousLoopController {
     this.finishedEmitter.fire({ success: false, summary: 'Loop stopped.' });
   }
 
+  /**
+   * Runs the test-and-fix loop in the first workspace folder. Exit code 0 ends the loop successfully; otherwise
+   * the model proposes a whole-file fix, which is shown in a diff view and applied right away through
+   * PatchManager.acceptAll (which also saves the file) before the tests run again.
+   * Returns immediately if a loop is already running. The outcome is reported via onFinished, not the promise.
+   */
   public async startLoop(testCommand: string, maxIterations: number = 3): Promise<void> {
     if (this.isRunning) return;
     this.isRunning = true;
