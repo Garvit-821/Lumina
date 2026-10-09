@@ -127,6 +127,12 @@ export class AutonomousLoopController {
     }
   }
 
+  /**
+   * Picks the file to fix (the first workspace file named in the failure output, else the active editor, else
+   * any open document), sends it with the last 2000 characters of the output to the model and wraps the reply
+   * in a diff suggestion. Returns null when there is no model or file, the reply is under 20 characters,
+   * or the request fails (the error is logged).
+   */
   private async diagnoseAndFixError(
     errorOutput: string,
     testCommand: string
