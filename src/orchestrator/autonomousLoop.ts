@@ -42,6 +42,10 @@ export class AutonomousLoopController {
     this.contextEngine = contextEngine;
   }
 
+  /**
+   * Stops a running loop: aborts the model request, kills the test process and fires onFinished with
+   * success false. The pending startLoop call notices at its next check and returns quietly. No-op when idle.
+   */
   public stop(): void {
     if (!this.isRunning) return;
     this.isRunning = false;
