@@ -20,3 +20,8 @@ test('an unclosed fence is not a block', () => {
   assert.deepEqual(extractCodeBlocks(md), []);
   assert.equal(extractCodeReply(md), md);
 });
+
+test('extractCodeReply returns the first of several blocks', () => {
+  const md = 'Before:\n```js\nold()\n```\nAfter:\n```js\nfresh()\n```';
+  assert.equal(extractCodeReply(md), 'old()');
+});
