@@ -2,7 +2,14 @@ import * as vscode from 'vscode';
 import { ContextEngine } from '../rag/contextEngine';
 import { getLuminaConfig } from '../utils/config';
 
+/** Assembles the system prompt sent at the start of every Nexus chat turn. */
 export class PromptBuilder {
+  /**
+   * Builds the system prompt: Lumina's operating rules, the workspace name, the active file (path, language,
+   * line count and any selected code), the content of active context chips and up to `lumina.maxRagChunks`
+   * RAG matches for userPrompt. Sections with nothing to show are left empty, and a maxRagChunks of 0
+   * skips retrieval entirely.
+   */
   public static async buildSystemPrompt(contextEngine: ContextEngine, userPrompt: string): Promise<string> {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     const workspaceName = workspaceFolders && workspaceFolders.length > 0 ? workspaceFolders[0].name : 'Unknown Workspace';
