@@ -27,3 +27,14 @@ between them. Proposals live in memory and are lost when the window reloads.
 
 A pure insertion has an old line count of 0, and its old start line points at the line it goes
 before. A pure deletion has a new line count of 0. Hunks carry no unchanged context lines.
+
+## The comparison view
+
+**Review diff** in chat, and Prism automatically, open VS Code's diff editor with the file on the
+left and the proposal on the right, titled "Lumina AI Proposal" followed by the file name. The right
+side is a read-only virtual document under the `lumina-diff` scheme, so the proposal cannot be
+edited there.
+
+- The left side is the file as it is now, including unsaved edits, not the snapshot the proposal was computed from.
+- The diff opens as a preview tab and takes focus.
+- Closing the diff neither accepts nor rejects the proposal; the chat buttons stay available.
