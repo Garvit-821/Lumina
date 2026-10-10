@@ -228,6 +228,10 @@ Output ONLY the entire corrected file content within a single markdown code bloc
     });
   }
 
+  /**
+   * Publishes one progress step to onStep. stepIndex is the 1-based iteration number, not a running
+   * step count.
+   */
   private emitStep(
     stepIndex: number,
     action: AutonomousLoopStep['action'],
