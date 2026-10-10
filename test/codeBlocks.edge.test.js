@@ -29,3 +29,7 @@ test('extractCodeReply returns the first of several blocks', () => {
 test('the language is the first word of the info string', () => {
   assert.equal(extractFirstCodeBlock('```typescript {1,3}\nx\n```').language, 'typescript');
 });
+
+test('an empty block yields empty code rather than null', () => {
+  assert.deepEqual(extractFirstCodeBlock('```js\n```'), { language: 'js', code: '' });
+});
