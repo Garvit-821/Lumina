@@ -33,3 +33,7 @@ test('the language is the first word of the info string', () => {
 test('an empty block yields empty code rather than null', () => {
   assert.deepEqual(extractFirstCodeBlock('```js\n```'), { language: 'js', code: '' });
 });
+
+test('CRLF line endings inside a block are kept', () => {
+  assert.equal(extractFirstCodeBlock('```\r\na\r\nb\r\n```').code, 'a\r\nb');
+});
