@@ -210,6 +210,11 @@ Output ONLY the entire corrected file content within a single markdown code bloc
     }
   }
 
+  /**
+   * Runs a shell command and resolves with its exit code and combined stdout and stderr; it never rejects.
+   * Limited to 5 minutes and 10 MB of output. A non-zero exit reports its own code; a timeout, kill or
+   * spawn failure is reported as exit code 1.
+   */
   private executeCommand(cmd: string, cwd: string): Promise<{ exitCode: number; output: string }> {
     return new Promise((resolve) => {
       this.child = exec(cmd, { cwd, timeout: 5 * 60_000, maxBuffer: 10 * 1024 * 1024 }, (error, stdout, stderr) => {
