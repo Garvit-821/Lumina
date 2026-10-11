@@ -38,3 +38,15 @@ edited there.
 - The left side is the file as it is now, including unsaved edits, not the snapshot the proposal was computed from.
 - The diff opens as a preview tab and takes focus.
 - Closing the diff neither accepts nor rejects the proposal; the chat buttons stay available.
+
+## Reviewing and applying
+
+- **Accept all** (chat) and **Accept All Changes** (Prism) replace the whole file content with the proposed text and save the file, then show "Lumina: All changes applied to <file>".
+- **Reject** marks the proposal as rejected and shows "Lumina: Diff suggestion discarded." The file is not changed.
+- In chat, the proposal box then shows "Applied" or "Rejected" and disables its buttons except **Review diff**.
+- A proposal that is applied or rejected cannot be accepted again.
+- The extension can also accept a single hunk (`accept_diff` with a `hunkIndex`), which applies that hunk, shifts later hunks and marks the proposal "Partially applied". The current panel has no per-hunk button.
+- **Insert** on a code block is not part of this flow: it puts the block into the active editor at the cursor or over the selection, with no diff and no save.
+
+An applied proposal is a normal workspace edit, so it can usually be reverted with Undo in that
+file's editor, followed by a save.
