@@ -50,3 +50,16 @@ edited there.
 
 An applied proposal is a normal workspace edit, so it can usually be reverted with Undo in that
 file's editor, followed by a save.
+
+## When the file changed in the meantime
+
+Each proposal keeps the text it was computed from: for Prism, the file when you picked the action;
+for chat, the file when the reply finished. Before applying a pending proposal, Lumina compares the
+current document, including unsaved edits, with that snapshot. If they differ, a modal warning says
+"<file> has changed since Lumina proposed this edit. Applying it will overwrite your newer changes."
+
+- **Apply anyway** writes the full proposed text, discarding every change made after the snapshot.
+- Cancelling leaves the file alone and the proposal pending. Ask again to get a proposal based on the current text.
+
+The check only runs while the proposal is pending. Once a single hunk has been accepted (status
+"partial"), later accepts skip it.
