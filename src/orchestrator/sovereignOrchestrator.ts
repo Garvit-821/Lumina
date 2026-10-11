@@ -51,14 +51,23 @@ export class SovereignOrchestrator {
     this.contextEngine = contextEngine;
   }
 
+  /**
+   * Returns the live history array, not a copy. The Nexus view uses it to restore the chat after a
+   * webview reload.
+   */
   public getHistory(): ChatMessage[] {
     return this.history;
   }
 
+  /** Forgets the conversation. It does not stop a reply in progress, so callers call abortCurrent first. */
   public clearHistory(): void {
     this.history = [];
   }
 
+  /**
+   * Cancels the reply that is currently streaming, if any. The partial text is kept and handleUserMessage
+   * appends a "Stopped." note to it. Safe to call when nothing is running.
+   */
   public abortCurrent(): void {
     if (this.currentAbortController) {
       this.currentAbortController.abort();
