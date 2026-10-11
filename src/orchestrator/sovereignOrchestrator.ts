@@ -30,8 +30,20 @@ export class SovereignOrchestrator {
   private onStreamChunkEmitter = new vscode.EventEmitter<{ messageId: string; chunk: string }>();
   private onStreamEndEmitter = new vscode.EventEmitter<{ messageId: string; diffSuggestion?: DiffSuggestion }>();
 
+  /**
+   * Fires when a message joins the history: the user's message, the empty streaming placeholder or an
+   * error notice.
+   */
   public readonly onMessage = this.onMessageEmitter.event;
+  /**
+   * Fires for each text delta of a streaming reply, and once more with the stop or error note if the
+   * stream fails.
+   */
   public readonly onStreamChunk = this.onStreamChunkEmitter.event;
+  /**
+   * Fires once per reply when streaming ends, successfully or not; carries the diff suggestion if one
+   * was built.
+   */
   public readonly onStreamEnd = this.onStreamEndEmitter.event;
 
   constructor(manager: OllamaModelManager, contextEngine: ContextEngine) {
