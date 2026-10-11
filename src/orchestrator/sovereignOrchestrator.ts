@@ -10,10 +10,20 @@ import { extractFirstCodeBlock } from '../utils/codeBlocks';
 import { isLikelyFullFileReplacement } from '../diff/proposalPolicy';
 import { getLuminaConfig } from '../utils/config';
 
+/**
+ * Drives the Nexus chat: keeps the conversation history, streams replies from the active Ollama model and,
+ * when a reply contains a usable code block, turns it into a reviewable diff suggestion.
+ * The Nexus view subscribes to its events to render messages as they arrive.
+ */
 export class SovereignOrchestrator {
   private manager: OllamaModelManager;
   private contextEngine: ContextEngine;
+  /**
+   * Full chat transcript in display order, including error notices and stopped replies.
+   * Only the last 8 non-empty earlier messages are replayed to the model on each turn.
+   */
   private history: ChatMessage[] = [];
+  /** Aborts the reply that is currently streaming; null when no request is in flight. */
   private currentAbortController: AbortController | null = null;
 
   private onMessageEmitter = new vscode.EventEmitter<ChatMessage>();
