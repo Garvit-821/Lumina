@@ -63,3 +63,18 @@ current document, including unsaved edits, with that snapshot. If they differ, a
 
 The check only runs while the proposal is pending. Once a single hunk has been accepted (status
 "partial"), later accepts skip it.
+
+## When chat does not offer a diff
+
+Chat only attaches a proposal when it can place the code safely. No proposal appears when:
+
+- no editor was active when you sent the message, or it showed an untitled document;
+- that document was closed before the reply finished;
+- the reply has no fenced code block, or its first block is shorter than 10 characters after trimming;
+- nothing was selected and the block does not look like the whole file;
+- the result would be identical to the current file.
+
+Without a selection, a block counts as the whole file when the file is empty or has 5 lines or fewer,
+or when the block has at least 60% as many lines as the file and contains at least a quarter of the
+file's non-trivial lines (trimmed lines longer than 3 characters). To get a proposal, select the code
+to change before sending, ask for the complete file, or use Prism. Only the first code block is used.
