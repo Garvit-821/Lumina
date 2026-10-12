@@ -22,6 +22,11 @@ export class PrismCommandBar {
     this.contextEngine = contextEngine;
   }
 
+  /**
+   * Shows the action picker for the active editor (plus an input box for a custom instruction) and runs the
+   * choice. Preset actions use their description text as the instruction. Returns without doing anything if
+   * there is no editor or the user dismisses a prompt.
+   */
   public async open(): Promise<void> {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
