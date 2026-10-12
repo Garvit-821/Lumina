@@ -8,6 +8,11 @@ import { LuminaLogger } from '../utils/logger';
 import { extractCodeReply } from '../utils/codeBlocks';
 import { getLuminaConfig } from '../utils/config';
 
+/**
+ * Prism, the quick-pick command bar behind lumina.prism. It applies a preset or custom instruction to the
+ * selection, or to the whole file when nothing is selected, and shows the model's rewrite as a diff to
+ * accept or reject.
+ */
 export class PrismCommandBar {
   private manager: OllamaModelManager;
   private contextEngine: ContextEngine;
