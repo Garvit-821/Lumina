@@ -75,6 +75,13 @@ export class SovereignOrchestrator {
     }
   }
 
+  /**
+   * Runs one chat turn: records the user's message, builds the system prompt (active file, pinned chips,
+   * RAG matches), streams the model's reply through onStreamChunk and finishes with onStreamEnd.
+   * With no active model it posts a warning message instead of calling Ollama. Prompt and stream errors,
+   * including aborts, are written into the reply rather than thrown. The editor that is active when the
+   * message is sent is the target for any diff suggestion, even if the user switches editors meanwhile.
+   */
   public async handleUserMessage(text: string): Promise<void> {
     const userMessage: ChatMessage = {
       id: `msg_user_${Date.now()}`,
