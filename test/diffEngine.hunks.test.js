@@ -22,3 +22,12 @@ test('appended lines form an insert-only hunk after the last line', () => {
     [3, 0, 3, 2]
   );
 });
+
+test('two edits far apart become two hunks', () => {
+  const before = numbered(20);
+  const after = [...before];
+  after[3] = 'changed 3';
+  after[15] = 'changed 15';
+  const hunks = DiffEngine.computeHunks(before.join('\n'), after.join('\n'));
+  assert.deepEqual(hunks.map((h) => h.oldStartLine), [4, 16]);
+});
