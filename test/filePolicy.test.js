@@ -8,3 +8,9 @@ test('secret files are never indexed', () => {
     assert.equal(shouldIndexFile(f), false, f);
   }
 });
+
+test('ordinary source files are indexed', () => {
+  for (const f of ['index.ts', 'App.tsx', 'main.py', 'README.md', 'tsconfig.json', '.eslintrc.json', 'env.ts', 'keyboard.ts']) {
+    assert.equal(shouldIndexFile(f), true, f);
+  }
+});
