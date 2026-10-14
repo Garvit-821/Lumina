@@ -20,3 +20,10 @@ test('lockfiles, minified bundles and binaries are skipped', () => {
     assert.equal(shouldIndexFile(f), false, f);
   }
 });
+
+test('dependency and build directories are skipped', () => {
+  assert.equal(shouldIndexDirectory('node_modules'), false);
+  assert.equal(shouldIndexDirectory('.git'), false);
+  assert.equal(shouldIndexDirectory('src'), true);
+  assert.equal(shouldIndexDirectory('.github'), true);
+});
