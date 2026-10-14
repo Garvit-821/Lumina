@@ -14,3 +14,9 @@ test('ordinary source files are indexed', () => {
     assert.equal(shouldIndexFile(f), true, f);
   }
 });
+
+test('lockfiles, minified bundles and binaries are skipped', () => {
+  for (const f of ['package-lock.json', 'yarn.lock', 'pnpm-lock.yaml', 'vendor.min.js', 'logo.png', 'app.js.map']) {
+    assert.equal(shouldIndexFile(f), false, f);
+  }
+});
