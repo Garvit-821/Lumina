@@ -3,16 +3,26 @@ import { OllamaModelManager } from '../ollama/manager';
 import { LuminaLogger } from '../utils/logger';
 import { getLuminaConfig } from '../utils/config';
 
+/** Lines before the cursor sent to the model as the completion prefix. */
 const PREFIX_LINES = 60;
+/** Lines after the cursor sent as the fill-in-the-middle suffix. */
 const SUFFIX_LINES = 20;
 
+/**
+ * The Aura: ghost-text inline completions from the active Ollama model. Uses fill-in-the-middle with the
+ * surrounding code when the model supports it, and a plain "continue this code" prompt otherwise.
+ * Follows the lumina.enableGhostText setting.
+ */
 export class AuraInlineCompletionProvider implements vscode.InlineCompletionItemProvider, vscode.Disposable {
   private manager: OllamaModelManager;
+  /** Mirrors lumina.enableGhostText; updated by toggle() and by settings changes. */
   private isEnabled: boolean = true;
   /** Models that rejected `suffix` (no FIM support); they get a plain continuation prompt instead. */
   private noFimModels = new Set<string>();
+  /** Settings subscription that keeps isEnabled in sync; released in dispose(). */
   private configListener: vscode.Disposable;
 
+  /** Reads the initial enabled state and starts listening for changes to lumina.enableGhostText. */
   constructor(manager: OllamaModelManager) {
     this.manager = manager;
     this.isEnabled = getLuminaConfig().ghostTextEnabled;
