@@ -41,3 +41,9 @@ test('hunk indexes count up from 1', () => {
   const hunks = DiffEngine.computeHunks(before.join('\n'), after.join('\n'));
   assert.deepEqual(hunks.map((h) => h.hunkIndex), [1, 2, 3]);
 });
+
+test('unchanged leading and trailing lines never appear in a hunk', () => {
+  const [h] = DiffEngine.computeHunks('keep 1\nkeep 2\nold\nkeep 3', 'keep 1\nkeep 2\nnew\nkeep 3');
+  assert.deepEqual(h.originalLines, ['old']);
+  assert.deepEqual(h.modifiedLines, ['new']);
+});
