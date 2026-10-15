@@ -31,3 +31,13 @@ test('two edits far apart become two hunks', () => {
   const hunks = DiffEngine.computeHunks(before.join('\n'), after.join('\n'));
   assert.deepEqual(hunks.map((h) => h.oldStartLine), [4, 16]);
 });
+
+test('hunk indexes count up from 1', () => {
+  const before = numbered(12);
+  const after = [...before];
+  after[1] = 'x';
+  after[6] = 'y';
+  after[10] = 'z';
+  const hunks = DiffEngine.computeHunks(before.join('\n'), after.join('\n'));
+  assert.deepEqual(hunks.map((h) => h.hunkIndex), [1, 2, 3]);
+});
