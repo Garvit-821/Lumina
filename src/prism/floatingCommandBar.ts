@@ -98,6 +98,12 @@ export class PrismCommandBar {
     await this.executePrismInstruction(editor, selectedText, hasSelection, instruction, snapshot);
   }
 
+  /**
+   * Sends the code and instruction, plus up to 3 RAG matches, to the active model under a cancellable progress
+   * notification. The reply is spliced into the snapshot taken in open() and shown in a diff view with
+   * Accept All / Reject buttons; nothing changes until the user accepts. Cancellation ends silently, empty or
+   * unchanged output shows a short notice, and other errors are logged and shown.
+   */
   private async executePrismInstruction(
     editor: vscode.TextEditor,
     originalCode: string,
