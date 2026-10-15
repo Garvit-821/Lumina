@@ -33,6 +33,7 @@ export class AuraInlineCompletionProvider implements vscode.InlineCompletionItem
     });
   }
 
+  /** Flips ghost text on or off, writes the new value to the global (user) setting and returns it. */
   public toggle(): boolean {
     this.isEnabled = !this.isEnabled;
     vscode.workspace
