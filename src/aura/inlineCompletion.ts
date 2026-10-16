@@ -126,6 +126,7 @@ export class AuraInlineCompletionProvider implements vscode.InlineCompletionItem
     return this.manager.getClient().generate(model, prompt, options, signal);
   }
 
+  /** Stops listening for settings changes. */
   public dispose(): void {
     this.configListener.dispose();
   }
