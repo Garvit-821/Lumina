@@ -53,3 +53,13 @@ test('clearing a file is a single hunk that applies back to empty text', () => {
   assert.equal(hunks.length, 1);
   assert.equal(DiffEngine.applyHunks('a\nb\nc', hunks), '');
 });
+
+test('inputs too large for the LCS table are diffed as one replacement', () => {
+  const middle = numbered(2100);
+  const before = ['first', ...middle, 'last'].join('\n');
+  const after = ['FIRST', ...middle, 'LAST'].join('\n');
+  const hunks = DiffEngine.computeHunks(before, after);
+  assert.equal(hunks.length, 1);
+  assert.equal(hunks[0].oldLineCount, 2102);
+  assert.equal(DiffEngine.applyHunks(before, hunks), after);
+});
