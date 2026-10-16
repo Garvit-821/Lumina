@@ -40,3 +40,16 @@ these steps:
 5. **verify**: "Applied patch to <file>. Re-running verification...", and the next iteration starts.
 
 When the run ends, a toast in the panel shows the summary.
+
+## How the file to fix is chosen
+
+`findCandidateFiles` (`src/orchestrator/traceParser.ts`) looks for paths in the output that end in
+one of these extensions: `ts`, `tsx`, `js`, `jsx`, `mjs`, `cjs`, `py`, `go`, `rs`, `java`, `kt`, `c`,
+`cc`, `cpp`, `h`, `hpp`, `cs`, `rb`, `php`, `swift`. It drops paths inside `node_modules`, `dist`,
+`out`, `build`, `.git`, `site-packages` or `target`, and Node internals (`node:` and `internal/`).
+Paths mentioned more often rank first; ties keep the order in which they first appeared.
+
+The loop tries the first 10 candidates, resolved against the workspace folder, and uses the first
+one that exists inside the workspace. If none does, it falls back to the file in the active editor,
+then to the first open document that is not untitled. With no file at all, the run stops. Because the
+most-mentioned file wins, the file it edits may be a test file rather than the code under test.
