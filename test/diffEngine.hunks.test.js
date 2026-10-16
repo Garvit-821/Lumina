@@ -47,3 +47,9 @@ test('unchanged leading and trailing lines never appear in a hunk', () => {
   assert.deepEqual(h.originalLines, ['old']);
   assert.deepEqual(h.modifiedLines, ['new']);
 });
+
+test('clearing a file is a single hunk that applies back to empty text', () => {
+  const hunks = DiffEngine.computeHunks('a\nb\nc', '');
+  assert.equal(hunks.length, 1);
+  assert.equal(DiffEngine.applyHunks('a\nb\nc', hunks), '');
+});
