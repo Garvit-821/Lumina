@@ -27,3 +27,16 @@ A folder must be open and a model must be active, and the command must exit non-
 as `npm test`, `pytest`, `cargo test` and `tsc` do. Only one run can be active: starting another while
 one is running is silently ignored. Progress is shown only on the Loop tab, so open it before
 starting from the Command Palette.
+
+## Step by step
+
+Each iteration adds one entry to the Loop tab timeline, which is updated in place as it moves through
+these steps:
+
+1. **run_test**: runs the command. Exit code 0 ends the run with "All tests passed cleanly on iteration N!".
+2. **diagnose**: the command failed. The entry shows the last 600 characters of output, and the model is asked for a fix through `/api/generate` with temperature 0.1.
+3. **propose_fix**: the reply's first code block, or the whole reply, becomes a proposal for the chosen file. A reply shorter than 20 characters ends the run.
+4. The diff view opens, and the proposal is applied at once through the same code path as **Accept all**, which saves the file.
+5. **verify**: "Applied patch to <file>. Re-running verification...", and the next iteration starts.
+
+When the run ends, a toast in the panel shows the summary.
