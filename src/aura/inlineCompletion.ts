@@ -42,6 +42,12 @@ export class AuraInlineCompletionProvider implements vscode.InlineCompletionItem
     return this.isEnabled;
   }
 
+  /**
+   * Returns at most one completion at the cursor, or undefined when disabled, offline, without a model, outside
+   * a file or untitled buffer, when the cursor is not at the end of a line, or when the user keeps typing.
+   * Waits lumina.ghostTextDelay ms as a debounce, sends up to 60 lines before and 20 after the cursor, and caps
+   * the output at 64 tokens. Failures are logged as warnings and never shown to the user.
+   */
   public async provideInlineCompletionItems(
     document: vscode.TextDocument,
     position: vscode.Position,
