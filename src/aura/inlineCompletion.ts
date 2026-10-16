@@ -111,6 +111,10 @@ export class AuraInlineCompletionProvider implements vscode.InlineCompletionItem
     }
   }
 
+  /**
+   * Fallback for models without fill-in-the-middle support: asks the model to continue the prefix as plain
+   * text. The code after the cursor is not sent.
+   */
   private continuation(
     model: string,
     languageId: string,
