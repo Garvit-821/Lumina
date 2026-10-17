@@ -1,5 +1,13 @@
+/**
+ * Hardware class picked by ModelRecommender from RAM and usable GPU memory. It decides which chat model,
+ * embedding model and context window Lumina suggests.
+ */
 export type ProfileTier = 'low' | 'balanced' | 'power';
 
+/**
+ * Snapshot of the local machine from CalibrationTelemetry.scanSystem(). The first scan is cached and
+ * reused until a forced rescan. RAM sizes are in GB (1024^3 bytes), rounded to one decimal.
+ */
 export interface HardwareTelemetry {
   osPlatform: string;
   osRelease: string;
