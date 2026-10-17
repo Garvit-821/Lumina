@@ -63,3 +63,11 @@ test('inputs too large for the LCS table are diffed as one replacement', () => {
   assert.equal(hunks[0].oldLineCount, 2102);
   assert.equal(DiffEngine.applyHunks(before, hunks), after);
 });
+
+test('a new suggestion keeps both texts and starts with every hunk unaccepted', () => {
+  const s = DiffEngine.createSuggestion('a.ts', 'one\ntwo', 'one\n2', 'Rename');
+  assert.equal(s.originalCode, 'one\ntwo');
+  assert.equal(s.proposedCode, 'one\n2');
+  assert.equal(s.explanation, 'Rename');
+  assert.ok(s.hunks.every((h) => h.accepted === false));
+});
