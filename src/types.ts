@@ -22,6 +22,10 @@ export interface HardwareTelemetry {
   hasCuda: boolean;
 }
 
+/**
+ * Output of ModelRecommender.evaluate(): the Ollama model tags suggested for a ProfileTier and why.
+ * Shown in the Nexus Models tab and offered by the calibrate command. The models may not be installed yet.
+ */
 export interface ModelRecommendation {
   recommendedModel: string;
   fallbackModel: string;
