@@ -63,3 +63,19 @@ The Stop button is only enabled after you press **Start** on the Loop tab. A run
 Command Palette leaves it disabled, and there is no stop command. To stop such a run, press **Start**
 on the Loop tab, which clears the timeline and is ignored because a run is active but enables the
 button, then press **Stop**. Reloading the window also ends the loop.
+
+## Limits
+
+| Limit | Value |
+|---|---|
+| Iterations per run | 3, not configurable |
+| Command timeout | 5 minutes per execution |
+| Captured output | 10 MB of stdout and stderr; more ends the command with an error |
+| Output sent to the model | Last 2,000 characters |
+| Candidate files tried | First 10 |
+| Model request timeout | None; the request runs until it finishes or you stop the loop |
+| Shortest accepted reply | 20 characters |
+
+The third iteration applies its patch and then ends with "Reached maximum iterations (3) without all
+tests passing." without running the command again, so the last patch is never tested. A command
+that times out or overflows the buffer counts as a failure with exit code 1 and is diagnosed as usual.
