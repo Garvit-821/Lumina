@@ -16,6 +16,7 @@ export interface HardwareTelemetry {
   totalRamGB: number;
   freeRamGB: number;
   gpuName: string;
+  /** GPU memory in GB; 0 when none was detected. On Apple Silicon it is an estimate: 75% of unified RAM. */
   vramGB: number;
   isAppleSilicon: boolean;
   hasCuda: boolean;
