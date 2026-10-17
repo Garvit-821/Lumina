@@ -53,3 +53,13 @@ The loop tries the first 10 candidates, resolved against the workspace folder, a
 one that exists inside the workspace. If none does, it falls back to the file in the active editor,
 then to the first open document that is not untitled. With no file at all, the run stops. Because the
 most-mentioned file wins, the file it edits may be a test file rather than the code under test.
+
+## Stopping a run
+
+**Stop** on the Loop tab ends the run: it aborts a pending model request, sends a kill signal to the
+shell process running the command, and reports "Loop stopped." Patches already applied stay applied.
+
+The Stop button is only enabled after you press **Start** on the Loop tab. A run started from the
+Command Palette leaves it disabled, and there is no stop command. To stop such a run, press **Start**
+on the Loop tab, which clears the timeline and is ignored because a run is active but enables the
+button, then press **Stop**. Reloading the window also ends the loop.
