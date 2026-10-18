@@ -79,3 +79,12 @@ button, then press **Stop**. Reloading the window also ends the loop.
 The third iteration applies its patch and then ends with "Reached maximum iterations (3) without all
 tests passing." without running the command again, so the last patch is never tested. A command
 that times out or overflows the buffer counts as a failure with exit code 1 and is diagnosed as usual.
+
+## Safety notes
+
+- The loop writes and saves files without asking. Commit or stash your work first, then review the result with `git diff` and revert what you do not want.
+- Each patch replaces the whole file with the model's output. If the model drops or truncates code, that code is removed from disk.
+- The command runs through your shell, with your permissions, in the workspace folder. Only enter commands you would run yourself.
+- The full content of the chosen file and the end of the command output are sent to Ollama, and secret-file filtering does not apply here (see [Privacy and data handling](privacy.md)).
+- If the chosen file has unsaved edits, the model sees them, and the file is saved with whatever the model returns.
+- If you edit the file while the model is working, the stale-file warning appears. Cancelling it leaves the file untouched, but the loop still reports the patch as applied and moves on.
