@@ -11,3 +11,8 @@ test('whitespace-only originals accept any snippet', () => {
 test('files of five lines or fewer accept any non-empty snippet', () => {
   assert.equal(isLikelyFullFileReplacement('a();\nb();\nc();', 'x();'), true);
 });
+
+test('a snippet under 60% of the original length is rejected even if every line matches', () => {
+  const original = statements(10);
+  assert.equal(isLikelyFullFileReplacement(original.join('\n'), original.slice(0, 5).join('\n')), false);
+});
