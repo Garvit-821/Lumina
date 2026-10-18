@@ -70,6 +70,10 @@ export interface OllamaModelInfo {
   };
 }
 
+/**
+ * A model currently loaded into memory, as listed by Ollama's GET /api/ps. size and size_vram are in
+ * bytes; expires_at is the ISO time at which Ollama unloads the model if it stays idle.
+ */
 export interface OllamaRunningProcess {
   name: string;
   model: string;
