@@ -31,11 +31,18 @@ export interface ModelRecommendation {
   fallbackModel: string;
   embeddingModel: string;
   tier: ProfileTier;
+  /** Display label such as 'Balanced Profile (Speed & Precision)'; the Nexus tier pill shows only its first word. */
   tierName: string;
   reason: string;
+  /** Suggested context size in tokens: 4096, 8192 or 16384 depending on the tier. */
   contextWindow: number;
 }
 
+/**
+ * Speed of one model as measured by ModelBenchmarker.runBenchmark() on a fixed code-generation prompt
+ * (at most 256 output tokens). Token counts and speed come from Ollama's own timings when it reports
+ * them, otherwise from an estimate of one token per 4 characters.
+ */
 export interface BenchmarkResult {
   model: string;
   promptTokens: number;
