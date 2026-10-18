@@ -55,8 +55,10 @@ export interface BenchmarkResult {
   timestamp: number;
 }
 
+/** One installed model as listed by Ollama's GET /api/tags. Field names keep Ollama's snake_case. */
 export interface OllamaModelInfo {
   name: string;
+  /** Size on disk in bytes. */
   size: number;
   digest: string;
   modified_at: string;
