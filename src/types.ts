@@ -48,6 +48,7 @@ export interface BenchmarkResult {
   promptTokens: number;
   completionTokens: number;
   totalDurationSec: number;
+  /** Milliseconds from sending the request to the first streamed token, including the time to load the model. */
   timeToFirstTokenMs: number;
   tokensPerSecond: number;
   memoryUsedMB?: number;
