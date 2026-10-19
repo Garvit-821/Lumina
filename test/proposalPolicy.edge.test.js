@@ -16,3 +16,9 @@ test('a snippet under 60% of the original length is rejected even if every line 
   const original = statements(10);
   assert.equal(isLikelyFullFileReplacement(original.join('\n'), original.slice(0, 5).join('\n')), false);
 });
+
+test('re-indented lines still count as kept', () => {
+  const original = statements(10);
+  const indented = original.map((l) => `    ${l}`);
+  assert.equal(isLikelyFullFileReplacement(original.join('\n'), indented.join('\n')), true);
+});
