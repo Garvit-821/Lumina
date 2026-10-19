@@ -87,6 +87,11 @@ export interface OllamaRunningProcess {
   size_vram?: number;
 }
 
+/**
+ * A file the user can include in or exclude from chat prompts, shown as a chip in the Nexus. The context
+ * engine keeps one chip for the active editor (id 'active:<path>') plus any added files (id 'file:<path>').
+ * Only 'file' chips are produced today, and file contents are read from disk when a prompt is built.
+ */
 export interface ContextChip {
   id: string;
   label: string;
