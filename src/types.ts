@@ -116,6 +116,7 @@ export interface RAGChunk {
   endLine: number;
   content: string;
   language: string;
+  /** Vector from the configured embedding model; missing when that model is not installed (keyword search only). */
   embedding?: number[];
   tokenCount?: number;
 }
