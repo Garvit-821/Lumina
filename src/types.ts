@@ -103,6 +103,11 @@ export interface ContextChip {
   content?: string;
 }
 
+/**
+ * A slice of a workspace file stored in the local index. Files longer than 40 lines are cut into 40-line
+ * windows that overlap by 10 lines, each prefixed with a "// File: path (Lines a-b)" header; shorter files
+ * are a single chunk. startLine and endLine are 1-based and inclusive.
+ */
 export interface RAGChunk {
   id: string;
   filePath: string;
