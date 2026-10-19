@@ -22,3 +22,9 @@ test('re-indented lines still count as kept', () => {
   const indented = original.map((l) => `    ${l}`);
   assert.equal(isLikelyFullFileReplacement(original.join('\n'), indented.join('\n')), true);
 });
+
+test('keeping exactly a quarter of the original lines is enough', () => {
+  const original = statements(12);
+  const rewrite = [...original.slice(0, 3), ...statements(9, 'let other')];
+  assert.equal(isLikelyFullFileReplacement(original.join('\n'), rewrite.join('\n')), true);
+});
