@@ -48,3 +48,17 @@ These files are never indexed, never read as context chips, and dropped from the
 The check uses file names only. It does not apply to code you select for chat, to Prism, to ghost
 text or to the autonomous loop, and it does not find secrets inside ordinary files. Turn ghost text
 off before editing a secret file if you do not want its contents sent to Ollama.
+
+## Data written to disk
+
+| What | Where | When |
+|---|---|---|
+| Workspace index: chunk text, paths, line ranges, vectors | `.lumina/vector_cache.json` in the first workspace folder | Each index run |
+| Your source files | The file a proposal targets, saved after the edit | When you accept a proposal, and on every autonomous loop iteration |
+| `lumina.selectedModel` | User settings | When you pick or pull a model on the Models tab, accept a calibration recommendation, or on startup auto-selection |
+| `lumina.enableGhostText` | User settings | When you run the toggle command |
+| Last open Nexus tab | VS Code webview state | When you switch tabs |
+
+The index file holds your code in plain text, and Lumina does not add `.lumina/` to `.gitignore`;
+add it yourself. **Insert** edits the active editor without saving. The output channel is managed by
+VS Code, which may keep its contents in its own log folder.
