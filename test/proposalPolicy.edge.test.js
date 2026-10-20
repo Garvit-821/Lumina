@@ -28,3 +28,9 @@ test('keeping exactly a quarter of the original lines is enough', () => {
   const rewrite = [...original.slice(0, 3), ...statements(9, 'let other')];
   assert.equal(isLikelyFullFileReplacement(original.join('\n'), rewrite.join('\n')), true);
 });
+
+test('keeping fewer than a quarter of the original lines is rejected', () => {
+  const original = statements(12);
+  const rewrite = [...original.slice(0, 2), ...statements(10, 'let other')];
+  assert.equal(isLikelyFullFileReplacement(original.join('\n'), rewrite.join('\n')), false);
+});
