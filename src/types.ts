@@ -121,6 +121,10 @@ export interface RAGChunk {
   tokenCount?: number;
 }
 
+/**
+ * One hit from the vector store. similarity is the cosine similarity for semantic search, or the fraction
+ * of query terms found (0 to 1) for the keyword fallback. Results are sorted highest first.
+ */
 export interface VectorSearchResult {
   chunk: RAGChunk;
   similarity: number;
