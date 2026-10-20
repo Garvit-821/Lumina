@@ -62,3 +62,17 @@ off before editing a secret file if you do not want its contents sent to Ollama.
 The index file holds your code in plain text, and Lumina does not add `.lumina/` to `.gitignore`;
 add it yourself. **Insert** edits the active editor without saving. The output channel is managed by
 VS Code, which may keep its contents in its own log folder.
+
+## Network access
+
+Every HTTP request goes to `lumina.ollamaEndpoint`:
+
+- `GET /api/tags` and `GET /api/ps` for the health check and the model lists;
+- `POST /api/chat` and `POST /api/generate` for chat, Prism, ghost text, the loop and the benchmark;
+- `POST /api/embed` and `POST /api/embeddings` for indexing and retrieval;
+- `POST /api/pull` when you pull a model; Ollama itself then downloads the model from its registry.
+
+Requests use plain HTTP unless the endpoint URL starts with `https`. Lumina also starts local
+processes: `system_profiler`, `nvidia-smi` or `wmic` for the hardware scan, and your shell for the
+autonomous loop's command, which can reach the network on its own. The Nexus Content Security Policy
+allows images from `https:` sources, but the chat renderer never produces image tags.
