@@ -159,10 +159,13 @@ export interface DiffSuggestion {
   explanation: string;
   hunks: DiffHunk[];
   createdAt: number;
+  /** 'partial' means some hunks were accepted one at a time, but not all of them. */
   status: 'pending' | 'applied' | 'rejected' | 'partial';
 }
 
+/** One chat turn. The orchestrator keeps the history in memory; the webview renders each message by id. */
 export interface ChatMessage {
+  /** 'msg_user_<ms>' or 'msg_asst_<ms>'. Also used as the message's DOM element id in the webview. */
   id: string;
   role: 'user' | 'assistant' | 'system';
   content: string;
