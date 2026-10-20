@@ -146,6 +146,11 @@ export interface DiffHunk {
   accepted?: boolean;
 }
 
+/**
+ * A proposed edit to one file, built from a chat reply or the test-and-fix loop and held by PatchManager
+ * until it is accepted or rejected. proposedCode is the complete new file text. originalCode is the file
+ * as it was when proposed: if the file has changed since, accepting asks before overwriting the newer edits.
+ */
 export interface DiffSuggestion {
   id: string;
   filePath: string;
