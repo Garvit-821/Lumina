@@ -130,7 +130,12 @@ export interface VectorSearchResult {
   similarity: number;
 }
 
+/**
+ * One contiguous changed region of a DiffSuggestion. Line numbers are 1-based. An insert-only hunk has
+ * oldLineCount 0 and oldStartLine pointing at the line it is inserted before.
+ */
 export interface DiffHunk {
+  /** 1-based position within the suggestion; this is the value accept_diff's hunkIndex refers to. */
   hunkIndex: number;
   oldStartLine: number;
   oldLineCount: number;
