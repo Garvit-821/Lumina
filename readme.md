@@ -379,10 +379,9 @@ npm run build:watch
 ```
 
 ### Running Tests
-Lumina includes a standalone verification suite covering the Diff Engine, Code Chunker, Model Recommender, and Cosine Similarity math:
+Unit tests live in `test/*.test.js` and run on Node's built-in test runner (Node 21 or newer). They cover the diff engine, code chunker, model recommender, file policy, NDJSON stream reader, trace parser and the webview's markdown renderer:
 ```bash
-npm run compile
-node test/test-suite.js
+npm test
 ```
 
 ---
