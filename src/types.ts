@@ -172,10 +172,16 @@ export interface ChatMessage {
   timestamp: number;
   diffSuggestion?: DiffSuggestion;
   contextChips?: ContextChip[];
+  /** True while an assistant reply is still arriving; content stays empty until the stream ends. */
   isStreaming?: boolean;
 }
 
+/** Progress event from the test-and-fix loop (AutonomousLoopController), forwarded to the Nexus Loop tab. */
 export interface AutonomousLoopStep {
+  /**
+   * Iteration number (1-based), shared by every step of that iteration. The webview keys timeline rows
+   * by it, so a later step of the same iteration replaces the earlier row.
+   */
   stepIndex: number;
   action: 'run_test' | 'diagnose' | 'propose_fix' | 'verify' | 'completed';
   description: string;
