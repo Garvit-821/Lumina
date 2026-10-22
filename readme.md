@@ -354,7 +354,7 @@ lumina/
 │   ├── extension.ts       # Main extension activation entry point
 │   └── types.ts           # Core TypeScript types & message protocols
 ├── test/
-│   └── test-suite.js      # Unit and integration test suite
+│   └── *.test.js          # Unit tests, one file per module (node:test)
 ├── Documentation.md       # Original specification & whitepaper
 ├── esbuild.js             # Asset packaging pipeline
 ├── package.json           # Extension manifest & contribution points
