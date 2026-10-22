@@ -193,7 +193,9 @@ export interface AutonomousLoopStep {
 
 // Webview <-> Extension Messaging
 export type WebviewMessage =
+  // Sent when the user submits the chat box or a quick prompt. contextChipIds is never sent; the active chips are used.
   | { type: 'chat_send'; text: string; contextChipIds?: string[] }
+  // Clear button: aborts any reply in progress and wipes the extension-side history.
   | { type: 'chat_clear' }
   | { type: 'chat_stop' }
   | { type: 'request_calibration' }
