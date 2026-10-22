@@ -200,6 +200,7 @@ export type WebviewMessage =
   | { type: 'chat_stop' }
   | { type: 'request_calibration' }
   | { type: 'request_benchmark'; model?: string }
+  // Asks the manager to re-poll Ollama. Not sent by the current webview; models_list follows only if something changed.
   | { type: 'request_models' }
   | { type: 'select_model'; model: string }
   | { type: 'pull_model'; model: string }
