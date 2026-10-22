@@ -34,3 +34,8 @@ test('keeping fewer than a quarter of the original lines is rejected', () => {
   const rewrite = [...original.slice(0, 2), ...statements(10, 'let other')];
   assert.equal(isLikelyFullFileReplacement(original.join('\n'), rewrite.join('\n')), false);
 });
+
+test('originals made only of very short lines are judged on length alone', () => {
+  const original = Array.from({ length: 8 }, (_, i) => (i % 2 ? '}' : '{')).join('\n');
+  assert.equal(isLikelyFullFileReplacement(original, statements(8).join('\n')), true);
+});
