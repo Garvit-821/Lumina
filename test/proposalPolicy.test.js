@@ -26,3 +26,8 @@ test('a full rewrite that keeps the file structure IS treated as a replacement',
   const rewrite = file.replace('return true;', 'return config.name.length > 0;');
   assert.equal(isLikelyFullFileReplacement(file, rewrite), true);
 });
+
+test('an unrelated block of similar length is rejected', () => {
+  const unrelated = Array.from({ length: 12 }, (_, i) => `console.log(${i});`).join('\n');
+  assert.equal(isLikelyFullFileReplacement(file, unrelated), false);
+});
