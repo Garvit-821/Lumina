@@ -31,3 +31,8 @@ test('an unrelated block of similar length is rejected', () => {
   const unrelated = Array.from({ length: 12 }, (_, i) => `console.log(${i});`).join('\n');
   assert.equal(isLikelyFullFileReplacement(file, unrelated), false);
 });
+
+test('empty files accept any code; empty snippets are never replacements', () => {
+  assert.equal(isLikelyFullFileReplacement('', 'const a = 1;'), true);
+  assert.equal(isLikelyFullFileReplacement(file, '   '), false);
+});
