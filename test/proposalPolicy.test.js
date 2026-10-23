@@ -21,3 +21,8 @@ test('a short example snippet is NOT treated as the whole file', () => {
   const snippet = 'export function validate(config: Config) {\n  return Boolean(config.name);\n}';
   assert.equal(isLikelyFullFileReplacement(file, snippet), false);
 });
+
+test('a full rewrite that keeps the file structure IS treated as a replacement', () => {
+  const rewrite = file.replace('return true;', 'return config.name.length > 0;');
+  assert.equal(isLikelyFullFileReplacement(file, rewrite), true);
+});
