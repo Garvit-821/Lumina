@@ -76,3 +76,11 @@ Requests use plain HTTP unless the endpoint URL starts with `https`. Lumina also
 processes: `system_profiler`, `nvidia-smi` or `wmic` for the hardware scan, and your shell for the
 autonomous loop's command, which can reach the network on its own. The Nexus Content Security Policy
 allows images from `https:` sources, but the chat renderer never produces image tags.
+
+## Telemetry
+
+Lumina collects no usage telemetry. "Telemetry" and "calibration" in the code and the UI refer to the
+local hardware scan: OS platform and release, CPU model and core count, total and free RAM, GPU name
+and VRAM. The scan runs on your machine, and its result is used only to pick a recommended model. It
+is shown on the Models tab and in the calibration notification, and written to the **Lumina Agent**
+output channel. It is not stored or sent anywhere else.
