@@ -234,7 +234,9 @@ export type ExtensionMessage =
   | { type: 'calibration_data'; telemetry: HardwareTelemetry; recommendation: ModelRecommendation }
   | { type: 'benchmark_progress'; status: string }
   | { type: 'benchmark_result'; result: BenchmarkResult }
+  // Sent when the view loads and whenever the model manager reports a change (its 15 s poll or a model switch).
   | { type: 'models_list'; models: OllamaModelInfo[]; activeModel: string; running: OllamaRunningProcess[]; isOnline?: boolean }
+  // One status line from Ollama's pull stream. completed and total are bytes when present; status 'success' ends it.
   | { type: 'pull_progress'; model: string; status: string; completed?: number; total?: number }
   | { type: 'context_chips_updated'; chips: ContextChip[] }
   | { type: 'rag_status'; indexing: boolean; indexedFiles: number; totalChunks: number }
