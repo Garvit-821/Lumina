@@ -216,12 +216,19 @@ export type WebviewMessage =
   | { type: 'start_autonomous_loop'; testCommand: string }
   | { type: 'stop_autonomous_loop' }
   | { type: 'open_settings' }
+  // Insert button on a code block: replaces the editor selection, or inserts at the cursor. language is unused.
   | { type: 'apply_to_editor'; code: string; language?: string }
   | { type: 'open_prism' };
 
+/**
+ * Messages the extension posts to the Nexus webview. Anything posted while no view is resolved is dropped,
+ * which is why NexusViewProvider re-sends the full state each time the view is resolved.
+ */
 export type ExtensionMessage =
+  // A new chat turn. An assistant message with empty content is the placeholder that streaming fills in.
   | { type: 'chat_message'; message: ChatMessage }
   | { type: 'chat_history'; messages: ChatMessage[] }
+  // Only the new piece of reply text, to be appended; not the whole text so far.
   | { type: 'chat_stream_chunk'; messageId: string; chunk: string }
   | { type: 'chat_stream_end'; messageId: string; diffSuggestion?: DiffSuggestion }
   | { type: 'calibration_data'; telemetry: HardwareTelemetry; recommendation: ModelRecommendation }
