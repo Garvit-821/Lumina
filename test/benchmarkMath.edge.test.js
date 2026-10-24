@@ -10,3 +10,7 @@ test('throughput is rounded to one decimal place', () => {
 test('counters with a zero duration are ignored in favour of the estimate', () => {
   assert.equal(tokensPerSecond({ eval_count: 50, eval_duration: 0 }, { chars: 400, generationMs: 1000 }), 100);
 });
+
+test('an eval_count of zero falls back to the estimate', () => {
+  assert.equal(tokensPerSecond({ eval_count: 0, eval_duration: 1e9 }, { chars: 8, generationMs: 2000 }), 1);
+});
