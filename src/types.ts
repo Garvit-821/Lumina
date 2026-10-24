@@ -205,9 +205,11 @@ export type WebviewMessage =
   | { type: 'select_model'; model: string }
   | { type: 'pull_model'; model: string }
   | { type: 'toggle_context_chip'; chipId: string }
+  // filePath is absolute. Not sent by the current webview.
   | { type: 'add_file_as_chip'; filePath: string }
   | { type: 'remove_context_chip'; chipId: string }
   | { type: 'index_workspace' }
+  // Accepts the whole suggestion, or only one hunk when hunkIndex is given; answered with diff_updated.
   | { type: 'accept_diff'; suggestionId: string; hunkIndex?: number }
   | { type: 'reject_diff'; suggestionId: string }
   | { type: 'open_diff_view'; suggestionId: string }
