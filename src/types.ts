@@ -243,4 +243,5 @@ export type ExtensionMessage =
   | { type: 'diff_updated'; suggestion: DiffSuggestion }
   | { type: 'autonomous_step'; step: AutonomousLoopStep }
   | { type: 'autonomous_finished'; success: boolean; summary: string }
+  // Short notice in the webview. Its severity and wording also tell the webview which loading spinners to stop.
   | { type: 'toast'; severity: 'info' | 'warning' | 'error'; text: string };
