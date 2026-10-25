@@ -83,6 +83,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     orchestrator,
     autonomousLoop
   );
+  // retainContextWhenHidden keeps the webview page alive while the sidebar is hidden, so a reply that is
+  // still streaming and the scroll position survive; the cost is keeping the page in memory.
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(NexusViewProvider.viewType, nexusProvider, {
       webviewOptions: { retainContextWhenHidden: true },
