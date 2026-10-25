@@ -21,3 +21,16 @@ run every 15 seconds, so the display can lag by that long.
 
 Chat does not check the online state. It sends the request anyway and shows the network error in the
 reply, for example "**Error:** fetch failed".
+
+## Model not found or no model selected
+
+**Symptom:** a chat reply ends with "**Error:** Ollama chat failed (HTTP 404): ..." and Ollama's
+model-not-found message, Prism shows a similar error, or chat answers "No Active Model Selected".
+
+**Cause:** `lumina.selectedModel` names a model that is not installed, or no model is active at all.
+Lumina does not validate the name: **Use <model>** after calibration, a typo in settings, or a model
+removed with `ollama rm` all leave a name that Ollama rejects.
+
+**Fix:** run `ollama list` to see what is installed, then pick a model in the Models tab dropdown, or
+pull the missing one with `ollama pull <name>`. With no models installed, the dropdown reads "No local
+models — pull one below".
