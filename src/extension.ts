@@ -17,6 +17,13 @@ import { LuminaStatusBar } from './utils/statusBar';
 import { LuminaLogger } from './utils/logger';
 import { getLuminaConfig } from './utils/config';
 
+/**
+ * Extension entry point, run once VS Code has finished starting up (activation event onStartupFinished).
+ * Creates the shared services (Ollama client, model manager, RAG context engine, chat orchestrator and
+ * test-and-fix loop), then registers the diff document provider, ghost-text completions, the Nexus
+ * sidebar and the lumina.* commands. It ends with an optional hardware calibration that runs in the
+ * background and never blocks activation.
+ */
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   const logger = LuminaLogger.getInstance();
   logger.log('✨ Lumina AI Coding Agent activating...');
