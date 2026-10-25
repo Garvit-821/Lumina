@@ -30,7 +30,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   // 1. Core Services Setup
   const config = vscode.workspace.getConfiguration('lumina');
+  // Single HTTP client shared by every service; its base URL is updated in place when the endpoint setting changes.
   const ollamaClient = new OllamaClient(getLuminaConfig().endpoint);
+  // Owns the active-model choice and polls Ollama every 15 s for its health and the installed and loaded models.
   const modelManager = new OllamaModelManager(ollamaClient);
   const contextEngine = new ContextEngine(ollamaClient);
   const orchestrator = new SovereignOrchestrator(modelManager, contextEngine);
