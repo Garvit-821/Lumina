@@ -19,3 +19,8 @@ test('the estimate assumes four characters per token, rounded up', () => {
   // 10 chars -> 3 tokens in one second
   assert.equal(tokensPerSecond({}, { chars: 10, generationMs: 1000 }), 3);
 });
+
+test('the estimate is 0 for negative durations or character counts', () => {
+  assert.equal(tokensPerSecond({}, { chars: 100, generationMs: -5 }), 0);
+  assert.equal(tokensPerSecond({}, { chars: -1, generationMs: 100 }), 0);
+});
