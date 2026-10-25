@@ -14,3 +14,8 @@ test('counters with a zero duration are ignored in favour of the estimate', () =
 test('an eval_count of zero falls back to the estimate', () => {
   assert.equal(tokensPerSecond({ eval_count: 0, eval_duration: 1e9 }, { chars: 8, generationMs: 2000 }), 1);
 });
+
+test('the estimate assumes four characters per token, rounded up', () => {
+  // 10 chars -> 3 tokens in one second
+  assert.equal(tokensPerSecond({}, { chars: 10, generationMs: 1000 }), 3);
+});
