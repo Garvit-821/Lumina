@@ -112,6 +112,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
           const message = `Lumina Hardware Calibration:\n• GPU/VRAM: ${telemetry.gpuName} (${telemetry.vramGB}GB)\n• RAM: ${telemetry.totalRamGB}GB\n• Recommendation: ${recommendation.recommendedModel} (${recommendation.tierName})`;
 
+          // Not awaited, so the progress notification closes as soon as the scan finishes while this prompt stays open.
           vscode.window.showInformationMessage(
             message,
             `Use ${recommendation.recommendedModel}`,
