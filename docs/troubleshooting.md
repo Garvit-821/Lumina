@@ -51,3 +51,17 @@ models — pull one below".
 the error from Ollama. If the toggle command seems to do nothing, look for a `lumina.enableGhostText`
 value in workspace settings, which overrides the user setting the command writes. A large model may
 answer too slowly to be useful; see [Ghost text and fill-in-the-middle](models.md#ghost-text-and-fill-in-the-middle).
+
+## Search is keyword-only
+
+**Symptom:** after indexing, the output channel shows `Embedding model "nomic-embed-text" is not
+available in Ollama; using keyword search only.`, and answers pick up unrelated workspace code or none.
+
+**Cause:** the probe request to the embedding model returned no vector, usually because the model is
+not pulled, so the chunks were stored without embeddings. Retrieval then matches the words of 3 or
+more characters in your message against the chunk text.
+
+**Fix:** pull the model with `ollama pull nomic-embed-text` (or the model set in
+`lumina.embeddingModel`), then run **Index workspace** again. Pull it in a terminal rather than on the
+Models tab, because a model pulled there becomes the active chat model. Re-index after any change to
+`lumina.embeddingModel` too.
