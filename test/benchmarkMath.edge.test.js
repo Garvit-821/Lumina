@@ -24,3 +24,7 @@ test('the estimate is 0 for negative durations or character counts', () => {
   assert.equal(tokensPerSecond({}, { chars: 100, generationMs: -5 }), 0);
   assert.equal(tokensPerSecond({}, { chars: -1, generationMs: 100 }), 0);
 });
+
+test('model names are compared case-insensitively', () => {
+  assert.equal(sameModel('Llama3:Latest', 'llama3'), true);
+});
