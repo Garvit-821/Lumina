@@ -28,3 +28,8 @@ test('the estimate is 0 for negative durations or character counts', () => {
 test('model names are compared case-insensitively', () => {
   assert.equal(sameModel('Llama3:Latest', 'llama3'), true);
 });
+
+test('an untagged name only matches the :latest tag', () => {
+  assert.equal(sameModel('llama3', 'llama3:8b'), false);
+  assert.equal(sameModel('llama3:8b', 'llama3:latest'), false);
+});
