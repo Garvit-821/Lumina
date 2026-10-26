@@ -196,6 +196,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       }
     }),
 
+    // Marks a proposed change as rejected without touching the file. Expects the suggestion id as its
+    // argument; run with no id (for example from the Command Palette) it does nothing.
     vscode.commands.registerCommand('lumina.rejectDiff', (suggestionId?: string) => {
       if (suggestionId) {
         PatchManager.reject(suggestionId);
