@@ -106,6 +106,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
           title: 'Lumina: Scanning Hardware Telemetry...',
         },
         async () => {
+          // true skips the cached scan so a manual calibration reflects the machine as it is now.
           const telemetry = await CalibrationTelemetry.scanSystem(true);
           const recommendation = ModelRecommender.evaluate(telemetry);
 
