@@ -34,3 +34,20 @@ removed with `ollama rm` all leave a name that Ollama rejects.
 **Fix:** run `ollama list` to see what is installed, then pick a model in the Models tab dropdown, or
 pull the missing one with `ollama pull <name>`. With no models installed, the dropdown reads "No local
 models — pull one below".
+
+## No ghost text appears
+
+**Symptom:** typing in an editor never shows gray inline suggestions.
+
+**Cause:** Lumina only asks for a completion when all of these hold:
+
+- `lumina.enableGhostText` is on, and so is VS Code's `editor.inlineSuggest.enabled`;
+- the last health check saw Ollama online, and a model is active;
+- the document is a file on disk or an untitled file, not an output panel or a virtual document;
+- the cursor is at the end of its line, with some non-blank text in the 60 lines before it;
+- you paused typing for `lumina.ghostTextDelay` ms (default 350), and the model returned some text.
+
+**Fix:** check the conditions above, then look in the output channel for "Ghost text skipped:" and
+the error from Ollama. If the toggle command seems to do nothing, look for a `lumina.enableGhostText`
+value in workspace settings, which overrides the user setting the command writes. A large model may
+answer too slowly to be useful; see [Ghost text and fill-in-the-middle](models.md#ghost-text-and-fill-in-the-middle).
