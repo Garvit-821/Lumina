@@ -219,10 +219,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   // 6. Startup Calibration
   const autoCalibrate = config.get<boolean>('autoCalibrateOnStartup', true);
   if (autoCalibrate) {
+    // Not awaited, so activation finishes immediately; any failure is only logged as a warning.
     CalibrationTelemetry.scanSystem()
       .then(async (telemetry) => {
         const rec = ModelRecommender.evaluate(telemetry);
         logger.log('Startup telemetry calibrated', { profile: rec.tier, recommended: rec.recommendedModel });
+        // Keep a model that is already active: the lumina.selectedModel setting, or the first installed
+        // model the manager picked on its initial poll if that finished first.
         if (modelManager.getActiveModel()) return;
 
         // Only auto-select the recommendation if it is installed; otherwise every chat would fail with "model not found".
