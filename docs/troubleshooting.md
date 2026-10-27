@@ -90,3 +90,19 @@ from. Accepting writes the complete proposed file, so the newer edits would be l
 **Fix:** choose **Apply anyway** only if you want to discard the newer edits. Otherwise cancel, which
 leaves the file and the proposal untouched, and ask Prism or chat again so the proposal is based on the
 current text. During an autonomous loop run, do not edit the file being fixed.
+
+## Benchmark fails
+
+**Symptom:** "Lumina: Benchmark failed." followed by a reason, "Benchmark error: ..." on the Models
+tab, or a warning that no model is selected.
+
+**Cause:** one of the following:
+
+- no model is active ("Lumina: No active model selected to benchmark." or "No model available to benchmark.");
+- Ollama is offline or the endpoint is wrong, which gives a network error such as `fetch failed`;
+- the model is not installed (`Ollama generate failed (HTTP 404): ...`) or cannot generate text, such as an embedding model that became active after a pull on the Models tab;
+- the model streamed no text ("<model> produced no output.").
+
+**Fix:** start Ollama, select an installed chat model on the Models tab and run the benchmark again.
+The first run includes loading the model, which can take a while for large models; the benchmark
+has no timeout.
