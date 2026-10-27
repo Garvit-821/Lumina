@@ -206,6 +206,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
     // Focus Nexus Sidebar
     vscode.commands.registerCommand('lumina.focusNexus', () => {
+      // "<view id>.focus" is the command VS Code generates for each contributed view.
       vscode.commands.executeCommand('lumina.nexusView.focus');
     }),
 
