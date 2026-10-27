@@ -15,3 +15,7 @@ const tier = (t) => ModelRecommender.evaluate(t).tier;
 test('32 GB of RAM reaches the power tier without a graphics card', () => {
   assert.equal(tier(pc(32)), 'power');
 });
+
+test('a 16 GB graphics card reaches the power tier on a 16 GB machine', () => {
+  assert.equal(tier(pc(16, 16)), 'power');
+});
