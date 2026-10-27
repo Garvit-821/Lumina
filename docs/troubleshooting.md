@@ -78,3 +78,15 @@ that is not untitled was active when you sent the message, the reply's first cod
 **Fix:** select the code to replace before sending, or ask for the complete file. Prism always
 produces a diff for targeted edits, and **Insert** on the code block puts it at the cursor without a
 diff. The exact rules are in [When chat does not offer a diff](diff-review.md#when-chat-does-not-offer-a-diff).
+
+## File changed since the proposal
+
+**Symptom:** a modal warning says "<file> has changed since Lumina proposed this edit. Applying it
+will overwrite your newer changes."
+
+**Cause:** the document, including unsaved edits, no longer matches the text the proposal was built
+from. Accepting writes the complete proposed file, so the newer edits would be lost.
+
+**Fix:** choose **Apply anyway** only if you want to discard the newer edits. Otherwise cancel, which
+leaves the file and the proposal untouched, and ask Prism or chat again so the proposal is based on the
+current text. During an autonomous loop run, do not edit the file being fixed.
