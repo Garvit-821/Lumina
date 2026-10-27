@@ -1,0 +1,17 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { ModelRecommender } = require('../out/calibration/recommender');
+
+const pc = (totalRamGB, vramGB = 0) => ({
+  osPlatform: 'linux', osRelease: '6.8', cpuModel: 'Ryzen 5', cpuCores: 8, freeRamGB: 4,
+  gpuName: vramGB ? 'Discrete GPU' : 'Integrated', hasCuda: vramGB > 0, isAppleSilicon: false, totalRamGB, vramGB,
+});
+const mac = (totalRamGB) => ({
+  osPlatform: 'darwin', osRelease: '23.4.0', cpuModel: 'Apple M2', cpuCores: 8, freeRamGB: 4,
+  gpuName: 'Apple M2', hasCuda: false, isAppleSilicon: true, totalRamGB, vramGB: totalRamGB,
+});
+const tier = (t) => ModelRecommender.evaluate(t).tier;
+
+test('32 GB of RAM reaches the power tier without a graphics card', () => {
+  assert.equal(tier(pc(32)), 'power');
+});
