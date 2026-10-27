@@ -65,3 +65,16 @@ more characters in your message against the chunk text.
 `lumina.embeddingModel`), then run **Index workspace** again. Pull it in a terminal rather than on the
 Models tab, because a model pulled there becomes the active chat model. Re-index after any change to
 `lumina.embeddingModel` too.
+
+## Chat does not offer a diff
+
+**Symptom:** a reply contains code, but no proposal box with **Accept all**, **Review diff** and
+**Reject** appears under it.
+
+**Cause:** chat only creates a proposal when it can place the code safely: an editor showing a file
+that is not untitled was active when you sent the message, the reply's first code block has at least
+10 characters, and either you had code selected or the block looks like a complete version of the file.
+
+**Fix:** select the code to replace before sending, or ask for the complete file. Prism always
+produces a diff for targeted edits, and **Insert** on the code block puts it at the cursor without a
+diff. The exact rules are in [When chat does not offer a diff](diff-review.md#when-chat-does-not-offer-a-diff).
