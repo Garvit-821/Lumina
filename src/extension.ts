@@ -243,6 +243,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   logger.log('🌌 Lumina Agent initialized and ready.');
 }
 
+/**
+ * Called when the extension is deactivated or VS Code shuts down. It only logs: everything registered in
+ * context.subscriptions is disposed by VS Code itself.
+ */
 export function deactivate(): void {
   LuminaLogger.getInstance().log('Lumina deactivated.');
 }
