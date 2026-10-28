@@ -120,3 +120,17 @@ has no timeout.
 
 If nothing happens at all, a run may already be in progress; a new start is ignored until it ends.
 See [Stopping a run](autonomous-loop.md#stopping-a-run).
+
+## The Prism shortcut does nothing
+
+**Symptom:** pressing the shortcut does not open the Prism quick pick.
+
+**Cause:** the shortcut is Cmd+Alt+K on macOS and Ctrl+Alt+K on Windows and Linux, not Cmd+K or
+Ctrl+K, and it only fires while a text editor has focus (`editorTextFocus`). It does nothing from the
+Nexus panel, the terminal or the Explorer. Another extension, or a keyboard layout where Ctrl+Alt
+acts as AltGr, can also claim the combination.
+
+**Fix:** click into the editor and try again, or run **Lumina: Open Prism Command Bar** from the
+Command Palette or the lightning button in the Nexus header. To use another key, open **Preferences:
+Open Keyboard Shortcuts** and search for `lumina.prism`. If Prism opens but warns "Open a file in the
+editor to use Prism.", open a file in an editor first.
