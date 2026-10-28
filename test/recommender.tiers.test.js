@@ -19,3 +19,8 @@ test('32 GB of RAM reaches the power tier without a graphics card', () => {
 test('a 16 GB graphics card reaches the power tier on a 16 GB machine', () => {
   assert.equal(tier(pc(16, 16)), 'power');
 });
+
+test('24 GB Apple Silicon is power, 18 GB is balanced', () => {
+  assert.equal(tier(mac(24)), 'power');
+  assert.equal(tier(mac(18)), 'balanced');
+});
