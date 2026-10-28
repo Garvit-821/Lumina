@@ -24,3 +24,7 @@ test('24 GB Apple Silicon is power, 18 GB is balanced', () => {
   assert.equal(tier(mac(24)), 'power');
   assert.equal(tier(mac(18)), 'balanced');
 });
+
+test('8 GB Apple Silicon is balanced thanks to unified memory', () => {
+  assert.equal(tier(mac(8)), 'balanced');
+});
