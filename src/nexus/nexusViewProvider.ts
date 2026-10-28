@@ -48,6 +48,11 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
     this.setupListeners();
   }
 
+  /**
+   * Called by VS Code when the sidebar view is first shown, and again if it is recreated. Enables scripts,
+   * limits local resources to the media and resources folders, installs the HTML and the message handler,
+   * then sends the initial state after a 200 ms delay to give the page's script time to start listening.
+   */
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
     _context: vscode.WebviewViewResolveContext,
