@@ -28,6 +28,10 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
   private orchestrator: SovereignOrchestrator;
   private autonomousLoop: AutonomousLoopController;
 
+  /**
+   * Stores the shared services and subscribes to their events straight away, so updates are relayed as
+   * soon as a view exists. Events fired while no view is resolved are dropped.
+   */
   constructor(
     extensionUri: vscode.Uri,
     manager: OllamaModelManager,
