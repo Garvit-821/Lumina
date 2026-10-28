@@ -106,3 +106,17 @@ tab, or a warning that no model is selected.
 **Fix:** start Ollama, select an installed chat model on the Models tab and run the benchmark again.
 The first run includes loading the model, which can take a while for large models; the benchmark
 has no timeout.
+
+## Autonomous loop stops early
+
+**Symptom:** the Loop tab shows a failed step or a warning toast before three iterations have run.
+
+**Cause and fix**, by message:
+
+- "No workspace open.": open a folder. The loop runs in the first workspace folder.
+- "Could not synthesize automated fix. Stopping loop." with "Agent was unable to produce an automatic patch.": no model is active; no file named in the output exists in the workspace and no file is open; the model request failed ("Diagnosis error:" in the output channel); or the reply was shorter than 20 characters. Select a model, open the file you expect to be fixed, or use a command whose output names the failing file.
+- "Loop stopped.": Stop was pressed.
+- "Reached maximum iterations (3) without all tests passing.": the normal end after three failed iterations. The last patch was applied but not tested.
+
+If nothing happens at all, a run may already be in progress; a new start is ignored until it ends.
+See [Stopping a run](autonomous-loop.md#stopping-a-run).
