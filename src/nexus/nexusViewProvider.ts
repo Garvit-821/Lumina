@@ -12,7 +12,14 @@ import { LuminaDiffProvider } from '../diff/diffProvider';
 import { WebviewMessage, ExtensionMessage } from '../types';
 import { LuminaLogger } from '../utils/logger';
 
+/**
+ * Hosts the Nexus sidebar (view id lumina.nexusView): builds its HTML, relays service events to the page
+ * as ExtensionMessage objects and carries out the WebviewMessage requests the page sends back.
+ * Created once in activate(); VS Code calls resolveWebviewView when the view is first shown and again
+ * if it is recreated.
+ */
 export class NexusViewProvider implements vscode.WebviewViewProvider {
+  /** Must match the view id in package.json; lumina.focusNexus focuses it as 'lumina.nexusView.focus'. */
   public static readonly viewType = 'lumina.nexusView';
   private _view?: vscode.WebviewView;
   private extensionUri: vscode.Uri;
