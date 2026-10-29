@@ -81,6 +81,10 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
     }, 200);
   }
 
+  /**
+   * Forwards events from the model manager, context engine, orchestrator and test-and-fix loop to the page.
+   * Runs once from the constructor; the subscriptions are never disposed and last as long as the extension.
+   */
   private setupListeners(): void {
     this.manager.onStatusChange(({ isOnline, activeModel }) => {
       this.postMessage({
