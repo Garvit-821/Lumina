@@ -166,8 +166,14 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
     }
   }
 
+  /**
+   * Carries out one request from the page. Results come back as further messages, often a toast; failures
+   * in calibration, benchmarking, indexing and pulls are reported as error toasts rather than thrown.
+   * Calls are not queued, so a chat_stop is handled while an earlier chat_send is still streaming.
+   */
   private async handleWebviewMessage(message: WebviewMessage): Promise<void> {
     switch (message.type) {
+      // Resolves only when the reply has finished streaming; the text reaches the page through orchestrator events.
       case 'chat_send':
         await this.orchestrator.handleUserMessage(message.text);
         break;
