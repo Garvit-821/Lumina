@@ -134,3 +134,18 @@ acts as AltGr, can also claim the combination.
 Command Palette or the lightning button in the Nexus header. To use another key, open **Preferences:
 Open Keyboard Shortcuts** and search for `lumina.prism`. If Prism opens but warns "Open a file in the
 editor to use Prism.", open a file in an editor first.
+
+## Where to find logs
+
+Open **View > Output** and choose **Lumina Agent** in the dropdown. Each line has a UTC time, a level
+and a message, with optional JSON context:
+
+```text
+[HH:MM:SS] [WARN] Ghost text skipped: <error>
+```
+
+Useful lines to look for: "Startup telemetry calibrated", "Recommended model ... is not installed",
+"Embedding model ... is not available", "Failed to list Ollama models", "Orchestrator error:",
+"Prism generation error:", "Diagnosis error:" and "Failed to persist vector cache". The panel never
+opens by itself. For problems inside the Nexus panel, run **Developer: Open Webview Developer Tools**
+to see its console.
