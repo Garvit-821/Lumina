@@ -32,3 +32,7 @@ test('8 GB Apple Silicon is balanced thanks to unified memory', () => {
 test('a 6 GB graphics card lifts an 8 GB PC to the balanced tier', () => {
   assert.equal(tier(pc(8, 6)), 'balanced');
 });
+
+test('an 8 GB PC with a 4 GB card stays in the low tier', () => {
+  assert.equal(tier(pc(8, 4)), 'low');
+});
