@@ -182,6 +182,7 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
         this.orchestrator.abortCurrent();
         break;
 
+      // Stop any reply in progress before dropping the history.
       case 'chat_clear':
         this.orchestrator.abortCurrent();
         this.orchestrator.clearHistory();
