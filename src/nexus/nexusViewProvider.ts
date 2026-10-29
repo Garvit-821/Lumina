@@ -125,10 +125,15 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
     });
   }
 
+  /**
+   * Brings a newly resolved view up to date: chat history, models and connection state, context chips,
+   * index counts and the (cached) hardware scan. A failed scan is ignored so the rest still loads.
+   */
   private async sendInitialState(): Promise<void> {
     // Restore the conversation when the view is re-created (e.g. after moving it or reloading the webview).
     this.postMessage({ type: 'chat_history', messages: this.orchestrator.getHistory() });
 
+    // refreshModels only fires onStatusChange when something changed, so models_list is posted explicitly here.
     const { models, running } = await this.manager.refreshModels();
     this.postMessage({
       type: 'models_list',
