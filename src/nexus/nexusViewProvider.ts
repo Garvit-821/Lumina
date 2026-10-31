@@ -221,6 +221,7 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
         }
         break;
 
+      // No direct reply: the manager emits onStatusChange (and so models_list) only if something changed.
       case 'request_models':
         await this.manager.refreshModels();
         break;
