@@ -41,3 +41,8 @@ test('12 GB of RAM without a GPU is balanced, 11 GB is low', () => {
   assert.equal(tier(pc(12)), 'balanced');
   assert.equal(tier(pc(11)), 'low');
 });
+
+test('the context window doubles with each tier', () => {
+  const windows = [pc(8), pc(16), pc(64)].map((t) => ModelRecommender.evaluate(t).contextWindow);
+  assert.deepEqual(windows, [4096, 8192, 16384]);
+});
