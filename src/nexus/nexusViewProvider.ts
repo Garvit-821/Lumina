@@ -189,6 +189,7 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
         this.postMessage({ type: 'toast', severity: 'info', text: 'Chat history cleared.' });
         break;
 
+      // true forces a fresh scan instead of returning the cached one.
       case 'request_calibration':
         try {
           const telemetry = await CalibrationTelemetry.scanSystem(true);
