@@ -36,3 +36,8 @@ test('a 6 GB graphics card lifts an 8 GB PC to the balanced tier', () => {
 test('an 8 GB PC with a 4 GB card stays in the low tier', () => {
   assert.equal(tier(pc(8, 4)), 'low');
 });
+
+test('12 GB of RAM without a GPU is balanced, 11 GB is low', () => {
+  assert.equal(tier(pc(12)), 'balanced');
+  assert.equal(tier(pc(11)), 'low');
+});
