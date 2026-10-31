@@ -201,6 +201,8 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
         }
         break;
 
+      // Falls back to the active model when the page sends none. Unlike the lumina.benchmark command, this
+      // path does not update the status bar's tokens/sec figure.
       case 'request_benchmark':
         const modelToBench = message.model || this.manager.getActiveModel();
         if (!modelToBench) {
