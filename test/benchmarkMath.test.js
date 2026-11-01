@@ -11,3 +11,9 @@ test('falls back to a wall-clock estimate, and to 0 with no data', () => {
   assert.equal(tokensPerSecond({}, { chars: 400, generationMs: 2000 }), 50);
   assert.equal(tokensPerSecond({}, { chars: 0, generationMs: 0 }), 0);
 });
+
+test('model names match with or without the :latest tag', () => {
+  assert.equal(sameModel('llama3', 'llama3:latest'), true);
+  assert.equal(sameModel('qwen2.5-coder:7b', 'qwen2.5-coder:7b'), true);
+  assert.equal(sameModel('qwen2.5-coder:7b', 'qwen2.5-coder:14b'), false);
+});
