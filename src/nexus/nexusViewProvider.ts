@@ -260,6 +260,8 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
         }
         break;
 
+      // With hunkIndex only that hunk is applied, otherwise the whole proposal; the file is saved after a
+      // successful apply, and the suggestion is sent back as diff_updated so the page can relabel its card.
       case 'accept_diff':
         if (typeof message.hunkIndex === 'number') {
           await PatchManager.acceptHunk(message.suggestionId, message.hunkIndex);
