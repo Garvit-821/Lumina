@@ -38,3 +38,25 @@ loop is described on its own page: [Autonomous test and fix loop](autonomous-loo
 
 `deactivate()` only writes a log line. Everything pushed to `context.subscriptions` (status bar,
 model manager and its timer, ghost text provider, registrations) is disposed by VS Code.
+
+## Ollama layer
+
+`OllamaClient` (`src/ollama/client.ts`) wraps the Ollama HTTP API with the global `fetch`:
+
+| Method | Request | Timeout |
+|---|---|---|
+| `isHealthy` | `GET /api/tags` | 3 s |
+| `listModels` | `GET /api/tags` | 5 s |
+| `listRunning` | `GET /api/ps` | 4 s |
+| `generate` | `POST /api/generate`, `stream: false`, optional `suffix` | caller's signal, else 60 s |
+| `generateStream` | `POST /api/generate`, `stream: true` | caller's signal only |
+| `chatStream` | `POST /api/chat`, `stream: true` | caller's signal only |
+| `getEmbeddings` | `POST /api/embed`, then `POST /api/embeddings` | 15 s each |
+| `getEmbeddingsBatch` | `POST /api/embed` with an array input | 15 s plus 2 s per input |
+| `pullModel` | `POST /api/pull`, `stream: true` | none |
+
+Streams are parsed by `readNdjson` (`ndjson.ts`), which reassembles lines split across network
+chunks and skips malformed lines. `assertOk` turns a non-2xx response into an error such as
+`Ollama chat failed (HTTP 404): ...` that carries Ollama's own message. `OllamaModelManager` keeps
+the active model, refreshes the model and running lists every 15 seconds, and fires `onStatusChange`
+only when the online state, active model, model list or running list changed.
