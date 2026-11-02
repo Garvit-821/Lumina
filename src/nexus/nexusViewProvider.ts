@@ -231,6 +231,7 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
         this.postMessage({ type: 'toast', severity: 'info', text: `Active model set to: ${message.model}` });
         break;
 
+      // Not awaited: a download can take minutes and reports back through pull_progress messages.
       case 'pull_model':
         this.pullModelStream(message.model);
         break;
