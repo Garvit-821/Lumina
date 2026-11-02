@@ -60,3 +60,18 @@ chunks and skips malformed lines. `assertOk` turns a non-2xx response into an er
 `Ollama chat failed (HTTP 404): ...` that carries Ollama's own message. `OllamaModelManager` keeps
 the active model, refreshes the model and running lists every 15 seconds, and fires `onStatusChange`
 only when the online state, active model, model list or running list changed.
+
+## Chat orchestrator
+
+`SovereignOrchestrator.handleUserMessage` runs one chat turn:
+
+1. Appends the user message to the in-memory history.
+2. If no model is active, replies with an explanatory message and stops. Otherwise it appends an empty assistant message that the webview shows as typing.
+3. Records the active editor and the selection offsets as the possible diff target. Untitled documents are skipped.
+4. Builds the system prompt with `PromptBuilder`: workspace name, active file path, language and line count, the selected code, the content of included context chips, and up to `lumina.maxRagChunks` retrieved chunks with match scores.
+5. Sends the system prompt, the last 8 earlier non-empty messages and the new message to `/api/chat` with `lumina.temperature`, forwarding each streamed delta to the webview.
+6. When the stream ends, `buildDiffSuggestion` may turn the reply's first code block into a proposal; see [When chat does not offer a diff](diff-review.md#when-chat-does-not-offer-a-diff).
+
+Stopping aborts the request through an `AbortController` and appends "_Stopped._" to the partial
+reply. Other errors are appended as "**Error:** ..." and logged. Clearing the chat aborts the current
+request and empties the history. History is never written to disk.
