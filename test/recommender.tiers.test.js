@@ -46,3 +46,12 @@ test('the context window doubles with each tier', () => {
   const windows = [pc(8), pc(16), pc(64)].map((t) => ModelRecommender.evaluate(t).contextWindow);
   assert.deepEqual(windows, [4096, 8192, 16384]);
 });
+
+test('each tier names a fallback and an embedding model', () => {
+  const low = ModelRecommender.evaluate(pc(8));
+  const balanced = ModelRecommender.evaluate(pc(16));
+  const power = ModelRecommender.evaluate(pc(64));
+  assert.deepEqual([low.fallbackModel, low.embeddingModel], ['phi3:mini', 'all-minilm:latest']);
+  assert.deepEqual([balanced.fallbackModel, balanced.embeddingModel], ['llama3.1:8b', 'nomic-embed-text:latest']);
+  assert.deepEqual([power.fallbackModel, power.embeddingModel], ['qwen2.5-coder:14b', 'nomic-embed-text:latest']);
+});
