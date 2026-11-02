@@ -55,3 +55,7 @@ test('each tier names a fallback and an embedding model', () => {
   assert.deepEqual([balanced.fallbackModel, balanced.embeddingModel], ['llama3.1:8b', 'nomic-embed-text:latest']);
   assert.deepEqual([power.fallbackModel, power.embeddingModel], ['qwen2.5-coder:14b', 'nomic-embed-text:latest']);
 });
+
+test('the reason quotes the detected amount of RAM', () => {
+  assert.ok(ModelRecommender.evaluate(pc(16)).reason.includes('16GB RAM'));
+});
