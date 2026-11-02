@@ -248,6 +248,7 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
         this.contextEngine.addFileChip(message.filePath);
         break;
 
+      // Each progress step becomes an info toast; the page stops its spinner on rag_status or an "Indexed" toast.
       case 'index_workspace':
         try {
           const chunkCount = await this.contextEngine.indexWorkspace((msg) => {
