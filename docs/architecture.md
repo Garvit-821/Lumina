@@ -96,3 +96,14 @@ webview. Details and limits are in [Workspace search and context](rag.md).
 
 Chat, Prism and the autonomous loop all use this pipeline. Proposals do not survive a window
 reload. See [Reviewing diffs](diff-review.md).
+
+## Prism
+
+`PrismCommandBar.open` (`src/prism/floatingCommandBar.ts`) shows a quick pick with a custom
+instruction and five presets; a preset's description text becomes the instruction. It snapshots the
+document text and the selection offsets before calling the model, so edits made during generation
+show up later as a stale file. The prompt holds up to `min(3, lumina.maxRagChunks)` retrieved chunks,
+the file name, the scope, the instruction and the selected code or whole file, and it is streamed from
+`/api/generate` with `lumina.temperature`. `extractCodeReply` takes the first code block, or the whole
+reply, which is spliced into the snapshot and registered as a suggestion before the comparison view
+opens. Cancelling the progress notification aborts the request.
