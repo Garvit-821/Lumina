@@ -301,6 +301,8 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
         vscode.commands.executeCommand('workbench.action.openSettings', 'lumina');
         break;
 
+      // Replaces the selection, or inserts at the cursor when nothing is selected, in whichever editor is active
+      // now. The edit is not awaited, so the confirmation shows even if the edit is later refused.
       case 'apply_to_editor':
         const editor = vscode.window.activeTextEditor;
         if (editor) {
