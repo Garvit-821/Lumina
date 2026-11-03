@@ -599,6 +599,7 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
   }
 }
 
+/** Random 128-bit value, base64 encoded, used as the CSP script nonce; a new one is made for every render. */
 function getNonce(): string {
   return randomBytes(16).toString('base64');
 }
