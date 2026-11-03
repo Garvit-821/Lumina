@@ -364,10 +364,16 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
     }
   }
 
+  /** Sends a message to the page; it is silently dropped when no view has been resolved yet. */
   private postMessage(message: ExtensionMessage): void {
     this._view?.webview.postMessage(message);
   }
 
+  /**
+   * Builds the page HTML. The script and stylesheet load from dist/nexus/media (copied there by esbuild.js),
+   * and the Content Security Policy only runs the script tag carrying this render's nonce.
+   * nexus.js looks up the element ids used here, so rename them in both places.
+   */
   private getHtmlForWebview(webview: vscode.Webview): string {
     const scriptUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this.extensionUri, 'dist', 'nexus', 'media', 'nexus.js')
