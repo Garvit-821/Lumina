@@ -86,3 +86,13 @@ keyword matching. `getActiveChipsContent` reads each included chip's file from d
 24,000 characters and skips secret files. The filters live in `filePolicy.ts` and are shared by the
 crawler, the chips and the cache loader. The `onChipsUpdated` and `onStatusUpdated` events feed the
 webview. Details and limits are in [Workspace search and context](rag.md).
+
+## Diff pipeline
+
+1. `DiffEngine.createSuggestion` takes a file path, the original text and the proposed full text, computes line hunks, and returns a `DiffSuggestion` with status `pending`.
+2. `PatchManager` keeps suggestions in a static in-memory map. `acceptAll` replaces the whole document with the proposed text and saves it; `acceptHunk` applies one hunk and shifts the start lines of later hunks; `reject` only changes the status.
+3. Before applying a pending suggestion, `PatchManager` compares the document with the snapshot the proposal was built from, and asks for confirmation if they differ.
+4. `LuminaDiffProvider` serves the proposed text as a read-only virtual document under the `lumina-diff` scheme and opens it next to the real file with `vscode.diff`. It keeps its own map of suggestions, filled when a comparison view opens.
+
+Chat, Prism and the autonomous loop all use this pipeline. Proposals do not survive a window
+reload. See [Reviewing diffs](diff-review.md).
