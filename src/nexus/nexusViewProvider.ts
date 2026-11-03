@@ -325,6 +325,10 @@ export class NexusViewProvider implements vscode.WebviewViewProvider {
     }
   }
 
+  /**
+   * Downloads a model through Ollama, forwarding each status line as pull_progress. On success it refreshes
+   * the model list and makes the new model active; any failure becomes an error toast.
+   */
   private async pullModelStream(modelName: string): Promise<void> {
     try {
       this.postMessage({
