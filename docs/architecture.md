@@ -75,3 +75,14 @@ only when the online state, active model, model list or running list changed.
 Stopping aborts the request through an `AbortController` and appends "_Stopped._" to the partial
 reply. Other errors are appended as "**Error:** ..." and logged. Clearing the chat aborts the current
 request and empties the history. History is never written to disk.
+
+## Context engine
+
+`ContextEngine` (`src/rag/contextEngine.ts`) owns the vector store and the context chips.
+`indexWorkspace` runs `WorkspaceCrawler.scanWorkspace`, `CodeChunker.chunkFile` for each file and
+`getEmbeddingsBatch` in batches of 16, then replaces the store contents and saves them to disk.
+`retrieveRelevantContext` embeds the query and ranks chunks by cosine similarity, or falls back to
+keyword matching. `getActiveChipsContent` reads each included chip's file from disk, caps it at
+24,000 characters and skips secret files. The filters live in `filePolicy.ts` and are shared by the
+crawler, the chips and the cache loader. The `onChipsUpdated` and `onStatusUpdated` events feed the
+webview. Details and limits are in [Workspace search and context](rag.md).
