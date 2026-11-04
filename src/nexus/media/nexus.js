@@ -1,3 +1,8 @@
+/**
+ * Browser script for the Nexus sidebar webview, loaded by the HTML that NexusViewProvider builds. It talks
+ * to the extension only through postMessage (WebviewMessage out, ExtensionMessage in; see src/types.ts).
+ * Wrapped in an IIFE so nothing leaks into the page's globals. The selected tab is kept in vscode.setState.
+ */
 (function () {
   // @ts-ignore
   const vscode = acquireVsCodeApi();
