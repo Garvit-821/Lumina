@@ -107,3 +107,13 @@ the file name, the scope, the instruction and the selected code or whole file, a
 `/api/generate` with `lumina.temperature`. `extractCodeReply` takes the first code block, or the whole
 reply, which is spliced into the snapshot and registered as a suggestion before the comparison view
 opens. Cancelling the progress notification aborts the request.
+
+## Aura ghost text
+
+`AuraInlineCompletionProvider` (`src/aura/inlineCompletion.ts`) answers VS Code's inline completion
+requests for `file` and `untitled` documents. It returns nothing unless ghost text is enabled, the
+last health check saw Ollama online, a model is active and the cursor is at the end of its line. It
+waits `lumina.ghostTextDelay` ms, then sends up to 60 lines before the cursor as the prompt and up to
+20 lines after it as `suffix`, with `temperature: 0.1`, `num_predict: 64` and stop sequences for three
+newlines and a code fence. A model that rejects `suffix` is remembered for the session and gets a
+plain continuation prompt instead. See [Ghost text and fill-in-the-middle](models.md#ghost-text-and-fill-in-the-middle).
