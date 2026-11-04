@@ -65,6 +65,7 @@
   const loopTimeline = $('loopTimeline');
   const toastEl = $('luminaToast');
 
+  /** Posts a WebviewMessage to the extension, where NexusViewProvider.handleWebviewMessage handles it. */
   const send = (message) => vscode.postMessage(message);
 
   // --- TABS ---
