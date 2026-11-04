@@ -10,3 +10,8 @@ test('TypeScript compiler errors are recognised', () => {
 test('a leading ./ is stripped from paths', () => {
   assert.deepEqual(findCandidateFiles('    at run (./src/a.ts:1:1)'), ['src/a.ts']);
 });
+
+test('Go panics and Rust compiler errors are recognised', () => {
+  const out = 'main.go:14 +0x1d\nerror[E0308]: mismatched types\n  --> src/lib.rs:7:9';
+  assert.deepEqual(findCandidateFiles(out), ['main.go', 'src/lib.rs']);
+});
