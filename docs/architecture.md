@@ -117,3 +117,18 @@ waits `lumina.ghostTextDelay` ms, then sends up to 60 lines before the cursor as
 20 lines after it as `suffix`, with `temperature: 0.1`, `num_predict: 64` and stop sequences for three
 newlines and a code fence. A model that rejects `suffix` is remembered for the session and gets a
 plain continuation prompt instead. See [Ghost text and fill-in-the-middle](models.md#ghost-text-and-fill-in-the-middle).
+
+## Nexus webview and message protocol
+
+`NexusViewProvider` renders the **Nexus Hub** view. Its HTML is an inline template in
+`nexusViewProvider.ts`; the script and stylesheet load from `dist/nexus/media/`, which the build
+copies from `src/nexus/media/`. The Content Security Policy allows only the nonce-tagged script,
+styles from the extension, and images from the extension, `data:` and `https:`. The view has four
+tabs (Chat, Context, Models, Loop) and keeps only the last open tab in its webview state.
+
+Messages are plain objects with a `type` field, typed as `WebviewMessage` and `ExtensionMessage` in
+`src/types.ts`. 200 ms after the view resolves, the provider sends the chat history, model list,
+context chips, index status and calibration data. After that, events from the model manager, context
+engine, orchestrator and loop controller are forwarded as they happen. The markdown renderer in
+`nexus.js` escapes all model output before applying a small set of formatting rules, so replies
+cannot inject HTML into the panel.
