@@ -9,8 +9,10 @@
 
   // --- STATE ---
   let activeModel = '';
+  /** Ollama reachability: null until the first models_list reports it (the pill shows "Connecting"). */
   let isOnline = null;
   let contextChips = [];
+  /** True while an assistant reply is streaming; turns the Send button into Stop and blocks new sends. */
   let isStreaming = false;
   /** Raw markdown per message id, so streaming chunks never round-trip through the DOM. */
   const rawById = new Map();
