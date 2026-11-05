@@ -101,6 +101,10 @@
   const SEND_ICON = btnSendChat.innerHTML;
   const STOP_ICON = '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>';
 
+  /**
+   * Makes the send button match the current state: Stop while a reply streams, otherwise Send, disabled
+   * when the box is empty. Call it after changing isStreaming or the input text.
+   */
   function updateSendState() {
     btnSendChat.classList.toggle('stop', isStreaming);
     btnSendChat.innerHTML = isStreaming ? STOP_ICON : SEND_ICON;
