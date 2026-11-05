@@ -15,3 +15,8 @@ test('Go panics and Rust compiler errors are recognised', () => {
   const out = 'main.go:14 +0x1d\nerror[E0308]: mismatched types\n  --> src/lib.rs:7:9';
   assert.deepEqual(findCandidateFiles(out), ['main.go', 'src/lib.rs']);
 });
+
+test('Java stack frames yield the source file name', () => {
+  const files = findCandidateFiles('\tat com.acme.App.main(App.java:14)');
+  assert.ok(files.includes('App.java'), JSON.stringify(files));
+});
