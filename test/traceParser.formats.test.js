@@ -20,3 +20,8 @@ test('Java stack frames yield the source file name', () => {
   const files = findCandidateFiles('\tat com.acme.App.main(App.java:14)');
   assert.ok(files.includes('App.java'), JSON.stringify(files));
 });
+
+test('build output directories are ignored', () => {
+  const out = 'at dist/extension.js:1:1\nat out/a.js:2:2\nat build/x.js:3:3';
+  assert.deepEqual(findCandidateFiles(out), []);
+});
