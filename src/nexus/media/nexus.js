@@ -119,6 +119,7 @@
   }
 
   chatInput?.addEventListener('input', autosize);
+  // Enter sends and Shift+Enter adds a new line; an Enter that confirms an IME composition is left alone.
   chatInput?.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
       e.preventDefault();
