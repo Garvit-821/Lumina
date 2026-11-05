@@ -154,3 +154,13 @@ cannot inject HTML into the panel.
 The current webview never sends `request_models`, `add_file_as_chip`, or `accept_diff` with a
 `hunkIndex`, and it does not display the `running` list in `models_list`; the extension side handles
 all of them. The optional `contextChipIds` field of `chat_send` is ignored by the extension.
+
+## Calibration
+
+- `CalibrationTelemetry.scanSystem` reads the OS, CPU model, core count and memory from Node's `os` module. On Apple Silicon it assumes 75% of RAM is usable as VRAM; Intel Macs run `system_profiler SPDisplaysDataType`; other systems run `nvidia-smi`, and Windows falls back to `wmic` for the GPU name. Each external command has a 3 second timeout. The result is cached until a forced rescan.
+- `ModelRecommender.evaluate` maps a scan to the low, balanced or power tier and a recommended model.
+- `ModelBenchmarker.runBenchmark` streams a fixed prompt and computes throughput with `tokensPerSecond` from `benchmarkMath.ts`. It throws instead of reporting a number when the model streams no text.
+- `sameModel` treats `name` and `name:latest` as the same model when the startup path matches the recommendation against installed models.
+
+Both `activate()` and `NexusViewProvider` call these. Tiers and thresholds are listed in
+[Models and hardware](models.md).
