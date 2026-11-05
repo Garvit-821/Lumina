@@ -132,3 +132,25 @@ context chips, index status and calibration data. After that, events from the mo
 engine, orchestrator and loop controller are forwarded as they happen. The markdown renderer in
 `nexus.js` escapes all model output before applying a small set of formatting rules, so replies
 cannot inject HTML into the panel.
+
+## Message reference
+
+| Direction | Types | Purpose |
+|---|---|---|
+| to extension | `chat_send`, `chat_stop`, `chat_clear` | Send a message, abort the reply, clear history |
+| to extension | `request_calibration`, `request_benchmark` | Rescan hardware, benchmark a model |
+| to extension | `request_models`, `select_model`, `pull_model` | Refresh, choose or download models |
+| to extension | `toggle_context_chip`, `remove_context_chip`, `add_file_as_chip` | Manage context chips |
+| to extension | `index_workspace` | Build the index |
+| to extension | `accept_diff` (optional `hunkIndex`), `reject_diff`, `open_diff_view` | Act on a proposal |
+| to extension | `start_autonomous_loop`, `stop_autonomous_loop` | Control the loop |
+| to extension | `open_settings`, `open_prism`, `apply_to_editor` | Settings, Prism, insert code |
+| to webview | `chat_message`, `chat_history`, `chat_stream_chunk`, `chat_stream_end` | Chat rendering |
+| to webview | `models_list`, `pull_progress` | Models, online state, pull progress |
+| to webview | `calibration_data`, `benchmark_progress`, `benchmark_result` | Hardware and benchmark |
+| to webview | `context_chips_updated`, `rag_status` | Chips and index counts |
+| to webview | `diff_updated`, `autonomous_step`, `autonomous_finished`, `toast` | Proposal state, loop, notices |
+
+The current webview never sends `request_models`, `add_file_as_chip`, or `accept_diff` with a
+`hunkIndex`, and it does not display the `running` list in `models_list`; the extension side handles
+all of them. The optional `contextChipIds` field of `chat_send` is ignored by the extension.
