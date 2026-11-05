@@ -113,6 +113,7 @@
     btnSendChat.disabled = !isStreaming && !chatInput.value.trim();
   }
 
+  /** Asks the extension to abort the reply in progress; does nothing when no reply is streaming. */
   function stopGenerating() {
     if (isStreaming) send({ type: 'chat_stop' });
   }
