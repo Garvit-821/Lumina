@@ -13,3 +13,10 @@ FAIL src/math.test.ts`;
   assert.ok(files.includes('src/math.test.ts'));
   assert.ok(!files.some((f) => f.includes('node_modules') || f.startsWith('node:')));
 });
+
+test('ranks the most-mentioned file first and handles Python and Windows paths', () => {
+  const out = `  File "app/models.py", line 3\n  File "app/views.py", line 9\n  File "app/models.py", line 7\nC:\\proj\\lib\\util.js:4`;
+  const files = findCandidateFiles(out);
+  assert.equal(files[0], 'app/models.py');
+  assert.ok(files.includes('C:/proj/lib/util.js'));
+});
