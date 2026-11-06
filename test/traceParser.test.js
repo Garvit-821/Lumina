@@ -20,3 +20,7 @@ test('ranks the most-mentioned file first and handles Python and Windows paths',
   assert.equal(files[0], 'app/models.py');
   assert.ok(files.includes('C:/proj/lib/util.js'));
 });
+
+test('returns nothing for output without file paths', () => {
+  assert.deepEqual(findCandidateFiles('All good. 0 failures.'), []);
+});
