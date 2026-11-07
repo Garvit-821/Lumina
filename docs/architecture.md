@@ -164,3 +164,15 @@ all of them. The optional `contextChipIds` field of `chat_send` is ignored by th
 
 Both `activate()` and `NexusViewProvider` call these. Tiers and thresholds are listed in
 [Models and hardware](models.md).
+
+## Logging and status bar
+
+`LuminaLogger` is a singleton that writes to the **Lumina Agent** output channel. Lines look like
+`[HH:MM:SS] [INFO] message {json context}`, with `WARN` and `ERROR` as the other levels and the time
+in UTC. Nothing opens the panel automatically. It records activation, hardware scans, model and
+endpoint changes, index counts, benchmark results, loop starts and errors, but not prompts or replies.
+
+`LuminaStatusBar` is a right-aligned status bar item (priority 100) that runs `lumina.focusNexus`
+when clicked. It reads "Lumina: Offline" with a warning background while Ollama is unreachable, and
+otherwise "Lumina: <model>" ("No Model" when none is active), followed by the last tokens-per-second
+figure once the benchmark command has run. It is driven by `OllamaModelManager.onStatusChange`.
