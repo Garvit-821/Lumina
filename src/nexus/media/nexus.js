@@ -153,6 +153,7 @@
     });
   });
 
+  // Clear the page at once, then ask the extension to abort any reply and drop its history.
   btnClearChat?.addEventListener('click', () => {
     chatMessages.querySelectorAll('.message').forEach((el) => el.remove());
     rawById.clear();
