@@ -131,6 +131,10 @@
     if (e.key === 'Escape') stopGenerating();
   });
 
+  /**
+   * Sends the chat box text as chat_send and clears the box; ignored when empty or while a reply streams.
+   * The user's bubble is not drawn here: it appears when the extension echoes the message back.
+   */
   function sendMessage() {
     const text = chatInput.value.trim();
     if (!text || isStreaming) return;
