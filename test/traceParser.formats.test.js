@@ -30,3 +30,7 @@ test('Python site-packages frames are dropped', () => {
   const out = '  File "/usr/lib/python3/site-packages/django/core.py", line 1\n  File "app/main.py", line 2';
   assert.deepEqual(findCandidateFiles(out), ['app/main.py']);
 });
+
+test('files mentioned more often rank first', () => {
+  assert.deepEqual(findCandidateFiles('src/a.ts:1\nsrc/b.ts:2\nsrc/b.ts:9'), ['src/b.ts', 'src/a.ts']);
+});
