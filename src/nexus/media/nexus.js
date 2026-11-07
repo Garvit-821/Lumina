@@ -294,10 +294,15 @@
     return chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 80;
   }
 
+  /** Jumps to the newest message when force is set or the user is already near the bottom. */
   function scrollToBottom(force) {
     if (force || isNearBottom()) chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
+  /**
+   * Returns the bubble for a message id, creating it (and hiding the welcome card) on first use. The message
+   * id is used directly as the element id. Any role other than 'user' is labelled Lumina.
+   */
   function ensureMessageEl(id, role) {
     let el = document.getElementById(id);
     if (!el) {
