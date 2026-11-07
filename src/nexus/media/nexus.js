@@ -191,6 +191,10 @@
     if (selected) send({ type: 'select_model', model: selected });
   });
 
+  /**
+   * Starts downloading the model typed in the pull box and shows the progress bar. The button stays busy
+   * until pull_progress reports 'success', or a "downloaded and activated" or non-info toast arrives.
+   */
   function pullModel() {
     const model = pullModelInput.value.trim();
     if (!model) return;
