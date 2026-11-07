@@ -25,3 +25,8 @@ test('build output directories are ignored', () => {
   const out = 'at dist/extension.js:1:1\nat out/a.js:2:2\nat build/x.js:3:3';
   assert.deepEqual(findCandidateFiles(out), []);
 });
+
+test('Python site-packages frames are dropped', () => {
+  const out = '  File "/usr/lib/python3/site-packages/django/core.py", line 1\n  File "app/main.py", line 2';
+  assert.deepEqual(findCandidateFiles(out), ['app/main.py']);
+});
