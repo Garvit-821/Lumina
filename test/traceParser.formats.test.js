@@ -34,3 +34,7 @@ test('Python site-packages frames are dropped', () => {
 test('files mentioned more often rank first', () => {
   assert.deepEqual(findCandidateFiles('src/a.ts:1\nsrc/b.ts:2\nsrc/b.ts:9'), ['src/b.ts', 'src/a.ts']);
 });
+
+test('ties keep the order in which files first appear', () => {
+  assert.deepEqual(findCandidateFiles('b.py:1\na.py:2'), ['b.py', 'a.py']);
+});
