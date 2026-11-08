@@ -354,6 +354,10 @@
     extra.querySelector('.btn-reject').addEventListener('click', () => send({ type: 'reject_diff', suggestionId: sug.id }));
   }
 
+  /**
+   * Renders a complete message, replacing any bubble with the same id. A diff seen earlier for this id is
+   * kept even if this copy has none. The view always scrolls for the user's own messages.
+   */
   function renderMessage(msg) {
     const el = ensureMessageEl(msg.id, msg.role);
     rawById.set(msg.id, msg.content || '');
