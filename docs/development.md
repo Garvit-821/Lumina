@@ -17,3 +17,14 @@ esbuild for the bundle and the TypeScript compiler for type checks and test buil
 In watch mode the webview files are copied once, when the watcher starts. After editing `nexus.js`
 or `nexus.css`, run `npm run build` or restart the watcher before reloading the window. The
 repository tracks `dist/`, so a build changes tracked files.
+
+## Run and debug
+
+`.vscode/launch.json` defines **Run Lumina Extension (F5)**, an `extensionHost` configuration that
+loads the repository with `--extensionDevelopmentPath` and maps breakpoints to `dist/**/*.js`. Its
+`preLaunchTask` is `npm: build`, the default build task in `.vscode/tasks.json`, so pressing F5
+builds once and opens an Extension Development Host window.
+
+- Keep `npm run dev` running and use **Developer: Reload Window** in the host window to load extension changes.
+- Extension logs appear in the **Lumina Agent** output channel of the host window.
+- Use **Developer: Open Webview Developer Tools** in the host window to debug `nexus.js`.
