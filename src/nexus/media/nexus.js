@@ -328,6 +328,10 @@
     body.innerHTML = raw ? formatMarkdown(raw) : '<div class="typing"><span></span><span></span><span></span></div>';
   }
 
+  /**
+   * Draws the proposed-change card under a message, or clears it when sug is empty. Its buttons send
+   * accept_diff, open_diff_view and reject_diff; status changes come back later as diff_updated.
+   */
   function renderDiff(el, sug) {
     const extra = el.querySelector('.message-extra');
     if (!sug) {
