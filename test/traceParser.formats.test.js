@@ -38,3 +38,7 @@ test('files mentioned more often rank first', () => {
 test('ties keep the order in which files first appear', () => {
   assert.deepEqual(findCandidateFiles('b.py:1\na.py:2'), ['b.py', 'a.py']);
 });
+
+test('files without a source extension are ignored', () => {
+  assert.deepEqual(findCandidateFiles('see README.md and config.yaml for details'), []);
+});
