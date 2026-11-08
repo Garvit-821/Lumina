@@ -322,6 +322,7 @@
     return el;
   }
 
+  /** Re-renders a bubble's body from the full markdown so far; empty text shows the typing dots. */
   function renderBody(el, raw) {
     const body = el.querySelector('.message-body');
     body.innerHTML = raw ? formatMarkdown(raw) : '<div class="typing"><span></span><span></span><span></span></div>';
