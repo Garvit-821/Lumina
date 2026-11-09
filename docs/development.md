@@ -46,3 +46,24 @@ builds once and opens an Extension Development Host window.
 - Build output: `dist/` (bundle and webview media) and `out/` (per-module output for tests, ignored by Git).
 
 See [Architecture](architecture.md) for how the pieces fit together.
+
+## Tests
+
+```bash
+npm test
+```
+
+`npm test` runs `npm run compile`, then `node --test "test/**/*.test.js"`. The tests use the built-in
+`node:test` runner with `node:assert/strict` and load the compiled modules from `out/`, so compile
+first if you run `node --test` yourself. They cover the modules that do not need the VS Code API:
+
+| Files | Cover |
+|---|---|
+| `diffEngine*.test.js` | Hunk computation, insertions and deletions, repeated lines, round trips |
+| `proposalPolicy*.test.js` | When a chat code block counts as a full-file replacement |
+| `chunker*.test.js`, `filePolicy*.test.js`, `similarity*.test.js` | Chunking, index filters and secret files, cosine similarity |
+| `ndjson*.test.js`, `codeBlocks*.test.js`, `traceParser*.test.js` | Stream parsing and errors, fenced block extraction, paths in failure output |
+| `benchmarkMath*.test.js`, `recommender*.test.js` | Tokens per second, model name matching, tier selection |
+| `webviewMarkdown*.test.js` | Escaping and rendering in `nexus.js`, whose functions are extracted from the source |
+
+There are no integration tests that start VS Code or talk to Ollama.
