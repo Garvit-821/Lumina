@@ -451,6 +451,10 @@
     return out.join('').replace(/\u0000(\d+)\u0000/g, (_m, i) => blocks[Number(i)]);
   }
 
+  /**
+   * Escapes the five HTML-special characters so a value is safe inside innerHTML or a quoted attribute.
+   * null and undefined become an empty string; anything else goes through String().
+   */
   function escapeHtml(str) {
     return String(str ?? '')
       .replace(/&/g, '&amp;')
