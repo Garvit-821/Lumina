@@ -400,10 +400,12 @@
         <pre class="code-block"><code>${escapeHtml(code.replace(/\n$/, ''))}</code></pre>
       </div>`;
 
+    // Closed code fences first, then a final fence that is still open (reply mid-stream), then inline code.
     let src = text.replace(/```([\w+-]*)[^\n]*\n([\s\S]*?)```/g, (_m, lang, code) => stash(codeBlock(lang, code, false)));
     src = src.replace(/```([\w+-]*)[^\n]*\n([\s\S]*)$/, (_m, lang, code) => stash(codeBlock(lang, code, true)));
     src = src.replace(/`([^`\n]+)`/g, (_m, code) => stash(`<code class="inline">${escapeHtml(code)}</code>`));
 
+    // Everything left is escaped before any tags are added, so HTML in the reply shows as plain text.
     src = escapeHtml(src)
       .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
       .replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
