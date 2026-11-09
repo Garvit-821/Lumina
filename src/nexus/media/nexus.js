@@ -385,6 +385,7 @@
   // Escapes everything first, then adds a small, safe subset of markdown.
   function formatMarkdown(text) {
     const blocks = [];
+    // Replace finished HTML with a NUL-delimited index so the escaping and markdown passes below skip it.
     const stash = (html) => `\u0000${blocks.push(html) - 1}\u0000`;
 
     const codeBlock = (lang, code, streaming) => `
