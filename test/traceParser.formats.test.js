@@ -42,3 +42,7 @@ test('ties keep the order in which files first appear', () => {
 test('files without a source extension are ignored', () => {
   assert.deepEqual(findCandidateFiles('see README.md and config.yaml for details'), []);
 });
+
+test('paths through scoped packages are kept intact', () => {
+  assert.deepEqual(findCandidateFiles('at packages/@app/core/index.ts:3:1'), ['packages/@app/core/index.ts']);
+});
