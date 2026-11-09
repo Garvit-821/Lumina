@@ -67,3 +67,16 @@ first if you run `node --test` yourself. They cover the modules that do not need
 | `webviewMarkdown*.test.js` | Escaping and rendering in `nexus.js`, whose functions are extracted from the source |
 
 There are no integration tests that start VS Code or talk to Ollama.
+
+## Packaging
+
+```bash
+npm run package
+```
+
+This runs `npx @vscode/vsce package --no-git-tag-version --allow-star-activation`. `vsce` first runs
+the `vscode:prepublish` script (`npm run build`), then writes `lumina-ai-agent-<version>.vsix`
+(currently `lumina-ai-agent-0.1.1.vsix`) to the repository root. `.vscodeignore` keeps `src/`,
+`test/`, `scripts/`, `out/`, `node_modules/`, `.vscode/`, `.github/`, `.devlog/`, source maps, `.vsix`
+files, `tsconfig.json` and `esbuild.js` out of the package. Anything it does not list, such as `docs/`,
+is included. Install the result with `code --install-extension lumina-ai-agent-0.1.1.vsix`.
