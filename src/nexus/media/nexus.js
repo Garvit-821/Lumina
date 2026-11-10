@@ -571,6 +571,7 @@
         scrollToBottom(true);
         break;
 
+      // An assistant message with no content is the placeholder for a reply that is about to stream.
       case 'chat_message':
         renderMessage(msg.message);
         if (msg.message.role === 'assistant' && !msg.message.content) {
