@@ -549,6 +549,7 @@
         break;
       }
 
+      // A percentage is shown only when Ollama sends byte counts; its last status line is 'success'.
       case 'pull_progress': {
         const pct = msg.completed && msg.total ? Math.round((msg.completed / msg.total) * 100) : null;
         pullProgress.hidden = false;
