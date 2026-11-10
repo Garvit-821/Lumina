@@ -11,3 +11,7 @@ const formatMarkdown = new Function(`${body}; return formatMarkdown;`)();
 test('empty input renders nothing', () => {
   assert.equal(formatMarkdown(''), '');
 });
+
+test('consecutive lines become one paragraph with line breaks', () => {
+  assert.equal(formatMarkdown('first\nsecond'), '<p>first<br/>second</p>');
+});
