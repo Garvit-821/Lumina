@@ -15,3 +15,7 @@ test('empty input renders nothing', () => {
 test('consecutive lines become one paragraph with line breaks', () => {
   assert.equal(formatMarkdown('first\nsecond'), '<p>first<br/>second</p>');
 });
+
+test('a blank line separates paragraphs', () => {
+  assert.equal(formatMarkdown('first\n\nsecond'), '<p>first</p><p>second</p>');
+});
