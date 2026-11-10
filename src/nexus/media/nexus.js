@@ -489,6 +489,7 @@
   window.addEventListener('message', (event) => {
     const msg = event.data;
     switch (msg.type) {
+      // Refresh the status pill and rebuild the dropdown. Sizes arrive in bytes and are shown in GiB.
       case 'models_list': {
         const models = msg.models || [];
         activeModel = msg.activeModel || '';
