@@ -14,3 +14,10 @@ test('model output cannot inject HTML', () => {
   assert.ok(!html.includes('<b>'), html);
   assert.ok(html.includes('&lt;img'));
 });
+
+test('code blocks are escaped and get Copy/Insert actions', () => {
+  const html = formatMarkdown('```html\n<script>alert(1)</script>\n```');
+  assert.ok(html.includes('&lt;script&gt;'));
+  assert.ok(!html.includes('<script>'));
+  assert.ok(html.includes('btn-copy-code') && html.includes('btn-apply-editor'));
+});
