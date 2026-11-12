@@ -27,3 +27,12 @@ test('an unfinished code block renders as streaming without an Insert button', (
   assert.ok(html.includes('writing…'));
   assert.ok(!html.includes('btn-apply-editor'));
 });
+
+test('headings, lists, inline code and emphasis render', () => {
+  const html = formatMarkdown('## Plan\n- one\n- two\n\n1. first\n\nUse `npm test` and *care*.');
+  assert.ok(html.includes('<h2>Plan</h2>'));
+  assert.ok(html.includes('<ul><li>one</li><li>two</li></ul>'));
+  assert.ok(html.includes('<ol><li>first</li></ol>'));
+  assert.ok(html.includes('<code class="inline">npm test</code>'));
+  assert.ok(html.includes('<em>care</em>'));
+});
