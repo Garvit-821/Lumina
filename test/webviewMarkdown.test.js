@@ -21,3 +21,9 @@ test('code blocks are escaped and get Copy/Insert actions', () => {
   assert.ok(!html.includes('<script>'));
   assert.ok(html.includes('btn-copy-code') && html.includes('btn-apply-editor'));
 });
+
+test('an unfinished code block renders as streaming without an Insert button', () => {
+  const html = formatMarkdown('Here:\n```ts\nconst a =');
+  assert.ok(html.includes('writing…'));
+  assert.ok(!html.includes('btn-apply-editor'));
+});
