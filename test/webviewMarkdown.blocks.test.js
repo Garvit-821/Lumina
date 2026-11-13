@@ -23,3 +23,7 @@ test('a blank line separates paragraphs', () => {
 test('numbered lists accept both 1. and 1) markers', () => {
   assert.equal(formatMarkdown('1. one\n2) two'), '<ol><li>one</li><li>two</li></ol>');
 });
+
+test('star bullets work like dash bullets', () => {
+  assert.equal(formatMarkdown('* one\n* two'), '<ul><li>one</li><li>two</li></ul>');
+});
