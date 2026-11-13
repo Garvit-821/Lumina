@@ -638,6 +638,7 @@
         break;
       }
 
+      // Toasts double as completion signals: the severity and the text decide which spinners stop.
       case 'toast':
         showToast(msg.text, msg.severity);
         if (msg.severity === 'error' || /^Indexed /.test(msg.text)) setLoading(btnIndexWorkspace, false);
