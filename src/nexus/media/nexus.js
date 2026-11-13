@@ -581,6 +581,7 @@
         }
         break;
 
+      // Chunks are appended to the raw text in rawById and the whole body is re-rendered each time.
       case 'chat_stream_chunk': {
         isStreaming = true;
         updateSendState();
