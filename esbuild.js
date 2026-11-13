@@ -1,3 +1,8 @@
+/**
+ * Build script for the extension. Bundles src/extension.ts with esbuild into dist/extension.js and copies
+ * the Nexus webview files (src/nexus/media) to dist/nexus/media, where the webview loads them from.
+ * Pass --watch to keep rebuilding the bundle on every change.
+ */
 const esbuild = require('esbuild');
 const fs = require('fs');
 const path = require('path');
