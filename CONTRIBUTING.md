@@ -15,3 +15,11 @@ npm run build
 
 Press <kbd>F5</kbd> in VS Code to launch an Extension Development Host with Lumina loaded.
 `npm run dev` rebuilds the bundle on every save.
+
+## Where things live
+
+Source is under `src/`, grouped by feature: `ollama/` (HTTP client and model manager),
+`rag/` (workspace index), `orchestrator/` (chat and the autonomous loop), `diff/`
+(suggestions and patching), `nexus/` (sidebar webview), `prism/`, `aura/` and
+`calibration/`. Tests are in `test/`, one `*.test.js` file per module.
+[docs/architecture.md](docs/architecture.md) explains how the pieces fit together.
