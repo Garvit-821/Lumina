@@ -621,6 +621,7 @@
         showToast(msg.summary, msg.success ? 'info' : 'warning');
         break;
 
+      // Relabel the card for its new status; unless only some hunks were applied, all but Review diff are disabled.
       case 'diff_updated': {
         const sug = msg.suggestion;
         const box = sug && document.querySelector(`.diff-box[data-suggestion="${CSS.escape(sug.id)}"]`);
