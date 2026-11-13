@@ -19,3 +19,7 @@ test('consecutive lines become one paragraph with line breaks', () => {
 test('a blank line separates paragraphs', () => {
   assert.equal(formatMarkdown('first\n\nsecond'), '<p>first</p><p>second</p>');
 });
+
+test('numbered lists accept both 1. and 1) markers', () => {
+  assert.equal(formatMarkdown('1. one\n2) two'), '<ol><li>one</li><li>two</li></ol>');
+});
