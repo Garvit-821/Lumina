@@ -23,3 +23,13 @@ Source is under `src/`, grouped by feature: `ollama/` (HTTP client and model man
 (suggestions and patching), `nexus/` (sidebar webview), `prism/`, `aura/` and
 `calibration/`. Tests are in `test/`, one `*.test.js` file per module.
 [docs/architecture.md](docs/architecture.md) explains how the pieces fit together.
+
+## Making a change
+
+- Keep a pull request to one topic. Small pull requests get reviewed faster.
+- Logic that does not need the VS Code API belongs in a plain module (see
+  `src/rag/filePolicy.ts` or `src/diff/proposalPolicy.ts`) so it can be unit tested.
+- Read settings through `getLuminaConfig()` in `src/utils/config.ts` rather than calling
+  `workspace.getConfiguration` directly, so changes apply without a reload.
+- Nothing may leave the machine: the only network destination is the configured Ollama
+  endpoint.
