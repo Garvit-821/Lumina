@@ -31,3 +31,7 @@ test('star bullets work like dash bullets', () => {
 test('switching from bullets to numbers starts a new list', () => {
   assert.equal(formatMarkdown('- a\n1. b'), '<ul><li>a</li></ul><ol><li>b</li></ol>');
 });
+
+test('headings deeper than three levels stay plain text', () => {
+  assert.equal(formatMarkdown('#### deep'), '<p>#### deep</p>');
+});
