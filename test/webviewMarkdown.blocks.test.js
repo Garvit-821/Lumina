@@ -27,3 +27,7 @@ test('numbered lists accept both 1. and 1) markers', () => {
 test('star bullets work like dash bullets', () => {
   assert.equal(formatMarkdown('* one\n* two'), '<ul><li>one</li><li>two</li></ul>');
 });
+
+test('switching from bullets to numbers starts a new list', () => {
+  assert.equal(formatMarkdown('- a\n1. b'), '<ul><li>a</li></ul><ol><li>b</li></ol>');
+});
