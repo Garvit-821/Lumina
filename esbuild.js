@@ -60,6 +60,7 @@ async function main() {
   }
 }
 
+// Report the error and exit non-zero so npm scripts and CI fail on a broken build.
 main().catch((err) => {
   console.error(err);
   process.exit(1);
