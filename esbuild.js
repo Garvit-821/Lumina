@@ -32,6 +32,10 @@ async function main() {
   const srcMedia = path.join(__dirname, 'src', 'nexus', 'media');
   const distMedia = path.join(__dirname, 'dist', 'nexus', 'media');
   
+  /**
+   * Copies every file in src/nexus/media to dist/nexus/media, creating the folder first. Not recursive: a
+   * subfolder there would make copyFileSync throw. Does nothing if the source folder is missing.
+   */
   function copyMediaFiles() {
     if (fs.existsSync(srcMedia)) {
       fs.mkdirSync(distMedia, { recursive: true });
