@@ -33,3 +33,14 @@ Source is under `src/`, grouped by feature: `ollama/` (HTTP client and model man
   `workspace.getConfiguration` directly, so changes apply without a reload.
 - Nothing may leave the machine: the only network destination is the configured Ollama
   endpoint.
+
+## Tests
+
+```bash
+npm run typecheck
+npm test
+```
+
+`npm test` compiles to `out/` and runs every `test/**/*.test.js` file with `node --test`.
+Add a test for each bug you fix and each pure function you add. Tests must not need a
+running Ollama server or VS Code.
