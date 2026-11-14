@@ -44,3 +44,10 @@ npm test
 `npm test` compiles to `out/` and runs every `test/**/*.test.js` file with `node --test`.
 Add a test for each bug you fix and each pure function you add. Tests must not need a
 running Ollama server or VS Code.
+
+## Commit messages
+
+Commits follow [Conventional Commits](https://www.conventionalcommits.org/):
+`type(scope): summary`, for example `fix(rag): skip secret files when indexing`. Common
+types are `feat`, `fix`, `docs`, `test`, `refactor`, `chore` and `ci`. Write the summary
+in the imperative and keep it under about 72 characters.
