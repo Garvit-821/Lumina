@@ -9,7 +9,12 @@ const path = require('path');
 
 const isWatch = process.argv.includes('--watch');
 
+/**
+ * Creates the esbuild context, copies the media files, then either watches or does a single build.
+ * Errors propagate to the catch at the bottom of the file, which exits with status 1.
+ */
 async function main() {
+  // CommonJS for Node, as VS Code expects; 'vscode' stays external because the editor provides it at runtime.
   const extensionCtx = await esbuild.context({
     entryPoints: ['src/extension.ts'],
     bundle: true,
