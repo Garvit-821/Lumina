@@ -47,6 +47,7 @@ async function main() {
     }
   }
 
+  // Runs once per invocation, so in watch mode edits to the webview files are not copied until the next run.
   copyMediaFiles();
 
   if (isWatch) {
