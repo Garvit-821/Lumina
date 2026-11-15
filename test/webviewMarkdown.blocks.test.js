@@ -35,3 +35,7 @@ test('switching from bullets to numbers starts a new list', () => {
 test('headings deeper than three levels stay plain text', () => {
   assert.equal(formatMarkdown('#### deep'), '<p>#### deep</p>');
 });
+
+test('bold and italic can share a line', () => {
+  assert.equal(formatMarkdown('**a** and *b*'), '<p><strong>a</strong> and <em>b</em></p>');
+});
