@@ -39,3 +39,9 @@ test('headings deeper than three levels stay plain text', () => {
 test('bold and italic can share a line', () => {
   assert.equal(formatMarkdown('**a** and *b*'), '<p><strong>a</strong> and <em>b</em></p>');
 });
+
+test('markdown inside inline code is left alone', () => {
+  const html = formatMarkdown('`**not bold**`');
+  assert.ok(html.includes('<code class="inline">**not bold**</code>'), html);
+  assert.ok(!html.includes('<strong>'), html);
+});
