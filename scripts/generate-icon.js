@@ -1,7 +1,17 @@
+/**
+ * Generates the extension icon, resources/lumina-icon.png (128x128, the "icon" in package.json), without any
+ * image library: the pixels are computed here and written as a hand-built PNG, with Node's zlib doing the
+ * compression. Run it with node scripts/generate-icon.js; it overwrites the existing file.
+ */
 const fs = require('fs');
 const zlib = require('zlib');
 const path = require('path');
 
+/**
+ * Draws the round badge (dark background, gradient rim, gradient diamond star with a white centre and
+ * transparent corners) and returns it as a complete 8-bit RGBA PNG file in a Buffer. Sizes are derived
+ * from width, apart from the fixed-pixel rim and centre sparkle, so it assumes a square image.
+ */
 function createPng(width, height) {
   // CRC32 implementation
   const crcTable = [];
