@@ -51,3 +51,10 @@ Commits follow [Conventional Commits](https://www.conventionalcommits.org/):
 `type(scope): summary`, for example `fix(rag): skip secret files when indexing`. Common
 types are `feat`, `fix`, `docs`, `test`, `refactor`, `chore` and `ci`. Write the summary
 in the imperative and keep it under about 72 characters.
+
+## Reporting bugs
+
+Open an issue with your OS, VS Code version, Ollama version, the model you were using and
+the steps to reproduce. The **Lumina Agent** output channel (View > Output) usually contains the
+error; please include the relevant lines. For security problems, follow
+[SECURITY.md](SECURITY.md) instead of opening a public issue.
