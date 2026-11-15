@@ -24,6 +24,7 @@ function createPng(width, height) {
     crcTable[n] = c;
   }
 
+  /** Standard CRC-32 (the checksum PNG requires) of a buffer, returned as an unsigned 32-bit number. */
   function crc32(buf) {
     let crc = 0xffffffff;
     for (let i = 0; i < buf.length; i++) {
