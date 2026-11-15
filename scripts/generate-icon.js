@@ -33,6 +33,7 @@ function createPng(width, height) {
     return (crc ^ 0xffffffff) >>> 0;
   }
 
+  /** Wraps data in a PNG chunk: 4-byte big-endian length, 4-letter type, the data, then the CRC of type plus data. */
   function makeChunk(type, data) {
     const len = Buffer.alloc(4);
     len.writeUInt32BE(data.length, 0);
