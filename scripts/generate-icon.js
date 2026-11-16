@@ -60,6 +60,7 @@ function createPng(width, height) {
 
   // Scanlines (RGBA)
   const rawData = [];
+  // Badge centre and radius in pixels; the badge spans 88% of the width.
   const cx = width / 2;
   const cy = height / 2;
   const radius = width * 0.44;
