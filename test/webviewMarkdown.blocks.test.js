@@ -45,3 +45,7 @@ test('markdown inside inline code is left alone', () => {
   assert.ok(html.includes('<code class="inline">**not bold**</code>'), html);
   assert.ok(!html.includes('<strong>'), html);
 });
+
+test('quotes and ampersands in prose are escaped', () => {
+  assert.equal(formatMarkdown('Tom & "Jerry"'), '<p>Tom &amp; &quot;Jerry&quot;</p>');
+});
