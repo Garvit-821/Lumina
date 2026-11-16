@@ -49,3 +49,7 @@ test('markdown inside inline code is left alone', () => {
 test('quotes and ampersands in prose are escaped', () => {
   assert.equal(formatMarkdown('Tom & "Jerry"'), '<p>Tom &amp; &quot;Jerry&quot;</p>');
 });
+
+test('a code block without a language is labelled "code"', () => {
+  assert.ok(formatMarkdown('```\nx\n```').includes('<span>code</span>'));
+});
