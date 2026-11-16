@@ -12,3 +12,10 @@ if you are setting it up, and use the reference pages when you need exact settin
 - [Reviewing diffs](diff-review.md): where proposed edits come from and how to review, apply or reject them.
 - [Autonomous test and fix loop](autonomous-loop.md): what the loop runs, what it changes on disk, and how to stop it.
 - [Models and hardware](models.md): hardware tiers, recommended models, benchmarking, ghost text and the embedding model.
+
+## Reference
+
+- [Configuration](configuration.md): every `lumina.*` setting with its type, default, valid range and when a change applies.
+- [Commands](commands.md): every contributed command, its preconditions, and the keyboard shortcuts.
+- [Privacy and data handling](privacy.md): what is sent to Ollama, what is written to disk, and how secret files are handled.
+- [Troubleshooting](troubleshooting.md): common problems, what causes them in the code, and how to fix them.
