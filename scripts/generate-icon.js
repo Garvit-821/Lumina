@@ -117,6 +117,7 @@ function createPng(width, height) {
     }
   }
 
+  // Every scanline already starts with filter byte 0, so the raw bytes can be deflated straight into one IDAT chunk.
   const compressedData = zlib.deflateSync(Buffer.from(rawData));
   const idatChunk = makeChunk('IDAT', compressedData);
   const iendChunk = makeChunk('IEND', Buffer.alloc(0));
