@@ -52,6 +52,7 @@ function createPng(width, height) {
   ihdrData.writeUInt32BE(height, 4);
   ihdrData.writeUInt8(8, 8); // 8 bits per channel
   ihdrData.writeUInt8(6, 9); // RGBA
+  // Compression method 0 (deflate), filter method 0 and interlace method 0 (none).
   ihdrData.writeUInt8(0, 10);
   ihdrData.writeUInt8(0, 11);
   ihdrData.writeUInt8(0, 12);
