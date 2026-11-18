@@ -4,6 +4,15 @@ This guide takes you from a fresh machine to a working Lumina setup: Ollama runn
 the extension installed, a first chat in the Nexus panel and a first edit with Prism. Each step
 links to the page that covers it in more detail.
 
+## Requirements
+
+- VS Code 1.80.0 or later. This is the `engines.vscode` range (`^1.80.0`) in `package.json`.
+- [Ollama](https://ollama.com/) installed and running on the machine where the extension runs, or reachable over HTTP from it.
+- At least one chat-capable model pulled into Ollama. Calibration suggests one for your hardware; see [Models and hardware](models.md).
+- Optionally, an embedding model for semantic workspace search. The default is `nomic-embed-text`.
+- No GPU is required. Machines without one get a small model recommendation.
+- Node.js and npm only if you build or package the extension from source. CI uses Node 22, and `npm test` needs Node 21 or later.
+
 ## Install and start Ollama
 
 Install Ollama from [ollama.com](https://ollama.com/). The desktop app starts the server for you;
