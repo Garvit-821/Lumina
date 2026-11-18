@@ -4,6 +4,19 @@ This page is for working on Lumina itself: setting up the repository, building, 
 Extension Development Host, running tests, packaging and CI. The tooling is plain npm scripts, with
 esbuild for the bundle and the TypeScript compiler for type checks and test builds.
 
+## Setup
+
+```bash
+git clone https://github.com/Garvit-821/Lumina.git
+cd Lumina
+npm install
+```
+
+Use Node.js 21 or later: CI runs Node 22, and `npm test` passes a glob to `node --test`, which needs
+Node 21. The only dependencies are dev dependencies: `typescript` (^5.5), `esbuild` (^0.23),
+`@types/node` (^20.14) and `@types/vscode` (^1.80). Nothing is bundled from npm at runtime. To try
+features by hand you also need Ollama and a model; see [Getting started](getting-started.md).
+
 ## Build and watch
 
 | Script | What it does |
