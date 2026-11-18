@@ -52,6 +52,15 @@ Commits follow [Conventional Commits](https://www.conventionalcommits.org/):
 types are `feat`, `fix`, `docs`, `test`, `refactor`, `chore` and `ci`. Write the summary
 in the imperative and keep it under about 72 characters.
 
+## Pull requests
+
+1. Fork the repository and create a branch from `main`.
+2. Make your change, with tests.
+3. Run `npm run typecheck` and `npm test`.
+4. Open a pull request that says what changed and why, and how you tested it.
+
+CI runs the same checks on every pull request.
+
 ## Reporting bugs
 
 Open an issue with your OS, VS Code version, Ollama version, the model you were using and
