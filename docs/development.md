@@ -93,3 +93,18 @@ the `vscode:prepublish` script (`npm run build`), then writes `lumina-ai-agent-<
 `test/`, `scripts/`, `out/`, `node_modules/`, `.vscode/`, `.github/`, `.devlog/`, source maps, `.vsix`
 files, `tsconfig.json` and `esbuild.js` out of the package. Anything it does not list, such as `docs/`,
 is included. Install the result with `code --install-extension lumina-ai-agent-0.1.1.vsix`.
+
+## Continuous integration
+
+`.github/workflows/ci.yml` defines one job, `test`, on `ubuntu-latest`. It runs on every push to
+`main` and on every pull request:
+
+1. `actions/checkout@v4`
+2. `actions/setup-node@v4` with Node 22 and the npm cache
+3. `npm ci`
+4. `npm run typecheck`
+5. `npm test`
+6. `npm run build`
+
+Run the same npm commands locally before opening a pull request. CI does not package the extension
+or run anything against Ollama.
