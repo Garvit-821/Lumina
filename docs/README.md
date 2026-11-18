@@ -19,3 +19,11 @@ if you are setting it up, and use the reference pages when you need exact settin
 - [Commands](commands.md): every contributed command, its preconditions, and the keyboard shortcuts.
 - [Privacy and data handling](privacy.md): what is sent to Ollama, what is written to disk, and how secret files are handled.
 - [Troubleshooting](troubleshooting.md): common problems, what causes them in the code, and how to fix them.
+
+## For contributors
+
+- [Architecture](architecture.md): how the extension is wired together, module by module, including the webview message protocol.
+- [Development](development.md): setup, build and watch, debugging, tests, packaging and CI.
+
+Both pages assume you have the repository checked out. The extension source is in `src/`, unit
+tests are in `test/`, and the bundle is built by `esbuild.js`.
