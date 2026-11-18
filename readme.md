@@ -47,6 +47,7 @@
 - [Repository Structure](#-repository-structure)
 - [Development & Testing](#-development--testing)
 - [Troubleshooting & FAQ](#-troubleshooting--faq)
+- [Documentation](#-documentation)
 - [Contributing](#-contributing)
 - [License](#-license)
 
