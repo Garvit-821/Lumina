@@ -125,6 +125,7 @@ function createPng(width, height) {
   return Buffer.concat([signature, ihdrChunk, idatChunk, iendChunk]);
 }
 
+// Write the icon into resources/; writeFileSync throws if that folder does not exist.
 const pngBuffer = createPng(128, 128);
 const outPath = path.join(__dirname, '..', 'resources', 'lumina-icon.png');
 fs.writeFileSync(outPath, pngBuffer);
