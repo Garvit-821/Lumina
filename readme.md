@@ -414,6 +414,20 @@ No. Once your models are pulled via Ollama, Lumina functions **100% offline and 
 
 ---
 
+## 📚 Documentation
+
+Longer guides live in the [`docs/`](docs/README.md) folder:
+
+- [Getting started](docs/getting-started.md): install Ollama, pull a model and run your first chat
+- [Configuration](docs/configuration.md) and [Commands](docs/commands.md): every setting and command
+- [Workspace indexing](docs/rag.md), [Diff review](docs/diff-review.md) and the [Autonomous loop](docs/autonomous-loop.md)
+- [Choosing a model](docs/models.md), [Privacy](docs/privacy.md) and [Troubleshooting](docs/troubleshooting.md)
+- [Architecture](docs/architecture.md) and [Development](docs/development.md) for contributors
+
+Release notes are in [CHANGELOG.md](CHANGELOG.md).
+
+---
+
 ## 🤝 Contributing
 
 Contributions are warmly welcomed! To contribute:
