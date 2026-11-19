@@ -50,3 +50,18 @@ All notable changes to Lumina are listed here. The format follows
   written by earlier versions.
 - Model output is escaped before it is rendered in the webview.
 - The webview's script nonce comes from a cryptographic random source.
+
+## [0.1.1]
+
+### Added
+
+- **Nexus**: sidebar chat with model switching, model pulling and context chips.
+- **Prism**: command bar for in-place edits on the selection or the whole file, reviewed
+  in a side-by-side diff.
+- **Aura**: inline ghost text completions.
+- **Calibration**: hardware scan, model recommendation and a tokens-per-second benchmark.
+- **Context engine**: local workspace index with embeddings from Ollama and keyword
+  fallback.
+- **Diff review**: accept or reject a suggestion as a whole or hunk by hunk.
+- **Autonomous loop**: run a test command, ask the model for a fix and re-run, for a
+  limited number of iterations.
