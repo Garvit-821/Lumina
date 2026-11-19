@@ -42,3 +42,11 @@ All notable changes to Lumina are listed here. The format follows
 - The recommended model is selected at startup only if it is actually installed.
 - Stopping the autonomous loop aborts the running request and kills the test process.
 - The indexed file count is correct after loading the index from disk.
+
+### Security
+
+- Files that commonly hold credentials (`.env`, private keys, `credentials.json`, `.npmrc`
+  and similar) are never indexed or added to a prompt, and are removed from indexes
+  written by earlier versions.
+- Model output is escaped before it is rendered in the webview.
+- The webview's script nonce comes from a cryptographic random source.
