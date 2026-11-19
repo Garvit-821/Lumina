@@ -16,3 +16,16 @@ All notable changes to Lumina are listed here. The format follows
   the checks on every push and pull request.
 - A `docs/` folder with guides for configuration, commands, indexing, diff review and
   troubleshooting.
+
+### Changed
+
+- Prism opens with <kbd>Cmd</kbd>+<kbd>Alt</kbd>+<kbd>K</kbd> / <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>K</kbd>,
+  so it no longer shadows VS Code's own <kbd>Cmd</kbd>+<kbd>K</kbd> chords.
+- Diff hunks are computed with a longest-common-subsequence diff, which gives minimal
+  hunks instead of the previous look-ahead heuristic.
+- Ghost text uses Ollama's native fill-in-the-middle support and falls back to a plain
+  continuation prompt for models without it.
+- Changes to `lumina.ollamaEndpoint` and `lumina.selectedModel` apply immediately, without
+  reloading the window.
+- The Nexus sidebar was redesigned around VS Code theme variables, with a status pill,
+  icon tabs and a streaming indicator.
