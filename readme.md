@@ -438,7 +438,7 @@ Contributions are warmly welcomed! To contribute:
 4. **Push to the Branch**: `git push origin feature/amazing-feature`
 5. **Open a Pull Request**.
 
-Please ensure all tests pass with `node test/test-suite.js` before submitting.
+Please make sure `npm run typecheck` and `npm test` pass before submitting. [CONTRIBUTING.md](CONTRIBUTING.md) has the details.
 
 ---
 
