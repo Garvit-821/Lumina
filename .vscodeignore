@@ -11,6 +11,8 @@ Documentation.md
 **/*.map
 node_modules/**
 out/**
+.devlog/**
 *.vsix
 lumina-ai-agent-*.vsix
 .github/**
+DEVLOG.md
