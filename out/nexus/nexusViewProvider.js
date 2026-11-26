@@ -82,6 +82,7 @@ class NexusViewProvider {
                 models: this.manager.getAvailableModels(),
                 activeModel,
                 running: this.manager.getRunningProcesses(),
+                isOnline,
             });
         });
         this.contextEngine.onChipsUpdated((chips) => {
@@ -113,6 +114,7 @@ class NexusViewProvider {
             models,
             activeModel: this.manager.getActiveModel(),
             running,
+            isOnline: this.manager.getIsOnline(),
         });
         this.postMessage({
             type: 'context_chips_updated',
@@ -300,185 +302,208 @@ class NexusViewProvider {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'nonce-${nonce}'; img-src ${webview.cspSource} data: https:;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; font-src ${webview.cspSource}; script-src 'nonce-${nonce}'; img-src ${webview.cspSource} data: https:;">
   <link rel="stylesheet" href="${styleUri}">
   <title>Lumina Nexus</title>
 </head>
 <body class="lumina-body">
   <div class="lumina-app">
-    <!-- Top Brand Header -->
     <header class="lumina-header">
       <div class="brand-title">
-        <div class="brand-pulse"></div>
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>
+        </span>
         <span class="brand-name">Lumina</span>
-        <span class="brand-tag">SOVEREIGN</span>
+        <span class="status-pill" id="statusPill" data-state="connecting" title="Ollama connection status">
+          <span class="status-dot"></span><span id="statusText">Connecting</span>
+        </span>
       </div>
       <div class="header-actions">
-        <button id="btnOpenPrism" class="icon-btn" title="Open Prism Command Bar (Cmd+K)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <button id="btnOpenPrism" class="icon-btn" title="Open Prism Command Bar" aria-label="Open Prism Command Bar">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         </button>
-        <button id="btnSettings" class="icon-btn" title="Lumina Settings">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <button id="btnSettings" class="icon-btn" title="Lumina Settings" aria-label="Lumina Settings">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         </button>
       </div>
     </header>
 
-    <!-- Navigation Tabs -->
-    <nav class="lumina-tabs">
-      <button class="tab-btn active" data-tab="tab-chat">Chat</button>
-      <button class="tab-btn" data-tab="tab-context">Context</button>
-      <button class="tab-btn" data-tab="tab-hardware">Hardware</button>
-      <button class="tab-btn" data-tab="tab-loop">Auto Loop</button>
+    <nav class="lumina-tabs" role="tablist">
+      <button class="tab-btn active" role="tab" data-tab="tab-chat">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Chat</span>
+      </button>
+      <button class="tab-btn" role="tab" data-tab="tab-context">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        <span>Context</span>
+      </button>
+      <button class="tab-btn" role="tab" data-tab="tab-hardware">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg>
+        <span>Models</span>
+      </button>
+      <button class="tab-btn" role="tab" data-tab="tab-loop">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        <span>Loop</span>
+      </button>
     </nav>
-
-    <!-- Context Chips Bar -->
-    <div class="chips-container" id="chipsContainer">
-      <div class="chips-label">Context:</div>
-      <div class="chips-list" id="chipsList">
-        <!-- Injected via JS -->
-      </div>
-    </div>
 
     <!-- TAB 1: AGENT CHAT -->
     <section class="tab-content active" id="tab-chat">
       <div class="chat-messages" id="chatMessages">
-        <div class="welcome-card">
-          <div class="welcome-icon">✦</div>
-          <h3>Local intelligence on your machine.</h3>
-          <p>Autonomous coding agent powered by Ollama. 100% private, hardware-calibrated, and deeply connected to your codebase.</p>
+        <div class="welcome-card" id="welcomeCard">
+          <div class="welcome-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>
+          </div>
+          <h3>What are we building?</h3>
+          <p>A local coding agent powered by Ollama. Your code never leaves this machine.</p>
           <div class="quick-prompts">
-            <button class="quick-btn" data-prompt="Analyze the active file and suggest modular refactoring.">✦ Refactor Active File</button>
-            <button class="quick-btn" data-prompt="Generate comprehensive unit tests for this module.">✦ Generate Unit Tests</button>
-            <button class="quick-btn" data-prompt="Audit this codebase for edge case bugs and memory leaks.">✦ Audit Code Quality</button>
+            <button class="quick-btn" data-prompt="Analyze the active file and suggest modular refactoring.">
+              <span class="quick-title">Refactor active file</span>
+              <span class="quick-sub">Split it into smaller, clearer pieces</span>
+            </button>
+            <button class="quick-btn" data-prompt="Generate comprehensive unit tests for this module.">
+              <span class="quick-title">Write unit tests</span>
+              <span class="quick-sub">Cover the module's edge cases</span>
+            </button>
+            <button class="quick-btn" data-prompt="Audit this codebase for edge case bugs and memory leaks.">
+              <span class="quick-title">Audit for bugs</span>
+              <span class="quick-sub">Look for edge cases and leaks</span>
+            </button>
           </div>
         </div>
       </div>
 
       <div class="chat-input-area">
+        <div class="chips-list" id="chipsList"></div>
         <div class="input-wrapper">
-          <textarea id="chatInput" placeholder="Ask Lumina (or press Cmd+K in editor for Prism)..." rows="2"></textarea>
+          <textarea id="chatInput" placeholder="Ask Lumina anything…" rows="1" aria-label="Message Lumina"></textarea>
           <div class="input-actions">
-            <span class="active-model-badge" id="chatModelBadge">Model: Loading...</span>
+            <button class="model-badge" id="chatModelBadge" title="Change model">
+              <span class="model-dot"></span><span id="chatModelName">Loading…</span>
+            </button>
             <div class="action-buttons">
-              <button id="btnClearChat" class="icon-btn small" title="Clear History">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              <button id="btnClearChat" class="icon-btn ghost" title="Clear chat" aria-label="Clear chat">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
               </button>
-              <button id="btnSendChat" class="send-btn" title="Send Message">
-                <span>Send</span>
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              <button id="btnSendChat" class="send-btn" title="Send (Enter)" aria-label="Send message">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
               </button>
             </div>
           </div>
         </div>
+        <div class="input-hint"><kbd>Enter</kbd> to send · <kbd>Shift</kbd>+<kbd>Enter</kbd> for a new line</div>
       </div>
     </section>
 
     <!-- TAB 2: CONTEXT HUB (RAG) -->
     <section class="tab-content" id="tab-context">
-      <div class="tab-pane glass-card">
-        <h3>Local RAG & Codebase Index.</h3>
-        <p class="section-desc">Lumina builds a private local vector index of your repository using Cosine Similarity embeddings for deep multi-file awareness.</p>
-        
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Codebase index</h3>
+          <p class="section-desc">A private vector index of your repository, used to pull relevant code into each answer.</p>
+        </div>
         <div class="stats-grid">
           <div class="stat-card">
+            <div class="stat-label">Chunks</div>
             <div class="stat-value" id="statChunks">0</div>
-            <div class="stat-label">Vector Chunks</div>
           </div>
           <div class="stat-card">
+            <div class="stat-label">Files</div>
             <div class="stat-value" id="statFiles">0</div>
-            <div class="stat-label">Indexed Files</div>
           </div>
         </div>
-
         <button id="btnIndexWorkspace" class="action-btn primary full-width">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-          Index Workspace Now
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          <span>Index workspace</span>
         </button>
+      </div>
 
-        <h4 style="margin-top: 20px;">Active Context Chips</h4>
-        <div id="contextHubChipsList" class="chips-hub-list">
-          <!-- Injected via JS -->
+      <div class="panel">
+        <div class="panel-head row">
+          <h4>Context files</h4>
+          <span class="count-badge" id="chipCount">0</span>
         </div>
+        <div id="contextHubChipsList" class="chips-hub-list"></div>
       </div>
     </section>
 
-    <!-- TAB 3: HARDWARE & CALIBRATION -->
+    <!-- TAB 3: HARDWARE & MODELS -->
     <section class="tab-content" id="tab-hardware">
-      <div class="tab-pane glass-card">
-        <h3>Hardware Telemetry Scan.</h3>
-        <p class="section-desc">Automatic calibration prevents system memory pressure and selects the fastest model tier for your GPU/RAM.</p>
-
-        <div class="telemetry-box" id="telemetryBox">
-          <div class="telemetry-row">
-            <span>CPU</span> <strong id="telCpu">Scanning...</strong>
-          </div>
-          <div class="telemetry-row">
-            <span>System RAM</span> <strong id="telRam">-- GB</strong>
-          </div>
-          <div class="telemetry-row">
-            <span>GPU / VRAM</span> <strong id="telGpu">--</strong>
-          </div>
-          <div class="telemetry-row">
-            <span>Profile Tier</span> <span class="tier-pill" id="telTier">Calculating</span>
-          </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Active model</h3>
+          <p class="section-desc">Pick an installed Ollama model, or pull a new one.</p>
         </div>
+        <select id="modelDropdown" class="lumina-select" aria-label="Active model">
+          <option value="">Select an Ollama model…</option>
+        </select>
+        <div class="pull-model-group">
+          <input type="text" id="pullModelInput" placeholder="e.g. qwen2.5-coder:7b" aria-label="Model to pull" />
+          <button id="btnPullModel" class="action-btn secondary">Pull</button>
+        </div>
+        <div class="progress" id="pullProgress" hidden>
+          <div class="progress-bar" id="pullProgressBar"></div>
+        </div>
+        <div id="pullProgressText" class="pull-progress-text"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Hardware</h3>
+          <p class="section-desc">Lumina scans your machine to suggest a model that fits your memory.</p>
+        </div>
+        <dl class="telemetry-box" id="telemetryBox">
+          <div class="telemetry-row"><dt>CPU</dt><dd id="telCpu"><span class="skeleton"></span></dd></div>
+          <div class="telemetry-row"><dt>Memory</dt><dd id="telRam"><span class="skeleton"></span></dd></div>
+          <div class="telemetry-row"><dt>GPU</dt><dd id="telGpu"><span class="skeleton"></span></dd></div>
+          <div class="telemetry-row"><dt>Tier</dt><dd><span class="tier-pill" id="telTier">Calculating</span></dd></div>
+        </dl>
 
         <div class="recommendation-box" id="recommendationBox">
-          <div class="rec-title">Recommended Local Model</div>
-          <div class="rec-model" id="recModel">qwen2.5-coder:7b</div>
-          <div class="rec-reason" id="recReason">Hardware calibration in progress...</div>
+          <div class="rec-title">Recommended</div>
+          <div class="rec-model" id="recModel">—</div>
+          <div class="rec-reason" id="recReason">Scanning hardware…</div>
         </div>
 
         <div class="hardware-actions">
-          <button id="btnRunCalibration" class="action-btn secondary">Rescan Hardware</button>
-          <button id="btnRunBenchmark" class="action-btn primary">Benchmark Speed (TPS)</button>
+          <button id="btnRunCalibration" class="action-btn secondary">Rescan</button>
+          <button id="btnRunBenchmark" class="action-btn primary">Benchmark speed</button>
         </div>
 
-        <div class="benchmark-gauge" id="benchmarkGauge" style="display: none;">
-          <div class="gauge-title">Inference Throughput</div>
-          <div class="gauge-value" id="gaugeTps">0.0 <span class="unit">tokens/sec</span></div>
-          <div class="gauge-sub" id="gaugeDetails">Latency: --ms</div>
+        <div class="benchmark-gauge" id="benchmarkGauge" hidden>
+          <div class="gauge-title">Throughput</div>
+          <div class="gauge-value" id="gaugeTps">—</div>
+          <div class="gauge-sub" id="gaugeDetails"></div>
         </div>
-
-        <h4 style="margin-top: 20px;">Model Manager</h4>
-        <div class="model-select-group">
-          <select id="modelDropdown" class="lumina-select">
-            <option value="">Select an Ollama model...</option>
-          </select>
-        </div>
-
-        <div class="pull-model-group">
-          <input type="text" id="pullModelInput" placeholder="Pull model (e.g. qwen2.5-coder:7b)" />
-          <button id="btnPullModel" class="action-btn secondary small">Pull</button>
-        </div>
-        <div id="pullProgressText" class="pull-progress-text"></div>
       </div>
     </section>
 
     <!-- TAB 4: AUTONOMOUS LOOP -->
     <section class="tab-content" id="tab-loop">
-      <div class="tab-pane glass-card">
-        <h3>Autonomous Test & Fix Loop.</h3>
-        <p class="section-desc">Executes your test suite or compiler, diagnoses error stack traces, crafts precision patches, and loops until all tests pass.</p>
-
-        <div class="loop-input-group">
-          <label for="loopTestCommand">Test Command</label>
-          <input type="text" id="loopTestCommand" value="npm test" placeholder="npm test / pytest / cargo test" />
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Test &amp; fix loop</h3>
+          <p class="section-desc">Runs your test command, reads the failures, patches the code, and repeats until the tests pass.</p>
         </div>
-
+        <label class="field-label" for="loopTestCommand">Test command</label>
+        <input type="text" id="loopTestCommand" class="lumina-input mono" value="npm test" placeholder="npm test / pytest / cargo test" />
         <div class="loop-controls">
-          <button id="btnStartLoop" class="action-btn primary">Start Auto Loop</button>
-          <button id="btnStopLoop" class="action-btn secondary" disabled>Stop</button>
-        </div>
-
-        <div class="loop-timeline" id="loopTimeline">
-          <!-- Timeline steps injected here -->
+          <button id="btnStartLoop" class="action-btn primary">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span>Start</span>
+          </button>
+          <button id="btnStopLoop" class="action-btn secondary" disabled>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="1"/></svg>
+            <span>Stop</span>
+          </button>
         </div>
       </div>
+      <ol class="loop-timeline" id="loopTimeline">
+        <li class="empty-state">No runs yet. Start the loop to see each step here.</li>
+      </ol>
     </section>
 
-    <!-- Toast Notification -->
-    <div id="luminaToast" class="lumina-toast"></div>
+    <div id="luminaToast" class="lumina-toast" role="status" aria-live="polite"></div>
   </div>
 
   <script nonce="${nonce}" src="${scriptUri}"></script>
