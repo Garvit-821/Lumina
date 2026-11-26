@@ -159,7 +159,7 @@ export type ExtensionMessage =
   | { type: 'calibration_data'; telemetry: HardwareTelemetry; recommendation: ModelRecommendation }
   | { type: 'benchmark_progress'; status: string }
   | { type: 'benchmark_result'; result: BenchmarkResult }
-  | { type: 'models_list'; models: OllamaModelInfo[]; activeModel: string; running: OllamaRunningProcess[] }
+  | { type: 'models_list'; models: OllamaModelInfo[]; activeModel: string; running: OllamaRunningProcess[]; isOnline?: boolean }
   | { type: 'pull_progress'; model: string; status: string; completed?: number; total?: number }
   | { type: 'context_chips_updated'; chips: ContextChip[] }
   | { type: 'rag_status'; indexing: boolean; indexedFiles: number; totalChunks: number }
